@@ -84,8 +84,8 @@ class _Main3DShellScreenState extends State<Main3DShellScreen>
 
   void _handleHorizontalDragStart(DragStartDetails details) {
     if (_animationController.isAnimating) return;
-    // Allow swipe initiation ONLY from strict left edge (< 32px) or if drawer is already open
-    if (_animationController.value < 0.05 && details.globalPosition.dx < 32) {
+    // Allow swipe initiation from the left side (< 80px) or if drawer is already open
+    if (_animationController.value < 0.05 && details.globalPosition.dx < 80) {
       _canDrag = true;
     } else if (_animationController.value > 0.8) {
       _canDrag = true;
@@ -98,10 +98,10 @@ class _Main3DShellScreenState extends State<Main3DShellScreen>
     if (!_canDrag || _animationController.isAnimating) return;
     final delta = details.primaryDelta ?? 0;
 
-    if (delta > 6 && _animationController.value < 0.5) {
+    if (delta > 5 && _animationController.value < 0.5) {
       _canDrag = false;
       _openDrawer();
-    } else if (delta < -6 && _animationController.value > 0.5) {
+    } else if (delta < -5 && _animationController.value > 0.5) {
       _canDrag = false;
       _closeDrawer();
     }
@@ -111,9 +111,9 @@ class _Main3DShellScreenState extends State<Main3DShellScreen>
     if (!_canDrag) return;
     _canDrag = false;
     final velocity = details.primaryVelocity ?? 0;
-    if (velocity > 120) {
+    if (velocity > 80) {
       _openDrawer();
-    } else if (velocity < -120) {
+    } else if (velocity < -80) {
       _closeDrawer();
     }
   }

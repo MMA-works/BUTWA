@@ -115,6 +115,24 @@ class _DealsSlideshowWidgetState extends State<DealsSlideshowWidget> {
       expiryText: 'Limited time offer',
       terms: 'Avail discount instantly on checkout with your Batwa Visa Virtual Card.',
     ),
+
+    // 📱 Deal 4: Mobile Network Packages & Load (Jazz, Zong, Telenor, Ufone)
+    DealItem(
+      id: 'deal-sim-50',
+      tag: '📱 50% CASHBACK • SIM PACKAGES',
+      title: '50% Cashback on All SIM Packages',
+      subTitle: 'Recharge Jazz, Zong, Ufone or Telenor & get instant 50% cashback',
+      discountPercent: 50,
+      voucherCode: 'SIMSUPER50',
+      type: 'UTILITY',
+      primaryColor: Color(0xFF1E1B4B),
+      secondaryColor: Color(0xFF312E81),
+      accentColor: Color(0xFFF3D602),
+      textColor: Colors.white,
+      icon: Icons.phone_android_rounded,
+      expiryText: 'Active Today',
+      terms: 'Applicable on any prepaid/postpaid package or load above Rs 300.',
+    ),
   ];
 
   @override
@@ -127,7 +145,7 @@ class _DealsSlideshowWidgetState extends State<DealsSlideshowWidget> {
 
   void _startAutoSlideTimer() {
     _slideshowTimer?.cancel();
-    _slideshowTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+    _slideshowTimer = Timer.periodic(const Duration(milliseconds: 2500), (timer) {
       if (_pageController.hasClients) {
         final nextPage = (_currentPage + 1) % _deals.length;
         _pageController.animateToPage(
@@ -192,24 +210,14 @@ class _DealsSlideshowWidgetState extends State<DealsSlideshowWidget> {
             children: [
               Row(
                 children: [
-                  Container(
-                    width: 26,
-                    height: 26,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF3D602).withValues(alpha: 0.18),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.local_fire_department_rounded,
-                        size: 17,
-                        color: Color(0xFFE59800),
-                      ),
-                    ),
+                  const Icon(
+                    Icons.star_rounded,
+                    size: 22,
+                    color: Color(0xFFF3D602),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 6),
                   Text(
-                    'Exclusive Deals & Offers',
+                    'Favorite Deals & Offers',
                     style: TextStyle(
                       fontSize: 13.5,
                       fontWeight: FontWeight.w800,

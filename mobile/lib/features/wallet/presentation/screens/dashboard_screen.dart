@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:batwa_wallet/core/constants/app_colors.dart';
-import 'package:batwa_wallet/core/theme/theme_cubit.dart';
 import 'package:batwa_wallet/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:batwa_wallet/features/auth/presentation/bloc/auth_state.dart';
 import 'package:batwa_wallet/features/auth/presentation/screens/pin_setup_screen.dart';
@@ -13,9 +12,8 @@ import 'package:batwa_wallet/features/wallet/presentation/bloc/wallet_event.dart
 import 'package:batwa_wallet/features/wallet/presentation/bloc/wallet_state.dart';
 import 'package:batwa_wallet/features/wallet/presentation/widgets/balance_card_widget.dart';
 import 'package:batwa_wallet/features/wallet/presentation/widgets/quick_actions_widget.dart';
-import 'package:batwa_wallet/features/wallet/presentation/widgets/quick_send_contacts_widget.dart';
+import 'package:batwa_wallet/features/wallet/presentation/widgets/deals_slideshow_widget.dart';
 import 'package:batwa_wallet/core/utils/user_avatar_helper.dart';
-import 'package:batwa_wallet/features/wallet/presentation/widgets/notched_bottom_sheet_container.dart';
 import 'package:batwa_wallet/features/wallet/presentation/widgets/floating_pill_nav_bar.dart';
 import 'package:batwa_wallet/features/wallet/presentation/widgets/recent_transactions_widget.dart';
 import 'package:batwa_wallet/features/cards/presentation/screens/cards_screen.dart';
@@ -248,11 +246,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : const Color(0xFFF8FAFC),
-      body: SafeArea(
-        bottom: false,
-        child: BlocConsumer<WalletBloc, WalletState>(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+      ),
+      child: Scaffold(
+        backgroundColor: isDark ? AppColors.darkBackground : const Color(0xFFF8FAFC),
+        body: BlocConsumer<WalletBloc, WalletState>(
           listener: (context, state) {
             if (state is WalletError) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -268,12 +270,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
             if (state is WalletLoaded) {
               return Stack(
                 children: [
-                  // 🌟 Raqami-Style Faded Yellow (#F3D602 to White) Gradient Banner
+                  // 🌟 Raqami-Style Full-Bleed Yellow (#F3D602 to White) Gradient Banner to Very Top
                   Positioned(
                     top: 0,
                     left: 0,
                     right: 0,
-                    height: MediaQuery.of(context).size.height * 0.58,
+                    height: MediaQuery.of(context).size.height * 0.60,
                     child: Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -281,25 +283,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           end: Alignment.bottomCenter,
                           colors: isDark
                               ? [
-                                  const Color(0xFFF3D602).withValues(alpha: 0.28),
-                                  const Color(0xFFF3D602).withValues(alpha: 0.12),
+                                  const Color(0xFFF3D602).withValues(alpha: 0.32),
+                                  const Color(0xFFF3D602).withValues(alpha: 0.16),
                                   AppColors.darkBackground.withValues(alpha: 0.0),
                                 ]
                               : [
-                                  const Color(0xFFF3D602), // Vibrant Brand Yellow #F3D602
+                                  const Color(0xFFF3D602), // Vibrant Brand Yellow #F3D602 (Bleeds to top)
+                                  const Color(0xFFF3D602),
                                   const Color(0xFFF4D916),
                                   const Color(0xFFF7E248),
                                   const Color(0xFFFAEE88).withValues(alpha: 0.85),
                                   const Color(0xFFFCF7CA).withValues(alpha: 0.35),
                                   const Color(0xFFF8FAFC).withValues(alpha: 0.0), // Smooth fade to white
                                 ],
-                          stops: const [0.0, 0.35, 0.65, 0.82, 0.93, 1.0],
+                          stops: const [0.0, 0.22, 0.38, 0.58, 0.78, 0.90, 1.0],
                         ),
                       ),
                     ),
                   ),
 
-                  RefreshIndicator(
+                  SafeArea(
+                    bottom: false,
+                    child: RefreshIndicator(
                     color: AppColors.primary,
                     backgroundColor: AppColors.surface,
                     onRefresh: () async {
@@ -310,49 +315,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // 🏝️ Center Dynamic Island Notch Capsule (BATWA Brand Badge)
-                          Center(
-                            child: Container(
-                              margin: const EdgeInsets.only(top: 2, bottom: 8),
-                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
-                              decoration: BoxDecoration(
-                                color: Colors.black,
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.25),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Image.asset(
-                                    'assets/images/app_logo.png',
-                                    width: 16,
-                                    height: 16,
-                                    fit: BoxFit.contain,
-                                  ),
-                                  const SizedBox(width: 6),
-                                  const Text(
-                                    'BATWA',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 10.5,
-                                      fontWeight: FontWeight.w900,
-                                      letterSpacing: 1.2,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-
                           // 🌟 Top Header Row (User Avatar + Welcome Name on Left; Mascot Bot + 3D Bell on Right)
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 2, 20, 14),
+                            padding: const EdgeInsets.fromLTRB(20, 8, 20, 14),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -590,21 +555,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                           const SizedBox(height: 18),
 
-                          // ⭐ Favourites Quick Send Contacts
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: QuickSendContactsWidget(
-                              onContactSelected: (name, tag) {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => SendMoneyScreen(
-                                      userBalance: state.wallet.balance,
-                                    ),
-                                  ),
-                                ).then((_) => context.read<WalletBloc>().add(LoadWalletDataEvent()));
-                              },
-                              onSeeAll: () => _showMoreServicesSheet(context),
-                            ),
+                          // ⭐ Favorite Offers Slideshow (Auto-rotates every 2-3 seconds with 4 deals)
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: DealsSlideshowWidget(),
                           ),
                           const SizedBox(height: 16),
 
@@ -678,15 +632,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                     ),
                   ),
+                ),
 
                   // 🌟 Floating Matte Black Bottom Navigation Bar
                   FloatingPillNavBar(
                     selectedIndex: _selectedTabIndex,
                     onTabSelected: (index) {
-                      setState(() => _selectedTabIndex = index);
-                      if (index == 1) {
+                      HapticFeedback.lightImpact();
+                      if (index == 0) {
+                        setState(() => _selectedTabIndex = 0);
+                      } else if (index == 1) {
+                        setState(() => _selectedTabIndex = 1);
                         _showMoreServicesSheet(context);
                       } else if (index == 2) {
+                        setState(() => _selectedTabIndex = 2);
                         Navigator.of(context).push(
                           MaterialPageRoute(builder: (_) => const AnalyticsDashboardScreen()),
                         ).then((_) {
@@ -694,11 +653,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           context.read<WalletBloc>().add(LoadWalletDataEvent());
                         });
                       } else if (index == 3) {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const SecuritySettingsScreen()),
-                        ).then((_) {
-                          setState(() => _selectedTabIndex = 0);
-                        });
+                        // 🌟 Open Drawer Menu via Bottom Nav Menu button
+                        setState(() => _selectedTabIndex = 0);
+                        widget.onMenuTap?.call();
                       }
                     },
                   ),

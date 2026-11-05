@@ -42,7 +42,7 @@ class FloatingPillNavBar extends StatelessWidget {
     NavItemData(
       icon: Icons.grid_view_rounded,
       activeIcon: Icons.grid_view_rounded,
-      label: 'More',
+      label: 'Menu',
     ),
   ];
 

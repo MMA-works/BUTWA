@@ -125,35 +125,25 @@ class UserAvatarHelper {
         ],
       ),
       child: ClipOval(
-        child: Image.network(
-          effectiveUrl,
+        child: Image.asset(
+          'assets/images/default_avatar.png',
           width: size,
           height: size,
           fit: BoxFit.cover,
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return Container(
-              color: const Color(0xFF031E14),
-              child: const Center(
-                child: SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFF3D602)),
-                  ),
-                ),
-              ),
-            );
-          },
           errorBuilder: (context, error, stackTrace) {
-            return Container(
-              color: const Color(0xFF031E14),
-              child: Center(
-                child: Icon(
-                  gender == 'FEMALE' ? Icons.face_3_rounded : Icons.face_rounded,
-                  color: const Color(0xFFF3D602),
-                  size: size * 0.55,
+            return Image.network(
+              effectiveUrl,
+              width: size,
+              height: size,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => Container(
+                color: const Color(0xFF031E14),
+                child: Center(
+                  child: Icon(
+                    gender == 'FEMALE' ? Icons.face_3_rounded : Icons.face_rounded,
+                    color: const Color(0xFFF3D602),
+                    size: size * 0.55,
+                  ),
                 ),
               ),
             );
