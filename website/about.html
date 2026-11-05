@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us &amp; Founders – BATWA Digital Banking</title>
+  <meta name="description" content="Meet the founders of BATWA: M. Ali Zeeshan, Razi Hussain Agha, Muhammad Ali Hussain Agha, and Deepak Kumar Khatri. Developed under Sir Shazib's mentorship." />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/batwa_b_transparent.png" />
+  <link rel="apple-touch-icon" href="assets/batwa_b_square_gold.png" />
+
+  <!-- Google Fonts: Plus Jakarta Sans & Space Grotesk -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+  <style type="text/tailwindcss">
+    @theme {
+      --color-batwa-navy: #0F172A;
+      --color-batwa-gold: #F3D602;
+      --color-batwa-gold-dark: #D4B800;
+      --color-batwa-canvas: #FAFAFA;
+      --color-batwa-surface: #FFFFFF;
+      --color-batwa-border: #E5E7EB;
+      --color-batwa-text-primary: #0F172A;
+      --color-batwa-text-muted: #64748B;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-sans: 'Plus Jakarta Sans', sans-serif;
+    }
+  </style>
+</head>
+<body class="selection:bg-batwa-gold selection:text-batwa-navy bg-batwa-canvas text-batwa-text-primary antialiased min-h-screen flex flex-col justify-between">
+
+  <!-- ================= FLOATING OVAL NAVBAR ================= -->
+  <header class="sticky top-3.5 sm:top-5 z-50 w-full px-3 sm:px-6 pointer-events-none transition-all duration-300">
+    <div class="max-w-5xl mx-auto flex justify-center">
+      
+      <!-- Oval Pill Navbar Chassis -->
+      <div class="pointer-events-auto w-full bg-white/95 backdrop-blur-xl border border-gray-200/90 shadow-lg shadow-black/[0.04] rounded-full px-3.5 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between gap-3 sm:gap-6 transition-all">
+        
+        <!-- Left: Pure Brand Logo + Wordmark + BANK -->
+        <a href="index.html#overview" class="flex items-center gap-2.5 shrink-0 select-none group">
+          <img src="assets/batwa_b_transparent.png" alt="BATWA Logo" class="h-8 w-auto object-contain shrink-0 group-hover:scale-105 transition transform" />
+          <div class="flex items-center gap-1.5 sm:gap-2">
+            <span class="text-[19px] sm:text-[20px] font-black tracking-[-0.03em] text-[#0F172A] font-display">BATWA</span>
+            <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-white bg-[#0F172A] px-2 sm:px-2.5 py-0.5 rounded-full font-mono shadow-2xs">BANK</span>
+          </div>
+        </a>
+
+        <!-- Center: Direct Navigation Links -->
+        <nav class="flex items-center gap-0.5 sm:gap-1 text-[12px] sm:text-[13px] font-semibold text-gray-600 overflow-x-auto no-scrollbar py-0.5">
+          <a href="index.html#overview" class="px-2.5 sm:px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">Overview</a>
+          <a href="index.html#features" class="px-2.5 sm:px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">Features</a>
+          <a href="index.html#nfc-card" class="px-2.5 sm:px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">NFC Card</a>
+          <a href="index.html#update-engine" class="px-2.5 sm:px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">Updates</a>
+          <a href="about.html" class="px-2.5 sm:px-3 py-1.5 rounded-full bg-batwa-navy text-white font-bold transition-colors whitespace-nowrap">About Us</a>
+          <a href="index.html#security" class="px-2.5 sm:px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">Security</a>
+        </nav>
+
+        <!-- Right: Action Controls (Download APK) -->
+        <div class="flex items-center gap-2 shrink-0">
+          <a href="index.html#download" class="bg-[#0F172A] hover:bg-black text-white font-extrabold text-[12px] sm:text-[13px] px-4 sm:px-5 py-2 rounded-full flex items-center gap-1.5 sm:gap-2 shadow-sm transition active:scale-95 group shrink-0">
+            <svg class="w-3.5 h-3.5 text-batwa-gold group-hover:translate-y-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            <span class="hidden sm:inline">Download APK</span>
+            <span class="sm:hidden">APK</span>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MAIN ABOUT US HERO ================= -->
+  <main class="max-w-5xl mx-auto px-4 sm:px-8 pt-12 pb-24 space-y-16">
+    
+    <!-- Hero Intro -->
+    <div class="text-center max-w-3xl mx-auto space-y-4">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white border border-batwa-border text-[11px] font-bold text-batwa-navy uppercase tracking-wider font-mono shadow-2xs">
+        <span class="w-1.5 h-1.5 rounded-full bg-batwa-gold"></span>
+        <span>University Capstone &amp; Research Initiative</span>
+      </div>
+      <h1 class="text-4xl sm:text-5xl font-black font-display tracking-tight text-batwa-navy">
+        About BATWA &amp; The Founders
+      </h1>
+      <p class="text-base sm:text-lg text-batwa-text-muted leading-relaxed">
+        BATWA started as an ambitious computer science university project. We didn't build a commercial app — we built the vision of what digital banking in Pakistan should truly feel like.
+      </p>
+    </div>
+
+    <!-- The Origin Manifesto -->
+    <div class="bg-white p-8 sm:p-12 rounded-3xl border border-batwa-border shadow-xs space-y-6">
+      <div class="space-y-3">
+        <span class="text-xs font-bold text-batwa-gold-dark uppercase tracking-widest font-mono">Our Origin &amp; Mission</span>
+        <h2 class="text-2xl sm:text-3xl font-black font-display text-batwa-navy">
+          Why We Built BATWA
+        </h2>
+      </div>
+
+      <div class="space-y-4 text-sm sm:text-base text-batwa-text-muted leading-relaxed">
+        <p>
+          For years, consumers in Pakistan have dealt with slow, complicated banking apps burdened with high latency, hidden service charges, and fragile network recovery.
+        </p>
+        <p>
+          As undergraduate computer science students, we chose to dedicate our capstone project to solving this challenge from first principles:
+        </p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+          <div class="p-4 rounded-2xl bg-batwa-canvas border border-batwa-border space-y-1.5">
+            <div class="text-xs font-bold text-batwa-navy font-mono">01 / Sub-50ms Settlement</div>
+            <p class="text-xs text-batwa-text-muted">Instant Raast payment framework simulation with transactional idempotency.</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-batwa-canvas border border-batwa-border space-y-1.5">
+            <div class="text-xs font-bold text-batwa-navy font-mono">02 / Memory-Hard Argon2id</div>
+            <p class="text-xs text-batwa-text-muted">Hardware-enclave MPIN hashing immune to modern GPU cracking attacks.</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-batwa-canvas border border-batwa-border space-y-1.5">
+            <div class="text-xs font-bold text-batwa-navy font-mono">03 / 3D Titanium NFC Emulation</div>
+            <p class="text-xs text-batwa-text-muted">Contactless virtual card simulation with instant freeze and CVV masking.</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-batwa-canvas border border-batwa-border space-y-1.5">
+            <div class="text-xs font-bold text-batwa-navy font-mono">04 / Zero-Latency OTA Updates</div>
+            <p class="text-xs text-batwa-text-muted">Direct in-app continuous update engine bypassing app store rollout delays.</p>
+          </div>
+        </div>
+
+        <p class="pt-2">
+          BATWA is our proof-of-concept for how clean, secure, and beautiful sovereign banking can be when built with care.
+        </p>
+      </div>
+
+      <!-- University Academic Disclaimer -->
+      <div class="p-4 rounded-2xl bg-amber-50/80 border border-amber-200 text-xs text-amber-900 flex items-start gap-3">
+        <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div class="leading-relaxed">
+          <strong>Academic Prototype Notice:</strong> BATWA is an educational university research project created for academic evaluation. It is not an active SBP-licensed commercial banking institution and does not hold real customer fiat deposits.
+        </div>
+      </div>
+    </div>
+
+    <!-- Academic Supervisors Card (Dr. Khalid & Sir Shazib) -->
+    <div class="bg-gradient-to-br from-slate-900 to-slate-950 text-white p-8 sm:p-12 rounded-3xl border border-gray-800 shadow-md space-y-6">
+      <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-batwa-gold font-mono">
+        <span class="w-2 h-2 rounded-full bg-batwa-gold animate-pulse"></span>
+        <span>Academic Faculty Supervision</span>
+      </div>
+
+      <div class="space-y-2">
+        <h3 class="text-3xl font-black font-display text-white">
+          Course Leadership &amp; Mentorship
+        </h3>
+        <p class="text-sm text-gray-300 leading-relaxed max-w-2xl">
+          BATWA was built as an Object-Oriented Programming (OOP) project under the expert supervision of our respected faculty members:
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+        <!-- Dr. Khalid -->
+        <div class="p-6 rounded-2xl bg-white/5 border border-white/10 space-y-2">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xl font-bold font-display text-white">Dr. Khalid</h4>
+            <span class="text-[11px] font-mono font-bold text-batwa-gold bg-batwa-gold/15 px-2.5 py-0.5 rounded-full border border-batwa-gold/30">OOP Theory</span>
+          </div>
+          <div class="text-xs text-gray-400">Course Professor &amp; Theory Instructor</div>
+          <p class="text-xs text-gray-300 leading-relaxed pt-1">
+            Mentored the Object-Oriented Programming theory, structural class hierarchies, domain logic, and clean software architecture patterns.
+          </p>
+        </div>
+
+        <!-- Sir Shazib -->
+        <div class="p-6 rounded-2xl bg-white/5 border border-white/10 space-y-2">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xl font-bold font-display text-white">Sir Shazib</h4>
+            <span class="text-[11px] font-mono font-bold text-emerald-400 bg-emerald-500/15 px-2.5 py-0.5 rounded-full border border-emerald-500/30">OOP Lab</span>
+          </div>
+          <div class="text-xs text-gray-400">Lab Instructor &amp; Technical Supervisor</div>
+          <p class="text-xs text-gray-300 leading-relaxed pt-1">
+            Supervised practical lab implementations, hands-on software testing, continuous deployment milestones, and engineering evaluations.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Founders Grid (3 Core Members) -->
+    <div class="space-y-8">
+      <div class="text-center space-y-2">
+        <h3 class="text-3xl font-black font-display text-batwa-navy">
+          The Founding Team
+        </h3>
+        <p class="text-sm text-batwa-text-muted">
+          Meet the three computer science students who designed, engineered, and brought BATWA to life.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Founder 1: Muhammad Ali -->
+        <div class="bg-white p-7 rounded-3xl border border-batwa-border shadow-xs hover:shadow-md transition space-y-4 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="w-14 h-14 rounded-2xl bg-batwa-gold/20 border border-batwa-gold/50 flex items-center justify-center text-batwa-navy font-black text-xl font-display">
+                MA
+              </div>
+              <span class="text-[10px] font-black uppercase tracking-wider text-batwa-navy bg-batwa-gold/30 px-2.5 py-1 rounded-full font-mono">FOUNDER</span>
+            </div>
+            <div>
+              <h4 class="text-xl font-black text-batwa-navy">Muhammad Ali</h4>
+              <div class="text-xs font-bold text-batwa-gold-dark font-mono uppercase tracking-wider">Founder &amp; Lead Architect</div>
+            </div>
+            <p class="text-xs sm:text-sm text-batwa-text-muted leading-relaxed">
+              Spearheaded the core project concept, full-stack software architecture, Flutter cross-platform mobile client, and biometric Argon2id cryptographic security enclave.
+            </p>
+          </div>
+          <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs font-mono text-batwa-text-subtle">
+            <span>Role</span>
+            <span class="font-bold text-batwa-navy">Founder &amp; Architecture</span>
+          </div>
+        </div>
+
+        <!-- Founder 2: Muhammad Razi -->
+        <div class="bg-white p-7 rounded-3xl border border-batwa-border shadow-xs hover:shadow-md transition space-y-4 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="w-14 h-14 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-black text-xl font-display">
+                MR
+              </div>
+              <span class="text-[10px] font-black uppercase tracking-wider text-white bg-slate-900 px-2.5 py-1 rounded-full font-mono">FINANCE</span>
+            </div>
+            <div>
+              <h4 class="text-xl font-black text-batwa-navy">Muhammad Razi</h4>
+              <div class="text-xs font-bold text-blue-700 font-mono uppercase tracking-wider">Co-Founder &amp; CFO</div>
+            </div>
+            <p class="text-xs sm:text-sm text-batwa-text-muted leading-relaxed">
+              Spearheaded financial ledger modeling, mathematical audit trails, transactional idempotency specifications, and digital currency flow compliance.
+            </p>
+          </div>
+          <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs font-mono text-batwa-text-subtle">
+            <span>Role</span>
+            <span class="font-bold text-batwa-navy">Co-Founder &amp; CFO</span>
+          </div>
+        </div>
+
+        <!-- Founder 3: Deepak -->
+        <div class="bg-white p-7 rounded-3xl border border-batwa-border shadow-xs hover:shadow-md transition space-y-4 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-900 flex items-center justify-center font-black text-xl font-display">
+                DK
+              </div>
+              <span class="text-[10px] font-black uppercase tracking-wider text-emerald-900 bg-emerald-200 px-2.5 py-1 rounded-full font-mono">TECH</span>
+            </div>
+            <div>
+              <h4 class="text-xl font-black text-batwa-navy">Deepak</h4>
+              <div class="text-xs font-bold text-emerald-800 font-mono uppercase tracking-wider">Co-Founder &amp; CTO</div>
+            </div>
+            <p class="text-xs sm:text-sm text-batwa-text-muted leading-relaxed">
+              Architected high-throughput backend services, live OTA binary validation endpoints, system reliability, and database persistence layers.
+            </p>
+          </div>
+          <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs font-mono text-batwa-text-subtle">
+            <span>Role</span>
+            <span class="font-bold text-batwa-navy">Co-Founder &amp; CTO</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CTA Return Home -->
+    <div class="text-center pt-8">
+      <a href="index.html" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-batwa-navy hover:bg-black text-white text-sm font-bold shadow-sm transition active:scale-95">
+        <span>← Back to Platform Overview</span>
+      </a>
+    </div>
+
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="bg-white py-10 px-4 sm:px-8 border-t border-batwa-border text-xs text-batwa-text-muted">
+    <div class="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-2.5">
+        <img src="assets/batwa_b_transparent.png" class="h-6 w-auto object-contain" alt="BATWA Logo" />
+        <span class="font-bold text-batwa-navy">BATWA Project</span>
+        <span>• University Capstone 2026</span>
+      </div>
+      <div>
+        <span>Mentored by <strong>Dr. Khalid</strong> (OOP Theory) &amp; <strong>Sir Shazib</strong> (OOP Lab)</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

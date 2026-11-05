@@ -1,0 +1,54 @@
+=======================================================
+BATWA WALLET - BANK & DIGITAL WALLET LOGOS DIRECTORY
+=======================================================
+
+Location:
+C:\Users\M. Ali\Desktop\WORKPLACE\PRODUCTS\BATWA\mobile\assets\images\banks\
+
+Yahan par aap apne High-Resolution Transparent PNG logos paste kar saktay hain.
+Jab aap file paste karenge, agar already exist kare to "Replace the files in the destination" select karlein.
+
+Specs:
+- Format: PNG (Transparent background)
+- Recommended size: 512x512 px (min 256x256 px) square
+- Safe margin: ~10% padding inside edges
+
+-------------------------------------------------------
+FILE NAMES LIST:
+-------------------------------------------------------
+
+🔥 TOP PRIORITY (Tier 1):
+- meezan.png       -> Meezan Bank
+- hbl.png          -> Habib Bank Limited (HBL)
+- alfalah.png      -> Bank Alfalah
+- ubl.png          -> United Bank Limited (UBL)
+- mcb.png          -> MCB Bank
+- allied.png       -> Allied Bank (ABL)
+- alhabib.png      -> Bank AL Habib
+- scb.png          -> Standard Chartered
+- nbp.png          -> National Bank of Pakistan (NBP)
+- bop.png          -> Bank of Punjab (BOP)
+- faysal.png       -> Faysal Bank
+- askari.png       -> Askari Bank
+- js.png           -> JS Bank
+- easypaisa.png    -> Easypaisa
+- jazzcash.png     -> JazzCash
+- sadapay.png      -> SadaPay
+- nayapay.png      -> NayaPay
+
+🏦 SECONDARY BANKS (Tier 3 & 4):
+- dib.png          -> Dubai Islamic Bank (DIB)
+- albaraka.png     -> Al Baraka Bank
+- mcbib.png        -> MCB Islamic Bank
+- bok.png          -> Bank of Khyber (BOK)
+- hmb.png          -> Habib Metropolitan Bank (HMB)
+- soneri.png       -> Soneri Bank
+- silk.png         -> Silkbank
+- sindh.png        -> Sindh Bank
+- samba.png        -> Samba Bank
+- fwbl.png         -> First Women Bank (FWBL)
+- zindigi.png      -> Zindigi (JS Bank)
+- raqami.png       -> Raqami Islamic Digital Bank
+- abhi.png         -> ABHI Microfinance
+- apna.png         -> Apna Microfinance Bank
+=======================================================

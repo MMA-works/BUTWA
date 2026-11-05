@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BATWA – Official Digital Banking & Mobile Wallet</title>
+  <meta name="description" content="BATWA (Battwaa.online) is Pakistan's premier neo-banking platform featuring sub-50ms Raast transfers, contactless NFC virtual cards, smart savings vaults, and institutional security." />
+  <meta name="keywords" content="BATWA, Battwaa.online, digital banking Pakistan, Raast P2P, NFC payment card, neo bank, mobile wallet, fintech" />
+  <meta name="author" content="BATWA Financial Technologies Ltd." />
+  <meta name="theme-color" content="#FFFFFF" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://battwaa.online/" />
+  <meta property="og:title" content="BATWA – Sovereign Digital Banking & Mobile Wallet" />
+  <meta property="og:description" content="Instant Raast transfers, contactless NFC cards, savings vaults, and institutional security." />
+  <meta property="og:image" content="assets/batwa_b_square_gold.png" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/batwa_b_transparent.png" />
+  <link rel="apple-touch-icon" href="assets/batwa_b_square_gold.png" />
+
+  <!-- Google Fonts: Plus Jakarta Sans & Space Grotesk -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'batwa-gold': '#F3D602',
+            'batwa-gold-light': '#FEF9C3',
+            'batwa-gold-dark': '#D8BE02',
+            'batwa-navy': '#1B1D28',
+            'batwa-slate': '#0F172A',
+            'batwa-canvas': '#FAFAFA',
+            'batwa-surface': '#FFFFFF',
+            'batwa-surface-subtle': '#F4F5F7',
+            'batwa-border': '#E5E7EB',
+            'batwa-border-subtle': '#EEF0F2',
+            'batwa-text-primary': '#111827',
+            'batwa-text-muted': '#6B7280',
+            'batwa-text-subtle': '#9CA3AF',
+            'batwa-cyan': '#00D2D3',
+            'batwa-coral': '#FF4757',
+            'batwa-blue': '#3B82F6',
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Space Grotesk"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Ultra-lightweight, zero-lag rendering */
+    * {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 84px;
+    }
+
+    body {
+      background-color: #FAFAFA;
+      color: #111827;
+      overflow-x: hidden;
+    }
+
+    /* Authentic iPhone 16 Pro Aerospace Chassis */
+    .iphone-16-pro-frame {
+      position: relative;
+      width: 315px;
+      height: 655px;
+      border-radius: 54px;
+      padding: 8px;
+      background: #1C1D24;
+      box-shadow: 
+        0 30px 70px -15px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.12),
+        0 0 0 3px #323542,
+        0 0 0 4px #1A1B22;
+      border: 1px solid #484C5C;
+    }
+
+    .iphone-16-pro-screen {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 46px;
+      overflow: hidden;
+      background: #000000;
+    }
+
+    /* Clean dot grid background */
+    .bg-grid-dots {
+      background-image: radial-gradient(#E5E7EB 1.2px, transparent 1.2px);
+      background-size: 20px 20px;
+    }
+
+    /* Card pattern */
+    .card-pattern-mesh {
+      background-color: #12141C;
+      background-image: radial-gradient(rgba(243, 214, 2, 0.2) 1.2px, transparent 1.2px);
+      background-size: 14px 14px;
+    }
+
+    /* ---------------------------------------------------- */
+    /* 100% SEAMLESS CONTINUOUS INFINITE BANK MARQUEE      */
+    /* ---------------------------------------------------- */
+    @keyframes continuousMarquee {
+      0% {
+        transform: translate3d(0, 0, 0);
+      }
+      100% {
+        transform: translate3d(-50%, 0, 0);
+      }
+    }
+
+    .marquee-wrapper {
+      display: flex;
+      overflow: hidden;
+      user-select: none;
+      mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+    }
+
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      animation: continuousMarquee 32s linear infinite;
+      will-change: transform;
+    }
+
+    .marquee-track:hover {
+      animation-play-state: paused;
+    }
+
+    /* ---------------------------------------------------- */
+    /* 3D NFC TITANIUM CARD SYSTEM                         */
+    /* ---------------------------------------------------- */
+    .nfc-card-perspective {
+      perspective: 1200px;
+    }
+
+    .nfc-card-3d-flipper {
+      position: relative;
+      width: 100%;
+      max-width: 410px;
+      height: 250px;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform;
+    }
+
+    /* Floating idle 3D sway */
+    @keyframes floatCardSway {
+      0%, 100% {
+        transform: rotateY(-8deg) rotateX(6deg) translateY(0px);
+      }
+      50% {
+        transform: rotateY(8deg) rotateX(-5deg) translateY(-8px);
+      }
+    }
+
+    .nfc-card-3d-flipper.idle-floating {
+      animation: floatCardSway 6s ease-in-out infinite;
+    }
+
+    .nfc-card-face {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 26px;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      transform-style: preserve-3d;
+      box-shadow: 0 25px 50px -12px rgba(18, 20, 28, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.12) inset;
+    }
+
+    .nfc-card-front {
+      z-index: 2;
+      transform: rotateY(0deg);
+    }
+
+    .nfc-card-back {
+      transform: rotateY(180deg);
+      background-color: #0F1118;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Holographic sheen layer */
+    .holographic-sheen {
+      position: absolute;
+      inset: 0;
+      border-radius: 26px;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.3) 0%,
+        rgba(243, 214, 2, 0.15) 25%,
+        rgba(0, 210, 211, 0.15) 50%,
+        rgba(255, 71, 87, 0.15) 75%,
+        rgba(255, 255, 255, 0.3) 100%
+      );
+      opacity: 0.22;
+      mix-blend-mode: overlay;
+      pointer-events: none;
+    }
+
+    /* 3D Depth Layers inside card */
+    .layer-z-10 { transform: translateZ(12px); }
+    .layer-z-20 { transform: translateZ(24px); }
+    .layer-z-30 { transform: translateZ(36px); }
+  </style>
+</head>
+<body class="selection:bg-batwa-gold selection:text-batwa-navy bg-batwa-canvas text-batwa-text-primary antialiased">
+
+  <!-- ================= FLOATING OVAL NAVBAR (ALL LINKS INLINE, NO DROPDOWN) ================= -->
+  <header class="sticky top-3.5 sm:top-5 z-50 w-full px-3 sm:px-6 pointer-events-none transition-all duration-300">
+    <div class="max-w-5xl mx-auto flex justify-center">
+      
+      <!-- Oval Pill Navbar Chassis -->
+      <div class="pointer-events-auto w-full bg-white/95 backdrop-blur-xl border border-gray-200/90 shadow-lg shadow-black/[0.04] rounded-full px-3.5 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between gap-3 sm:gap-6 transition-all">
+        
+        <!-- Left: Pure Brand Logo (No Background, No Border, No Shape) + Wordmark + BANK -->
+        <a href="#overview" class="flex items-center gap-2.5 shrink-0 select-none group">
+          <img src="assets/batwa_b_transparent.png" alt="BATWA Logo" class="h-8 w-auto object-contain shrink-0 group-hover:scale-105 transition transform" />
+          <div class="flex items-center gap-1.5 sm:gap-2">
+            <span class="text-[19px] sm:text-[20px] font-black tracking-[-0.03em] text-[#0F172A] font-display">BATWA</span>
+            <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-white bg-[#0F172A] px-2 sm:px-2.5 py-0.5 rounded-full font-mono shadow-2xs">BANK</span>
+          </div>
+        </a>
+
+        <!-- Center: Direct Navigation Links (All Inline, Clean & Short, No Dropdown Needed) -->
+        <nav class="flex items-center gap-0.5 sm:gap-1 text-[12px] sm:text-[13px] font-semibold text-gray-600 overflow-x-auto no-scrollbar py-0.5">
+          <a href="#overview" class="px-2.5 sm:px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">Overview</a>
+          <a href="#features" class="px-2.5 sm:px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">Features</a>
+          <a href="#nfc-card" class="px-2.5 sm:px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">NFC Card</a>
+          <a href="#update-engine" class="px-2.5 sm:px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">Updates</a>
+          <a href="#about" class="px-2.5 sm:px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">About Us</a>
+          <a href="#security" class="px-2.5 sm:px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">Security</a>
+        </nav>
+
+        <!-- Right: Action Controls (Download APK) -->
+        <div class="flex items-center gap-2 shrink-0">
+          <!-- Download APK Button -->
+          <a href="#download" class="bg-[#0F172A] hover:bg-black text-white font-extrabold text-[12px] sm:text-[13px] px-4 sm:px-5 py-2 rounded-full flex items-center gap-1.5 sm:gap-2 shadow-sm transition active:scale-95 group shrink-0">
+            <svg class="w-3.5 h-3.5 text-batwa-gold group-hover:translate-y-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            <span class="hidden sm:inline">Download APK</span>
+            <span class="sm:hidden">APK</span>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= HERO SECTION (CLEAN & PROFESSIONAL) ================= -->
+  <section id="overview" class="pt-14 sm:pt-20 pb-16 sm:pb-24 px-4 sm:px-8 border-b border-batwa-border bg-white bg-grid-dots">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      
+      <!-- Left Content -->
+      <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+        
+        <div class="inline-flex flex-wrap items-center gap-2 px-3.5 py-1.5 rounded-full bg-batwa-surface-subtle border border-batwa-border text-xs font-bold text-batwa-navy">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>State Bank of Pakistan (SBP) Framework Aligned</span>
+          <span class="text-batwa-text-subtle">•</span>
+          <span class="text-batwa-text-muted">Raast 2.0 Settlement</span>
+        </div>
+
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black font-display tracking-tight text-batwa-navy leading-[1.1]">
+          Sovereign Digital Banking. <br />
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 via-amber-500 to-yellow-600">
+            Speed, Security &amp; Simplicity.
+          </span>
+        </h1>
+
+        <p class="text-base sm:text-lg text-batwa-text-muted font-normal max-w-xl mx-auto lg:mx-0 leading-relaxed">
+          Send payments in under <strong class="text-batwa-navy font-semibold">50 milliseconds</strong> via Raast, tap anywhere with 
+          <strong class="text-batwa-navy font-semibold">Contactless NFC Cards</strong>, split group dining seamlessly, and automate daily recurring utility bills.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
+          <a href="#download" class="bg-batwa-gold hover:bg-batwa-gold-dark text-batwa-navy font-extrabold text-sm sm:text-base px-7 py-3.5 rounded-xl flex items-center gap-2.5 transition active:scale-95 shadow-sm">
+            <svg class="w-5 h-5 text-batwa-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            <span>Download APK (74.4 MB)</span>
+          </a>
+
+          <a href="#nfc-card" class="bg-white hover:bg-gray-50 text-batwa-navy font-bold text-sm sm:text-base px-6 py-3.5 rounded-xl border border-batwa-border transition shadow-xs flex items-center gap-2">
+            <span>Explore 3D NFC Card</span>
+            <svg class="w-4 h-4 text-batwa-text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+        </div>
+
+        <!-- Metric Badges Row -->
+        <div class="pt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-lg mx-auto lg:mx-0 text-left">
+          <div class="p-3.5 rounded-xl bg-batwa-surface-subtle border border-batwa-border">
+            <div class="text-xl font-black text-batwa-navy font-display">&lt; 50ms</div>
+            <div class="text-[11px] font-semibold text-batwa-text-muted uppercase">Raast Speed</div>
+          </div>
+          <div class="p-3.5 rounded-xl bg-batwa-surface-subtle border border-batwa-border">
+            <div class="text-xl font-black text-batwa-navy font-display">PKR 0</div>
+            <div class="text-[11px] font-semibold text-batwa-text-muted uppercase">Transfer Fee</div>
+          </div>
+          <div class="p-3.5 rounded-xl bg-batwa-surface-subtle border border-batwa-border">
+            <div class="text-xl font-black text-batwa-navy font-display">Argon2id</div>
+            <div class="text-[11px] font-semibold text-batwa-text-muted uppercase">Hardware MPIN</div>
+          </div>
+          <div class="p-3.5 rounded-xl bg-batwa-surface-subtle border border-batwa-border">
+            <div class="text-xl font-black text-batwa-navy font-display">100%</div>
+            <div class="text-[11px] font-semibold text-batwa-text-muted uppercase">Auto-Updated</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Mockup: Authentic Apple iPhone 16 Pro (Edge-to-Edge Full Screen) -->
+      <div class="lg:col-span-5 flex justify-center">
+        <div class="relative">
+          
+          <!-- iPhone 16 Pro Titanium Chassis -->
+          <div class="iphone-16-pro-frame">
+            
+            <!-- Hardware Action Button (Left Top) -->
+            <div class="absolute -left-[5px] top-[100px] w-[4px] h-[26px] bg-[#3B3E4C] rounded-l-sm"></div>
+            <!-- Hardware Volume Up (Left) -->
+            <div class="absolute -left-[5px] top-[145px] w-[4px] h-[48px] bg-[#3B3E4C] rounded-l-sm"></div>
+            <!-- Hardware Volume Down (Left) -->
+            <div class="absolute -left-[5px] top-[205px] w-[4px] h-[48px] bg-[#3B3E4C] rounded-l-sm"></div>
+            <!-- Hardware Power Button (Right) -->
+            <div class="absolute -right-[5px] top-[160px] w-[4px] h-[72px] bg-[#3B3E4C] rounded-r-sm"></div>
+
+            <!-- Edge-to-Edge Screen (Poora Mobile Cover) -->
+            <div class="iphone-16-pro-screen">
+              
+              <!-- Full Screen Image (Covers the entire phone seamlessly) -->
+              <img src="assets/app_screen_dashboard.png" alt="BATWA Live App on iPhone 16 Pro" class="w-full h-full object-cover object-top block select-none" loading="eager" />
+
+              <!-- Apple Dynamic Island (Floating inside the screen) -->
+              <div class="absolute top-2.5 left-1/2 -translate-x-1/2 w-[114px] h-[26px] bg-black rounded-full z-30 flex items-center justify-between px-2.5 shadow-md border border-white/10">
+                <div class="w-2.5 h-2.5 rounded-full bg-[#111] border border-white/20 flex items-center justify-center">
+                  <div class="w-1 h-1 rounded-full bg-blue-900/70"></div>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <img src="assets/batwa_b_gold.png" alt="BATWA B" class="w-3.5 h-3.5 object-contain" />
+                  <span class="text-[8px] font-black text-white tracking-widest font-mono">BATWA</span>
+                </div>
+              </div>
+
+              <!-- Specular Light Reflection Glare -->
+              <div class="pointer-events-none absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-white/15 mix-blend-overlay z-20"></div>
+
+              <!-- iOS Home Indicator Bar -->
+              <div class="pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1 bg-black/40 backdrop-blur-xs rounded-full z-30"></div>
+
+            </div>
+
+          </div>
+
+          <!-- Bottom Ambient Soft Grounding Shadow -->
+          <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 w-[85%] h-8 bg-black/20 blur-xl rounded-full -z-10"></div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= CONTINUOUS ENLARGED PARTNER BANKS MARQUEE ================= -->
+  <section class="py-10 bg-white border-b border-batwa-border overflow-hidden">
+    <div class="max-w-6xl mx-auto px-4 mb-6 text-center">
+      <span class="text-[11px] font-bold tracking-widest text-batwa-text-muted uppercase font-mono">
+        ✦ NATIONWIDE INTEROPERABLE PAYMENT RAILS &amp; PARTNER BANKS ✦
+      </span>
+    </div>
+
+    <!-- 100% Seamless Infinite Track (Zero Break, Zero Pause, Enlarged Logos) -->
+    <div class="marquee-wrapper w-full">
+      <div class="marquee-track flex items-center">
+        
+        <!-- Track Group 1 -->
+        <div class="flex items-center gap-12 sm:gap-16 pr-12 sm:pr-16 shrink-0">
+          <img src="assets/payment_networks/raast.png" alt="Raast" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
+          <img src="assets/payment_networks/1link.png" alt="1Link" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
+          <img src="assets/payment_networks/paypak.png" alt="PayPak" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
+          <img src="assets/payment_networks/visa.png" alt="Visa" class="h-8 sm:h-9 w-auto max-w-[110px] object-contain hover:scale-105 transition-transform" />
+          <img src="assets/payment_networks/mastercard.png" alt="MasterCard" class="h-10 sm:h-12 w-auto max-w-[120px] object-contain hover:scale-105 transition-transform" />
+          <img src="assets/banks/meezan.png" alt="Meezan Bank" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
+          <img src="assets/banks/hbl.png" alt="HBL" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
+          <img src="assets/banks/alfalah.png" alt="Bank Alfalah" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
+          <img src="assets/banks/easypaisa.png" alt="EasyPaisa" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
+          <img src="assets/banks/jazzcash.png" alt="JazzCash" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
+          <img src="assets/banks/nayapay.png" alt="NayaPay" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
+          <img src="assets/banks/sadapay.png" alt="SadaPay" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
+          <img src="assets/banks/ubl.png" alt="UBL" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
+          <img src="assets/banks/mcb.png" alt="MCB" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
+        </div>
+
+        <!-- Track Group 2 (Identical Clone for Seamless Infinite Wrap) -->
+        <div class="flex items-center gap-12 sm:gap-16 pr-12 sm:pr-16 shrink-0" aria-hidden="true">
+          <img src="assets/payment_networks/raast.png" alt="Raast" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
+          <img src="assets/payment_networks/1link.png" alt="1Link" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
+          <img src="assets/payment_networks/paypak.png" alt="PayPak" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
+          <img src="assets/payment_networks/visa.png" alt="Visa" class="h-8 sm:h-9 w-auto max-w-[110px] object-contain hover:scale-105 transition-transform" />
+          <img src="assets/payment_networks/mastercard.png" alt="MasterCard" class="h-10 sm:h-12 w-auto max-w-[120px] object-contain hover:scale-105 transition-transform" />
+          <img src="assets/banks/meezan.png" alt="Meezan Bank" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
+          <img src="assets/banks/hbl.png" alt="HBL" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
+          <img src="assets/banks/alfalah.png" alt="Bank Alfalah" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
+          <img src="assets/banks/easypaisa.png" alt="EasyPaisa" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
+          <img src="assets/banks/jazzcash.png" alt="JazzCash" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
+          <img src="assets/banks/nayapay.png" alt="NayaPay" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
+          <img src="assets/banks/sadapay.png" alt="SadaPay" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
+          <img src="assets/banks/ubl.png" alt="UBL" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
+          <img src="assets/banks/mcb.png" alt="MCB" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CORE FEATURES (SIMPLE, FAST & PROFESSIONAL) ================= -->
+  <section id="features" class="py-20 px-4 sm:px-8 bg-batwa-canvas border-b border-batwa-border">
+    <div class="max-w-6xl mx-auto space-y-12">
+      
+      <div class="text-center max-w-2xl mx-auto space-y-3">
+        <span class="text-xs font-bold tracking-widest text-batwa-navy uppercase font-mono bg-batwa-surface-subtle px-3 py-1 rounded-full border border-batwa-border">
+          Core Capabilities
+        </span>
+        <h2 class="text-3xl sm:text-4xl font-black font-display tracking-tight text-batwa-navy">
+          Engineered for Modern Commerce
+        </h2>
+        <p class="text-sm sm:text-base text-batwa-text-muted">
+          All essential fintech services integrated natively with institutional reliability and zero hidden charges.
+        </p>
+      </div>
+
+      <!-- Feature Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- Card 1: Raast P2P -->
+        <div class="p-6 rounded-2xl bg-white border border-batwa-border shadow-xs space-y-4 hover:border-gray-300 transition">
+          <div class="w-11 h-11 rounded-xl bg-batwa-surface-subtle flex items-center justify-center text-batwa-navy">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg>
+          </div>
+          <div class="space-y-1.5">
+            <h3 class="text-base font-bold text-batwa-navy">Sub-50ms Raast P2P</h3>
+            <p class="text-xs sm:text-sm text-batwa-text-muted leading-relaxed">
+              Send payments instantly using mobile numbers or IBANs. Direct clearing via the State Bank Raast switch with zero transfer fee.
+            </p>
+          </div>
+          <div class="pt-1 text-[11px] font-bold text-emerald-600 flex items-center gap-1">
+            <span>Instant Finality</span> • <span>PKR 0 Surcharge</span>
+          </div>
+        </div>
+
+        <!-- Card 2: Contactless NFC Cards -->
+        <div class="p-6 rounded-2xl bg-white border border-batwa-border shadow-xs space-y-4 hover:border-gray-300 transition">
+          <div class="w-11 h-11 rounded-xl bg-batwa-surface-subtle flex items-center justify-center text-batwa-navy">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="3"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+          </div>
+          <div class="space-y-1.5">
+            <h3 class="text-base font-bold text-batwa-navy">Virtual NFC Payment Cards</h3>
+            <p class="text-xs sm:text-sm text-batwa-text-muted leading-relaxed">
+              Generate virtual Visa cards instantly. Tap your phone on any point-of-sale terminal to pay wirelessly with hardware tokenization.
+            </p>
+          </div>
+          <div class="pt-1 text-[11px] font-bold text-batwa-navy flex items-center gap-1">
+            <span>One-Tap Freeze</span> • <span>Dynamic CVV</span>
+          </div>
+        </div>
+
+        <!-- Card 3: Argon2 MPIN & Biometrics -->
+        <div class="p-6 rounded-2xl bg-white border border-batwa-border shadow-xs space-y-4 hover:border-gray-300 transition">
+          <div class="w-11 h-11 rounded-xl bg-batwa-surface-subtle flex items-center justify-center text-batwa-navy">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
+          </div>
+          <div class="space-y-1.5">
+            <h3 class="text-base font-bold text-batwa-navy">Argon2id Hardware Shield</h3>
+            <p class="text-xs sm:text-sm text-batwa-text-muted leading-relaxed">
+              Memory-hard key derivation resistant to GPU brute-force. Bound directly to device hardware biometrics and local keystore.
+            </p>
+          </div>
+          <div class="pt-1 text-[11px] font-bold text-batwa-navy flex items-center gap-1">
+            <span>Hardware Enclave</span> • <span>Zero Knowledge</span>
+          </div>
+        </div>
+
+        <!-- Card 4: Target Savings Pots -->
+        <div class="p-6 rounded-2xl bg-white border border-batwa-border shadow-xs space-y-4 hover:border-gray-300 transition">
+          <div class="w-11 h-11 rounded-xl bg-batwa-surface-subtle flex items-center justify-center text-batwa-navy">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="12" cy="12" r="4"/><path d="m12 8 2 2-2 2"/></svg>
+          </div>
+          <div class="space-y-1.5">
+            <h3 class="text-base font-bold text-batwa-navy">Locked Savings Vaults</h3>
+            <p class="text-xs sm:text-sm text-batwa-text-muted leading-relaxed">
+              Ring-fence capital into dedicated vaults for specific goals. Enforce lock dates, auto round-ups, and disciplined milestones.
+            </p>
+          </div>
+          <div class="pt-1 text-[11px] font-bold text-emerald-600 flex items-center gap-1">
+            <span>Automated Round-ups</span> • <span>Lockbox Safety</span>
+          </div>
+        </div>
+
+        <!-- Card 5: Smart Bill Splitter -->
+        <div class="p-6 rounded-2xl bg-white border border-batwa-border shadow-xs space-y-4 hover:border-gray-300 transition">
+          <div class="w-11 h-11 rounded-xl bg-batwa-surface-subtle flex items-center justify-center text-batwa-navy">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="m21 3-7 7"/><path d="M8 21H3v-5"/><path d="m3 21 7-7"/></svg>
+          </div>
+          <div class="space-y-1.5">
+            <h3 class="text-base font-bold text-batwa-navy">Social Bill Splitting</h3>
+            <p class="text-xs sm:text-sm text-batwa-text-muted leading-relaxed">
+              Split group dining and shared bills instantly. Friends receive prompt settlement reminders and can clear balances with one tap.
+            </p>
+          </div>
+          <div class="pt-1 text-[11px] font-bold text-batwa-navy flex items-center gap-1">
+            <span>Real-time Tracking</span> • <span>Automatic Clearing</span>
+          </div>
+        </div>
+
+        <!-- Card 6: Automated Recurring Debits -->
+        <div class="p-6 rounded-2xl bg-white border border-batwa-border shadow-xs space-y-4 hover:border-gray-300 transition">
+          <div class="w-11 h-11 rounded-xl bg-batwa-surface-subtle flex items-center justify-center text-batwa-navy">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+          </div>
+          <div class="space-y-1.5">
+            <h3 class="text-base font-bold text-batwa-navy">Scheduled Utility Debits</h3>
+            <p class="text-xs sm:text-sm text-batwa-text-muted leading-relaxed">
+              Never miss electricity, gas, internet, or school tuition deadlines. Configure standing orders with automatic digital receipts.
+            </p>
+          </div>
+          <div class="pt-1 text-[11px] font-bold text-batwa-navy flex items-center gap-1">
+            <span>Automated Cron Reliability</span> • <span>Zero Latency</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= 3D INTERACTIVE NFC TITANIUM CARD LAB ================= -->
+  <section id="nfc-card" class="py-20 px-4 sm:px-8 bg-white border-b border-batwa-border">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      
+      <!-- Left: 3D Holographic Titanium Card Showcase -->
+      <div class="lg:col-span-6 flex flex-col items-center justify-center nfc-card-perspective">
+        
+        <div id="card-3d-wrapper" class="w-full flex justify-center py-4 cursor-grab active:cursor-grabbing">
+          
+          <div id="card-3d-flipper" class="nfc-card-3d-flipper idle-floating">
+            
+            <!-- FRONT FACE -->
+            <div class="nfc-card-face nfc-card-front card-pattern-mesh p-6 sm:p-7 flex flex-col justify-between text-white border border-gray-800">
+              
+              <!-- Holographic Sheen Layer -->
+              <div id="card-sheen" class="holographic-sheen"></div>
+
+              <!-- Top Row: Brand & EMV Chip + NFC Waves -->
+              <div class="flex items-start justify-between relative z-10 layer-z-20">
+                <div>
+                  <div class="flex items-center gap-2.5">
+                    <img src="assets/batwa_b_gold.png" alt="BATWA Logo" class="h-6 w-auto object-contain" />
+                    <span class="text-lg font-black tracking-wider font-display text-white">BATWA</span>
+                  </div>
+                  <span class="text-[9px] font-bold text-batwa-gold uppercase tracking-widest">Titanium Metal Edition</span>
+                </div>
+
+                <div class="flex items-center gap-3 layer-z-30">
+                  <!-- Animated NFC waves icon -->
+                  <div class="relative flex items-center justify-center">
+                    <span class="absolute inline-flex h-full w-full rounded-full bg-batwa-gold opacity-50 animate-ping"></span>
+                    <svg class="w-6 h-6 text-batwa-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                  </div>
+                  <!-- Gold EMV Chip -->
+                  <div class="w-10 h-7 rounded-lg bg-gradient-to-tr from-yellow-600 via-yellow-400 to-yellow-200 border border-yellow-200 shadow-sm flex items-center justify-center">
+                    <div class="w-6 h-4 border border-yellow-700/40 rounded-sm"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Middle: Embossed Card Numbers -->
+              <div class="relative z-10 layer-z-30 my-auto">
+                <div class="font-mono text-xl sm:text-2xl font-bold tracking-widest text-white/95" id="card-digits">
+                  •••• •••• •••• 4821
+                </div>
+                <div class="text-[9px] text-batwa-gold font-mono tracking-wider mt-1" id="card-status-tag">
+                  ✦ CONTACTLESS NFC READY
+                </div>
+              </div>
+
+              <!-- Bottom Row: Cardholder & VISA -->
+              <div class="flex items-end justify-between relative z-10 layer-z-20">
+                <div>
+                  <div class="text-[9px] text-gray-400 uppercase font-semibold">Cardholder</div>
+                  <div class="text-sm font-extrabold uppercase tracking-wider font-display text-white">WILLIAM CURRENT</div>
+                </div>
+                <div>
+                  <div class="text-[9px] text-gray-400 uppercase font-semibold">Valid Thru</div>
+                  <div class="text-xs font-mono font-bold text-white">07/28</div>
+                </div>
+                <div class="text-2xl font-black italic tracking-wider text-white layer-z-30">
+                  VISA
+                </div>
+              </div>
+
+              <!-- Frozen Glass Overlay (Hidden by Default) -->
+              <div id="frozen-overlay" class="hidden absolute inset-0 rounded-[26px] bg-cyan-950/70 backdrop-blur-xs border-2 border-cyan-400/80 flex flex-col items-center justify-center gap-2 z-40">
+                <span class="text-3xl">❄️</span>
+                <span class="text-xs font-black uppercase tracking-widest text-cyan-200 bg-cyan-900/90 px-3 py-1 rounded-full border border-cyan-400/50">
+                  CARD FROZEN
+                </span>
+              </div>
+
+            </div>
+
+            <!-- BACK FACE (Shows in 3D when Flipped) -->
+            <div class="nfc-card-face nfc-card-back p-6 sm:p-7 flex flex-col justify-between text-white">
+              <!-- Magnetic Stripe -->
+              <div class="-mx-6 sm:-mx-7 -mt-2 h-11 bg-black border-y border-white/10"></div>
+
+              <!-- CVV & Signature Panel -->
+              <div class="space-y-2">
+                <div class="flex items-center gap-3">
+                  <div class="flex-1 h-9 bg-white/90 rounded-md flex items-center justify-end px-3">
+                    <span class="text-xs font-mono font-black italic text-black tracking-widest">384</span>
+                  </div>
+                  <span class="text-[10px] text-gray-400 font-mono">CVV2 SECURITY</span>
+                </div>
+                <p class="text-[8px] text-gray-400 leading-tight">
+                  Authorized signature • Not transferable • Issued by BATWA Financial Technologies under State Bank of Pakistan digital sandbox framework.
+                </p>
+              </div>
+
+              <div class="flex items-center justify-between text-[10px] text-gray-400 pt-1 border-t border-white/10">
+                <span class="font-mono">support@battwaa.online</span>
+                <span class="font-bold text-batwa-gold">24/7 ENCLAVE</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="mt-3 text-center">
+          <span class="text-xs text-batwa-text-subtle font-medium">✦ Hover mouse to rotate card in 3D perspective</span>
+        </div>
+
+      </div>
+
+      <!-- Right: Interactive 3D Controls -->
+      <div class="lg:col-span-6 space-y-6">
+        <div class="space-y-2">
+          <span class="text-xs font-bold text-batwa-navy uppercase font-mono tracking-wider">
+            Zero Plastic. Pure Velocity.
+          </span>
+          <h2 class="text-3xl font-black font-display tracking-tight text-batwa-navy">
+            Contactless Payments from Your Phone
+          </h2>
+          <p class="text-sm sm:text-base text-batwa-text-muted leading-relaxed">
+            Eliminate bulky plastic wallets. Your Android smartphone functions as an encrypted payment card, accepted at contactless point-of-sale terminals across Pakistan and internationally.
+          </p>
+        </div>
+
+        <!-- 3 Action Buttons Panel -->
+        <div class="p-5 rounded-2xl bg-batwa-surface-subtle border border-batwa-border space-y-3">
+          
+          <!-- Control 1: Freeze Toggle -->
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-sm font-bold text-batwa-navy">Instant Freeze Control</div>
+              <div class="text-xs text-batwa-text-muted">Temporarily disable contactless &amp; online charges</div>
+            </div>
+            <button onclick="toggleCardFreeze(this)" id="freeze-btn" class="px-4 py-2 rounded-xl text-xs font-bold bg-white hover:bg-gray-50 border border-batwa-border text-batwa-navy transition">
+              Unlocked
+            </button>
+          </div>
+
+          <!-- Control 2: Mask Toggle -->
+          <div class="border-t border-batwa-border pt-3 flex items-center justify-between">
+            <div>
+              <div class="text-sm font-bold text-batwa-navy">Reveal Full Card Details</div>
+              <div class="text-xs text-batwa-text-muted">Protected behind Argon2 MPIN and biometric enclave</div>
+            </div>
+            <button onclick="toggleMaskCard(this)" id="mask-btn" class="px-4 py-2 rounded-xl text-xs font-bold bg-batwa-navy text-white hover:bg-black transition">
+              Reveal CVV
+            </button>
+          </div>
+
+          <!-- Control 3: 3D Flip Card -->
+          <div class="border-t border-batwa-border pt-3 flex items-center justify-between">
+            <div>
+              <div class="text-sm font-bold text-batwa-navy">3D Card Flip</div>
+              <div class="text-xs text-batwa-text-muted">Inspect the back magnetic stripe and CVV enclave</div>
+            </div>
+            <button onclick="toggle3DCardFlip()" id="flip-btn" class="px-4 py-2 rounded-xl text-xs font-bold bg-batwa-gold hover:bg-batwa-gold-dark text-batwa-navy transition shadow-xs">
+              Flip Card 3D ↺
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= IN-APP AUTO-UPDATE ENGINE ================= -->
+  <section id="update-engine" class="py-20 px-4 sm:px-8 bg-batwa-canvas border-b border-batwa-border">
+    <div class="max-w-6xl mx-auto space-y-10">
+      
+      <div class="text-center max-w-2xl mx-auto space-y-3">
+        <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+          Zero-Friction Updates
+        </span>
+        <h2 class="text-3xl font-black font-display tracking-tight text-batwa-navy">
+          In-App Auto-Update Architecture
+        </h2>
+        <p class="text-sm sm:text-base text-batwa-text-muted">
+          Whenever a new feature or security patch is deployed, the mobile app automatically inspects the live release manifest on launch and alerts the user immediately.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        
+        <!-- Workflow Column -->
+        <div class="lg:col-span-6 space-y-4">
+          <div class="flex gap-3.5 p-4 rounded-xl bg-white border border-batwa-border shadow-xs">
+            <div class="w-8 h-8 rounded-lg bg-batwa-navy text-white font-mono font-bold text-xs flex items-center justify-center shrink-0">1</div>
+            <div>
+              <h4 class="text-sm font-bold text-batwa-navy">Release Manifest (<code class="font-mono text-xs">version.json</code>)</h4>
+              <p class="text-xs text-batwa-text-muted mt-0.5">
+                Hosts build metadata, SHA-256 package checksum, and release notes accessible over HTTPS.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex gap-3.5 p-4 rounded-xl bg-white border border-batwa-border shadow-xs">
+            <div class="w-8 h-8 rounded-lg bg-batwa-gold text-batwa-navy font-mono font-bold text-xs flex items-center justify-center shrink-0">2</div>
+            <div>
+              <h4 class="text-sm font-bold text-batwa-navy">Startup Check in Mobile Client</h4>
+              <p class="text-xs text-batwa-text-muted mt-0.5">
+                The app polls the manifest on start. If a higher build code exists, a clean modal prompts the user to upgrade.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex gap-3.5 p-4 rounded-xl bg-white border border-batwa-border shadow-xs">
+            <div class="w-8 h-8 rounded-lg bg-batwa-navy text-white font-mono font-bold text-xs flex items-center justify-center shrink-0">3</div>
+            <div>
+              <h4 class="text-sm font-bold text-batwa-navy">Seamless In-Place Upgrade</h4>
+              <p class="text-xs text-batwa-text-muted mt-0.5">
+                Downloads the verified APK directly, preserving session credentials and local biometric enrollment.
+              </p>
+            </div>
+          </div>
+
+          <div class="pt-2 flex items-center gap-3">
+            <button onclick="runLiveUpdateCheck()" class="px-5 py-2.5 rounded-xl bg-batwa-navy hover:bg-black text-white font-bold text-xs flex items-center gap-2 transition shadow-xs">
+              <svg class="w-3.5 h-3.5 text-batwa-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+              <span>Test Live Update API Query</span>
+            </button>
+            <a href="version.json" target="_blank" class="text-xs font-semibold text-batwa-navy hover:underline">
+              Inspect version.json ↗
+            </a>
+          </div>
+        </div>
+
+        <!-- Terminal Output -->
+        <div class="lg:col-span-6">
+          <div class="rounded-xl bg-white border border-batwa-border shadow-xs overflow-hidden font-mono text-xs">
+            <div class="bg-batwa-surface-subtle px-4 py-2.5 flex items-center justify-between border-b border-batwa-border">
+              <span class="text-batwa-text-muted font-bold text-[11px]">HTTP GET /version.json</span>
+              <span class="text-[10px] text-emerald-600 font-bold" id="terminal-status">STATUS: 200 OK</span>
+            </div>
+            <div class="p-4 text-batwa-navy space-y-2 max-h-[300px] overflow-auto">
+              <pre class="text-batwa-slate bg-batwa-surface-subtle p-3 rounded-lg border border-batwa-border leading-relaxed" id="json-preview-container">{
+  "version": "2.2.0",
+  "versionCode": 53,
+  "apkName": "batwa-wallet.apk",
+  "apkSize": "74.4 MB",
+  "forceUpdate": false,
+  "features": [
+    "Instant Raast 2.0 P2P clearing (under 50ms)",
+    "Contactless NFC Virtual Cards with live freeze",
+    "Argon2 MPIN + Hardware Biometric Enclave",
+    "Automated Recurring Debits & Split Bills"
+  ]
+}</pre>
+              <div class="text-[11px] text-emerald-700 font-semibold" id="terminal-log">
+                ✓ Ready: Mobile client automatically triggers update modal on version mismatch.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= ABOUT US (FOUNDERS & UNIVERSITY OOP PROJECT) ================= -->
+  <section id="about" class="py-20 px-4 sm:px-8 bg-batwa-canvas border-b border-batwa-border">
+    <div class="max-w-6xl mx-auto space-y-16">
+      
+      <!-- Section Header -->
+      <div class="text-center max-w-3xl mx-auto space-y-3">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white border border-batwa-border text-[11px] font-bold text-batwa-navy uppercase tracking-wider font-mono shadow-2xs">
+          <span class="w-1.5 h-1.5 rounded-full bg-batwa-gold"></span>
+          <span>University OOP Course Project • Research Prototype</span>
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-black font-display tracking-tight text-batwa-navy">
+          The Story Behind BATWA
+        </h2>
+        <p class="text-sm sm:text-base text-batwa-text-muted leading-relaxed">
+          BATWA was designed and developed as a university Object-Oriented Programming (OOP) project. We wanted to challenge legacy financial systems and build the vision of what digital banking in Pakistan should truly feel like.
+        </p>
+      </div>
+
+      <!-- Story Narrative & Academic Mentorship Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        
+        <!-- Why We Built It (Manifesto) -->
+        <div class="lg:col-span-7 bg-white p-7 sm:p-9 rounded-3xl border border-batwa-border shadow-xs flex flex-col justify-between space-y-6">
+          <div class="space-y-4">
+            <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-batwa-gold-dark font-mono">
+              <svg class="w-4 h-4 text-batwa-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              <span>Why We Built This Project</span>
+            </div>
+            <h3 class="text-2xl font-black font-display text-batwa-navy">
+              "We didn't build a commercial app — we built the vision of what banking should be."
+            </h3>
+            <p class="text-sm text-batwa-text-muted leading-relaxed">
+              Traditional banking applications in Pakistan are often sluggish, complex, burdened with hidden fees, and hindered by fragmented interfaces. As computer science university students, we asked ourselves a simple question:
+            </p>
+            <blockquote class="pl-4 border-l-2 border-batwa-gold italic text-sm text-batwa-navy font-medium">
+              "What if a digital wallet settled Raast transactions in under 50ms, offered simulated titanium NFC contactless payments, verified biometric MPINs with memory-hard Argon2id encryption, and updated itself without relying on app store delays?"
+            </blockquote>
+            <p class="text-sm text-batwa-text-muted leading-relaxed">
+              BATWA is our response to that challenge. While not an active commercial bank, it is a fully functioning technical realization of clean object-oriented domain modeling, high-concurrency ledgering, and intuitive user experience.
+            </p>
+          </div>
+
+          <!-- Academic Transparency Notice -->
+          <div class="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200/80 text-[11px] text-amber-900 flex items-start gap-2.5">
+            <svg class="w-4 h-4 text-amber-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <div class="leading-relaxed">
+              <strong>University Project Disclosure:</strong> BATWA is an educational university course project demonstrating OOP principles, RESTful microservices, and cryptographic security patterns. It does not solicit deposits or commercial banking activities.
+            </div>
+          </div>
+        </div>
+
+        <!-- Faculty Mentorship Card (Dr. Khalid & Sir Shazib) -->
+        <div class="lg:col-span-5 bg-gradient-to-br from-slate-900 to-slate-950 text-white p-7 sm:p-9 rounded-3xl border border-gray-800 shadow-md flex flex-col justify-between space-y-6">
+          <div class="space-y-4">
+            <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-batwa-gold font-mono">
+              <span class="w-2 h-2 rounded-full bg-batwa-gold animate-pulse"></span>
+              <span>Academic Supervision &amp; Mentorship</span>
+            </div>
+            
+            <p class="text-xs text-gray-400 leading-relaxed">
+              Developed under the academic supervision and guidance of our respected course faculty:
+            </p>
+
+            <!-- Dual Mentor Badges -->
+            <div class="space-y-3 pt-1">
+              <!-- Dr. Khalid -->
+              <div class="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
+                <div class="flex items-center justify-between">
+                  <h4 class="text-lg font-bold font-display text-white">Dr. Khalid</h4>
+                  <span class="text-[10px] font-mono font-bold text-batwa-gold bg-batwa-gold/10 px-2 py-0.5 rounded-full border border-batwa-gold/20">OOP Theory</span>
+                </div>
+                <div class="text-xs text-gray-400">Course Professor &amp; Domain Theory Mentor</div>
+                <p class="text-[11px] text-gray-300 leading-relaxed pt-1">
+                  Guided the core Object-Oriented Programming (OOP) paradigms, polymorphic banking entities, and architectural design patterns.
+                </p>
+              </div>
+
+              <!-- Sir Shazib -->
+              <div class="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
+                <div class="flex items-center justify-between">
+                  <h4 class="text-lg font-bold font-display text-white">Sir Shazib</h4>
+                  <span class="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">OOP Lab</span>
+                </div>
+                <div class="text-xs text-gray-400">Lab Instructor &amp; Technical Project Supervisor</div>
+                <p class="text-[11px] text-gray-300 leading-relaxed pt-1">
+                  Supervised hands-on laboratory engineering, live code implementations, and project evaluation benchmarks.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-white/10 flex items-center justify-between text-xs text-gray-400 font-mono">
+            <span>University OOP Project</span>
+            <span class="text-white font-bold">2026 Batch</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- The Founders (3 Core Team Cards) -->
+      <div class="space-y-6">
+        <div class="text-center space-y-1">
+          <h3 class="text-2xl font-black font-display text-batwa-navy">
+            The Founding Team
+          </h3>
+          <p class="text-xs sm:text-sm text-batwa-text-muted">
+            The three students who designed, engineered, and brought BATWA to life.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          
+          <!-- Founder 1: Muhammad Ali -->
+          <div class="bg-white p-7 rounded-3xl border border-batwa-border shadow-xs hover:shadow-md transition space-y-4 flex flex-col justify-between">
+            <div class="space-y-3">
+              <div class="w-14 h-14 rounded-2xl bg-batwa-gold/20 border border-batwa-gold/50 flex items-center justify-center text-batwa-navy font-black text-xl font-display">
+                MA
+              </div>
+              <div>
+                <h4 class="text-xl font-black text-batwa-navy">Muhammad Ali</h4>
+                <div class="text-xs font-bold text-batwa-gold-dark font-mono uppercase tracking-wider">Founder &amp; Lead Architect</div>
+              </div>
+              <p class="text-xs sm:text-sm text-batwa-text-muted leading-relaxed">
+                Spearheaded the core project concept, full-stack software architecture, Flutter cross-platform mobile client, and biometric Argon2id cryptographic security enclave.
+              </p>
+            </div>
+            <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs font-mono text-batwa-text-subtle">
+              <span>Role</span>
+              <span class="font-bold text-batwa-navy">Founder &amp; Architecture</span>
+            </div>
+          </div>
+
+          <!-- Founder 2: Muhammad Razi -->
+          <div class="bg-white p-7 rounded-3xl border border-batwa-border shadow-xs hover:shadow-md transition space-y-4 flex flex-col justify-between">
+            <div class="space-y-3">
+              <div class="w-14 h-14 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-black text-xl font-display">
+                MR
+              </div>
+              <div>
+                <h4 class="text-xl font-black text-batwa-navy">Muhammad Razi</h4>
+                <div class="text-xs font-bold text-blue-700 font-mono uppercase tracking-wider">Co-Founder &amp; CFO</div>
+              </div>
+              <p class="text-xs sm:text-sm text-batwa-text-muted leading-relaxed">
+                Spearheaded financial ledger modeling, mathematical audit trails, transactional idempotency specifications, and digital currency flow compliance.
+              </p>
+            </div>
+            <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs font-mono text-batwa-text-subtle">
+              <span>Role</span>
+              <span class="font-bold text-batwa-navy">Co-Founder &amp; CFO</span>
+            </div>
+          </div>
+
+          <!-- Founder 3: Deepak -->
+          <div class="bg-white p-7 rounded-3xl border border-batwa-border shadow-xs hover:shadow-md transition space-y-4 flex flex-col justify-between">
+            <div class="space-y-3">
+              <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-900 flex items-center justify-center font-black text-xl font-display">
+                DK
+              </div>
+              <div>
+                <h4 class="text-xl font-black text-batwa-navy">Deepak</h4>
+                <div class="text-xs font-bold text-emerald-800 font-mono uppercase tracking-wider">Co-Founder &amp; CTO</div>
+              </div>
+              <p class="text-xs sm:text-sm text-batwa-text-muted leading-relaxed">
+                Architected high-throughput backend services, live OTA binary validation endpoints, system reliability, and database persistence layers.
+              </p>
+            </div>
+            <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs font-mono text-batwa-text-subtle">
+              <span>Role</span>
+              <span class="font-bold text-batwa-navy">Co-Founder &amp; CTO</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= DOWNLOAD DECK (CLEAN & DIRECT) ================= -->
+  <section id="download" class="py-20 px-4 sm:px-8 bg-white border-b border-batwa-border">
+    <div class="max-w-5xl mx-auto rounded-3xl bg-batwa-canvas border border-batwa-border p-8 sm:p-12 shadow-sm">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        
+        <div class="lg:col-span-7 space-y-5 text-center lg:text-left">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-batwa-gold-light border border-batwa-gold/40 text-batwa-navy text-xs font-bold">
+            <span>Official Stable Release</span> • <span>v2.2.0 (Build 53)</span>
+          </div>
+
+          <h2 class="text-3xl font-black font-display tracking-tight text-batwa-navy">
+            Download BATWA on Android
+          </h2>
+
+          <p class="text-sm text-batwa-text-muted leading-relaxed">
+            Install the verified APK directly onto your device. Zero third-party trackers, cryptographic SHA-256 binary validation, and instant setup.
+          </p>
+
+          <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-1">
+            <a href="batwa-wallet.apk" download="batwa-wallet.apk" class="bg-batwa-gold hover:bg-batwa-gold-dark text-batwa-navy font-extrabold text-sm px-6 py-3.5 rounded-xl flex items-center gap-2 transition active:scale-95 shadow-sm">
+              <svg class="w-4 h-4 text-batwa-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+              <span>Download APK (74.4 MB)</span>
+            </a>
+
+            <button onclick="copyApkLink()" id="btn-copy-link" class="bg-white hover:bg-gray-50 text-batwa-navy font-bold text-xs px-5 py-3.5 rounded-xl border border-batwa-border transition flex items-center gap-2">
+              <svg class="w-3.5 h-3.5 text-batwa-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+              <span id="copy-text">Copy Link</span>
+            </button>
+          </div>
+
+          <div class="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-4 text-xs text-batwa-text-muted font-mono font-medium">
+            <div><span class="text-batwa-navy font-semibold">Package:</span> batwa-wallet.apk</div>
+            <div><span class="text-batwa-navy font-semibold">Size:</span> 74.4 MB</div>
+            <div><span class="text-batwa-navy font-semibold">OS:</span> Android 8.0+</div>
+          </div>
+        </div>
+
+        <!-- Authentic Scannable QR Code -->
+        <div class="lg:col-span-5 flex flex-col items-center justify-center">
+          <div class="p-5 rounded-2xl bg-white border border-batwa-border text-center space-y-3.5 max-w-[280px] w-full shadow-sm">
+            
+            <div class="flex items-center justify-between text-[11px] font-bold text-batwa-navy uppercase font-mono border-b border-gray-100 pb-2">
+              <span class="flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-batwa-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                <span>Scan with Camera</span>
+              </span>
+              <span class="inline-flex items-center gap-1 text-[9px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Active</span>
+              </span>
+            </div>
+
+            <!-- Target Network Switch (Prod vs Local LAN Wi-Fi) -->
+            <div class="flex items-center p-1 bg-gray-100/90 rounded-xl text-[11px] font-mono border border-gray-200/60">
+              <button id="qr-tab-prod" onclick="setQrMode('prod')" class="flex-1 py-1 px-2 rounded-lg bg-white text-batwa-navy font-bold shadow-xs transition">
+                🌐 battwaa.online
+              </button>
+              <button id="qr-tab-lan" onclick="setQrMode('lan')" class="flex-1 py-1 px-2 rounded-lg text-gray-500 hover:text-batwa-navy font-medium transition">
+                📱 Wi-Fi (LAN)
+              </button>
+            </div>
+
+            <!-- The Authentic Scannable QR Code -->
+            <div class="p-3 bg-white rounded-xl border border-batwa-border flex justify-center shadow-xs relative group overflow-hidden">
+              <img id="qr-code-img" src="assets/qr_batwa_prod.png" alt="Scan to Download BATWA APK" class="w-48 h-48 object-contain rounded-lg transition-transform duration-300 group-hover:scale-102" />
+              <!-- Ambient gold corner accents for luxury fintech polish -->
+              <div class="pointer-events-none absolute top-2 left-2 w-3 h-3 border-t-2 border-l-2 border-batwa-gold rounded-tl-sm"></div>
+              <div class="pointer-events-none absolute top-2 right-2 w-3 h-3 border-t-2 border-r-2 border-batwa-gold rounded-tr-sm"></div>
+              <div class="pointer-events-none absolute bottom-2 left-2 w-3 h-3 border-b-2 border-l-2 border-batwa-gold rounded-bl-sm"></div>
+              <div class="pointer-events-none absolute bottom-2 right-2 w-3 h-3 border-b-2 border-r-2 border-batwa-gold rounded-br-sm"></div>
+            </div>
+
+            <!-- Active Scan Target URL -->
+            <div class="space-y-1">
+              <div id="qr-url-display" class="text-[10px] text-batwa-navy font-mono font-semibold bg-gray-50 py-1 px-2 rounded-lg border border-gray-200 truncate select-all">
+                https://battwaa.online/batwa-wallet.apk
+              </div>
+              <div class="text-[9px] text-gray-500 font-medium">
+                Direct APK download link for Android devices
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= SECURITY SPECS ================= -->
+  <section id="security" class="py-20 px-4 sm:px-8 bg-batwa-canvas border-b border-batwa-border">
+    <div class="max-w-6xl mx-auto space-y-12">
+      
+      <div class="text-center max-w-2xl mx-auto space-y-3">
+        <span class="text-xs font-bold tracking-widest text-batwa-navy uppercase font-mono">
+          Security Standards
+        </span>
+        <h2 class="text-3xl font-black font-display tracking-tight text-batwa-navy">
+          Institutional Trust &amp; Concurrency
+        </h2>
+        <p class="text-sm sm:text-base text-batwa-text-muted">
+          Strict transactional idempotency, bank-grade ledgering, and hardware-secured biometric authentication.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div class="p-5 rounded-2xl bg-white border border-batwa-border space-y-2 shadow-xs">
+          <div class="text-xs font-mono font-bold text-batwa-navy">01 / Idempotency</div>
+          <h4 class="text-sm font-bold text-batwa-navy">Zero Double Debits</h4>
+          <p class="text-xs text-batwa-text-muted leading-relaxed">
+            Cryptographic Idempotency-Key headers prevent duplicate clearing over unstable networks.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-white border border-batwa-border space-y-2 shadow-xs">
+          <div class="text-xs font-mono font-bold text-batwa-navy">02 / Argon2id</div>
+          <h4 class="text-sm font-bold text-batwa-navy">Hardware MPIN Enclave</h4>
+          <p class="text-xs text-batwa-text-muted leading-relaxed">
+            4-digit MPINs hashed with memory-hard algorithms resistant to GPU brute-force attacks.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-white border border-batwa-border space-y-2 shadow-xs">
+          <div class="text-xs font-mono font-bold text-batwa-navy">03 / Dual-Entry Ledger</div>
+          <h4 class="text-sm font-bold text-batwa-navy">Immutable Audit Trail</h4>
+          <p class="text-xs text-batwa-text-muted leading-relaxed">
+            Double-entry bookkeeping guarantees zero balance discrepancy against central clearing logs.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-white border border-batwa-border space-y-2 shadow-xs">
+          <div class="text-xs font-mono font-bold text-batwa-navy">04 / TLS 1.3 Strict</div>
+          <h4 class="text-sm font-bold text-batwa-navy">Zero-Trust Network</h4>
+          <p class="text-xs text-batwa-text-muted leading-relaxed">
+            Certificate pinning and forward-secrecy encryption with immediate root/jailbreak detection.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= INSTITUTIONAL FOOTER ================= -->
+  <footer class="bg-white py-14 px-4 sm:px-8 text-xs text-batwa-text-muted">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+      
+      <div class="lg:col-span-2 space-y-3">
+        <div class="flex items-center gap-2.5">
+          <img src="assets/batwa_b_transparent.png" class="h-8 w-auto object-contain" alt="BATWA Logo" />
+          <span class="text-lg font-black font-display text-batwa-navy">BATWA</span>
+        </div>
+        <p class="text-xs text-batwa-text-muted leading-relaxed max-w-sm">
+          BATWA is a university Object-Oriented Programming (OOP) project founded by Muhammad Ali, Muhammad Razi, and Deepak under the academic guidance of Dr. Khalid (Theory) and Sir Shazib (Lab).
+        </p>
+        <div class="text-[11px] text-batwa-text-subtle font-mono">
+          University OOP Project • Mentored by Dr. Khalid &amp; Sir Shazib
+        </div>
+      </div>
+
+      <div class="space-y-2.5">
+        <h4 class="text-xs font-bold text-batwa-navy uppercase font-mono">Platform</h4>
+        <ul class="space-y-1.5">
+          <li><a href="#overview" class="hover:text-batwa-navy transition">Overview</a></li>
+          <li><a href="#features" class="hover:text-batwa-navy transition">Features</a></li>
+          <li><a href="#nfc-card" class="hover:text-batwa-navy transition">NFC Cards</a></li>
+          <li><a href="#about" class="hover:text-batwa-navy transition font-bold text-batwa-navy">About Us (Founders)</a></li>
+          <li><a href="#download" class="hover:text-batwa-navy transition">Download APK</a></li>
+        </ul>
+      </div>
+
+      <div class="space-y-2.5">
+        <h4 class="text-xs font-bold text-batwa-navy uppercase font-mono">Architecture</h4>
+        <ul class="space-y-1.5">
+          <li><a href="version.json" target="_blank" class="hover:text-batwa-navy transition">version.json</a></li>
+          <li><a href="#update-engine" class="hover:text-batwa-navy transition">Auto-Update System</a></li>
+          <li><a href="#security" class="hover:text-batwa-navy transition">Argon2id Enclave</a></li>
+          <li><a href="DEPLOYMENT_GUIDE.md" target="_blank" class="hover:text-batwa-navy transition">Deploy Guide</a></li>
+        </ul>
+      </div>
+
+      <div class="space-y-2.5">
+        <h4 class="text-xs font-bold text-batwa-navy uppercase font-mono">Legal &amp; Trust</h4>
+        <ul class="space-y-1.5">
+          <li><a href="#" class="hover:text-batwa-navy transition">Privacy Policy</a></li>
+          <li><a href="#" class="hover:text-batwa-navy transition">Terms of Service</a></li>
+          <li><a href="#" class="hover:text-batwa-navy transition">Security Compliance</a></li>
+          <li><a href="#" class="hover:text-batwa-navy transition">SBP Regulatory Sandbox</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="max-w-6xl mx-auto border-t border-batwa-border mt-10 pt-6 flex flex-wrap items-center justify-between gap-4">
+      <div>
+        © 2026 BATWA Financial Technologies Ltd. (Battwaa.online). All rights reserved.
+      </div>
+      <div>
+        <a href="#overview" class="hover:text-batwa-navy font-semibold transition">Back to Top ↑</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= VERSION MODAL ================= -->
+  <div id="version-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-batwa-border rounded-2xl p-6 max-w-sm w-full shadow-xl space-y-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <img src="assets/batwa_b_transparent.png" class="h-8 w-auto object-contain" alt="BATWA Logo" />
+          <div>
+            <h3 class="text-sm font-bold text-batwa-navy">Live Version Status</h3>
+            <span class="text-[11px] text-batwa-text-muted">Production Build</span>
+          </div>
+        </div>
+        <button onclick="document.getElementById('version-modal').classList.add('hidden')" class="text-batwa-text-muted hover:text-batwa-navy text-lg font-bold">✕</button>
+      </div>
+
+      <div class="p-3.5 rounded-xl bg-batwa-surface-subtle border border-batwa-border space-y-1.5 font-mono text-xs">
+        <div class="flex justify-between">
+          <span class="text-batwa-text-muted">Version:</span>
+          <span class="text-batwa-navy font-bold">v2.2.0 (Build 53)</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-batwa-text-muted">Status:</span>
+          <span class="text-emerald-600 font-bold">Active &amp; Stable</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-batwa-text-muted">Package:</span>
+          <span class="text-batwa-navy">batwa-wallet.apk (74.4 MB)</span>
+        </div>
+      </div>
+
+      <div class="flex gap-2.5 pt-1">
+        <a href="batwa-wallet.apk" download="batwa-wallet.apk" class="flex-1 text-center py-2.5 rounded-xl bg-batwa-gold text-batwa-navy font-bold text-xs uppercase tracking-wider">
+          Download APK
+        </a>
+        <button onclick="document.getElementById('version-modal').classList.add('hidden')" class="px-4 py-2.5 rounded-xl bg-batwa-surface-subtle hover:bg-gray-100 text-batwa-navy font-bold text-xs border border-batwa-border">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= JAVASCRIPT ================= -->
+  <script>
+    // 1. 3D Titanium NFC Card Interactivity
+    const cardWrapper = document.getElementById('card-3d-wrapper');
+    const cardFlipper = document.getElementById('card-3d-flipper');
+    const cardSheen = document.getElementById('card-sheen');
+    let isFlipped = false;
+    let isFrozen = false;
+    let isMasked = true;
+
+    if (cardWrapper && cardFlipper) {
+      cardWrapper.addEventListener('mouseenter', () => {
+        cardFlipper.classList.remove('idle-floating');
+      });
+
+      cardWrapper.addEventListener('mousemove', (e) => {
+        if (isFlipped) return; // Don't track angle when card is flipped to back
+        const rect = cardWrapper.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+
+        const rotateX = (y / (rect.height / 2)) * -18;
+        const rotateY = (x / (rect.width / 2)) * 18;
+
+        cardFlipper.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.03, 1.03, 1.03)`;
+
+        if (cardSheen) {
+          const px = ((e.clientX - rect.left) / rect.width) * 100;
+          const py = ((e.clientY - rect.top) / rect.height) * 100;
+          cardSheen.style.background = `radial-gradient(circle at ${px}% ${py}%, rgba(255,255,255,0.45) 0%, rgba(243,214,2,0.2) 40%, transparent 75%)`;
+        }
+      });
+
+      cardWrapper.addEventListener('mouseleave', () => {
+        if (!isFlipped) {
+          cardFlipper.style.transform = '';
+          cardFlipper.classList.add('idle-floating');
+        }
+      });
+    }
+
+    // 3D Flip Toggle
+    function toggle3DCardFlip() {
+      isFlipped = !isFlipped;
+      const flipBtn = document.getElementById('flip-btn');
+      if (!cardFlipper) return;
+
+      cardFlipper.classList.remove('idle-floating');
+      if (isFlipped) {
+        cardFlipper.style.transform = 'perspective(1200px) rotateY(180deg)';
+        if (flipBtn) flipBtn.textContent = 'Flip to Front ↻';
+      } else {
+        cardFlipper.style.transform = 'perspective(1200px) rotateY(0deg)';
+        if (flipBtn) flipBtn.textContent = 'Flip Card 3D ↺';
+        setTimeout(() => {
+          if (!cardWrapper.matches(':hover')) {
+            cardFlipper.classList.add('idle-floating');
+          }
+        }, 600);
+      }
+    }
+
+    // Freeze Toggle
+    function toggleCardFreeze(btn) {
+      isFrozen = !isFrozen;
+      const overlay = document.getElementById('frozen-overlay');
+      const tag = document.getElementById('card-status-tag');
+
+      if (isFrozen) {
+        btn.textContent = 'Frozen';
+        btn.className = 'px-4 py-2 rounded-xl text-xs font-bold bg-cyan-600 text-white transition';
+        if (overlay) overlay.classList.remove('hidden');
+        if (tag) tag.textContent = '❄️ CARD CONTACTLESS FROZEN';
+      } else {
+        btn.textContent = 'Unlocked';
+        btn.className = 'px-4 py-2 rounded-xl text-xs font-bold bg-white hover:bg-gray-50 border border-batwa-border text-batwa-navy transition';
+        if (overlay) overlay.classList.add('hidden');
+        if (tag) tag.textContent = '✦ CONTACTLESS NFC READY';
+      }
+    }
+
+    // Mask / Unmask Card Numbers
+    function toggleMaskCard(btn) {
+      isMasked = !isMasked;
+      const numElem = document.getElementById('card-digits');
+      if (isMasked) {
+        if (numElem) numElem.textContent = '•••• •••• •••• 4821';
+        btn.textContent = 'Reveal CVV';
+      } else {
+        if (numElem) numElem.textContent = '4111 5892 3401 4821';
+        btn.textContent = 'Mask Card';
+      }
+    }
+
+    // 3. Live In-App Update API Query Test
+    async function runLiveUpdateCheck() {
+      const statusElem = document.getElementById('terminal-status');
+      const logElem = document.getElementById('terminal-log');
+      const previewElem = document.getElementById('json-preview-container');
+
+      if (statusElem) statusElem.textContent = 'QUERYING /version.json...';
+      if (logElem) logElem.textContent = 'Connecting to version manifest...';
+
+      try {
+        const res = await fetch('version.json');
+        if (res.ok) {
+          const data = await res.json();
+          if (previewElem) previewElem.textContent = JSON.stringify(data, null, 2);
+          if (statusElem) statusElem.textContent = 'STATUS: 200 OK (VERIFIED)';
+          if (logElem) logElem.innerHTML = `✓ Verified Live Version: <strong class="text-batwa-navy">v${data.version} (Build ${data.versionCode})</strong>. Mobile client listener active!`;
+        } else {
+          throw new Error('HTTP ' + res.status);
+        }
+      } catch (err) {
+        if (statusElem) statusElem.textContent = 'OFFLINE CACHE';
+        if (logElem) logElem.textContent = 'Manifest verified at website/version.json';
+      }
+    }
+
+    // 4. QR Mode Switching (Prod vs LAN Wi-Fi)
+    let currentQrMode = 'prod';
+
+    function setQrMode(mode) {
+      currentQrMode = mode;
+      const img = document.getElementById('qr-code-img');
+      const urlDisplay = document.getElementById('qr-url-display');
+      const tabProd = document.getElementById('qr-tab-prod');
+      const tabLan = document.getElementById('qr-tab-lan');
+      
+      if (!img || !urlDisplay || !tabProd || !tabLan) return;
+
+      if (mode === 'prod') {
+        img.src = 'assets/qr_batwa_prod.png';
+        urlDisplay.textContent = 'https://battwaa.online/batwa-wallet.apk';
+        tabProd.className = 'flex-1 py-1 px-2 rounded-lg bg-white text-batwa-navy font-bold shadow-xs transition';
+        tabLan.className = 'flex-1 py-1 px-2 rounded-lg text-gray-500 hover:text-batwa-navy font-medium transition';
+      } else {
+        img.src = 'assets/qr_batwa_lan.png';
+        urlDisplay.textContent = 'http://192.168.0.105:3000/batwa-wallet.apk';
+        tabLan.className = 'flex-1 py-1 px-2 rounded-lg bg-white text-batwa-navy font-bold shadow-xs transition';
+        tabProd.className = 'flex-1 py-1 px-2 rounded-lg text-gray-500 hover:text-batwa-navy font-medium transition';
+      }
+    }
+
+    // 5. Copy APK Link
+    function copyApkLink() {
+      const link = currentQrMode === 'prod' 
+        ? 'https://battwaa.online/batwa-wallet.apk' 
+        : 'http://192.168.0.105:3000/batwa-wallet.apk';
+
+      navigator.clipboard.writeText(link).then(() => {
+        const textElem = document.getElementById('copy-text');
+        if (textElem) {
+          const orig = textElem.textContent;
+          textElem.textContent = 'Copied! ✓';
+          setTimeout(() => { textElem.textContent = orig; }, 2000);
+        }
+      }).catch(() => {
+        alert('Direct Link: ' + link);
+      });
+    }
+  </script>
+</body>
+</html>

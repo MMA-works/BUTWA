@@ -1,0 +1,29 @@
+# ==============================================================================
+# BATWA Web Server Configuration (Hostinger / Apache / LiteSpeed)
+# ==============================================================================
+
+# 1. Correct MIME Type for Android APK Download
+AddType application/vnd.android.package-archive .apk
+
+# 2. CORS Headers for version.json (Mobile App Update Checks)
+<Files "version.json">
+    <IfModule mod_headers.c>
+        Header set Access-Control-Allow-Origin "*"
+        Header set Access-Control-Allow-Methods "GET, OPTIONS"
+        Header set Access-Control-Allow-Headers "*"
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+    </IfModule>
+</Files>
+
+# 3. Clean URLs (e.g. /about loads /about.html)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME}\.html -f
+    RewriteRule ^([^\.]+)$ $1.html [NC,L]
+</IfModule>
+
+# 4. Gzip / Deflate Compression for high speed
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>

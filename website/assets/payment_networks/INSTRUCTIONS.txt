@@ -1,0 +1,23 @@
+=======================================================
+BATWA WALLET - PAYMENT NETWORKS & CARDS LOGOS DIRECTORY
+=======================================================
+
+Location:
+C:\Users\M. Ali\Desktop\WORKPLACE\PRODUCTS\BATWA\mobile\assets\images\payment_networks\
+
+Yahan par aap Payment Rails and Card Schemes ke Transparent PNG logos paste kar saktay hain:
+
+Specs:
+- Format: PNG (Transparent background)
+- Recommended size: 512x512 px (min 256x256 px) square or horizontal badge
+- Transparent background
+
+-------------------------------------------------------
+FILE NAMES LIST:
+-------------------------------------------------------
+- raast.png        -> Raast (State Bank of Pakistan Instant Payment switch)
+- 1link.png        -> 1Link Switch
+- paypak.png       -> PayPak Domestic Card Scheme
+- visa.png         -> Visa Card Scheme
+- mastercard.png   -> Mastercard Scheme
+=======================================================
