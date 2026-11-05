@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:batwa_wallet/core/theme/theme_cubit.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:batwa_wallet/core/constants/app_colors.dart';
+import 'package:batwa_wallet/core/theme/theme_cubit.dart';
 import 'package:batwa_wallet/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:batwa_wallet/features/auth/presentation/bloc/auth_state.dart';
 import 'package:batwa_wallet/features/auth/presentation/screens/pin_setup_screen.dart';
@@ -13,7 +13,7 @@ import 'package:batwa_wallet/features/wallet/presentation/bloc/wallet_event.dart
 import 'package:batwa_wallet/features/wallet/presentation/bloc/wallet_state.dart';
 import 'package:batwa_wallet/features/wallet/presentation/widgets/balance_card_widget.dart';
 import 'package:batwa_wallet/features/wallet/presentation/widgets/quick_actions_widget.dart';
-import 'package:batwa_wallet/features/wallet/presentation/widgets/deals_slideshow_widget.dart';
+import 'package:batwa_wallet/features/wallet/presentation/widgets/quick_send_contacts_widget.dart';
 import 'package:batwa_wallet/core/utils/user_avatar_helper.dart';
 import 'package:batwa_wallet/features/wallet/presentation/widgets/notched_bottom_sheet_container.dart';
 import 'package:batwa_wallet/features/wallet/presentation/widgets/floating_pill_nav_bar.dart';
@@ -73,6 +73,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  void _showTopUpModal(BuildContext context) {
+    _showMoreServicesSheet(context);
+  }
+
   void _showMoreServicesSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -97,7 +101,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   width: 36,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: AppColors.textMuted.withOpacity(0.3),
+                    color: AppColors.textMuted.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -219,7 +223,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.06),
+                  color: Colors.black.withValues(alpha: 0.06),
                   blurRadius: 8,
                   offset: const Offset(0, 3),
                 ),
@@ -242,8 +246,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: isDark ? AppColors.darkBackground : const Color(0xFFF8FAFC),
       body: SafeArea(
         bottom: false,
         child: BlocConsumer<WalletBloc, WalletState>(
@@ -262,6 +268,37 @@ class _DashboardScreenState extends State<DashboardScreen> {
             if (state is WalletLoaded) {
               return Stack(
                 children: [
+                  // 🌟 Raqami-Style Faded Yellow (#F3D602 to White) Gradient Banner
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: MediaQuery.of(context).size.height * 0.58,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: isDark
+                              ? [
+                                  const Color(0xFFF3D602).withValues(alpha: 0.28),
+                                  const Color(0xFFF3D602).withValues(alpha: 0.12),
+                                  AppColors.darkBackground.withValues(alpha: 0.0),
+                                ]
+                              : [
+                                  const Color(0xFFF3D602), // Vibrant Brand Yellow #F3D602
+                                  const Color(0xFFF4D916),
+                                  const Color(0xFFF7E248),
+                                  const Color(0xFFFAEE88).withValues(alpha: 0.85),
+                                  const Color(0xFFFCF7CA).withValues(alpha: 0.35),
+                                  const Color(0xFFF8FAFC).withValues(alpha: 0.0), // Smooth fade to white
+                                ],
+                          stops: const [0.0, 0.35, 0.65, 0.82, 0.93, 1.0],
+                        ),
+                      ),
+                    ),
+                  ),
+
                   RefreshIndicator(
                     color: AppColors.primary,
                     backgroundColor: AppColors.surface,
@@ -273,109 +310,110 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Top Header (Avatar + Name + Theme Mode Toggle + Notification Bubble)
+                          // 🏝️ Center Dynamic Island Notch Capsule (BATWA Brand Badge)
+                          Center(
+                            child: Container(
+                              margin: const EdgeInsets.only(top: 2, bottom: 8),
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+                              decoration: BoxDecoration(
+                                color: Colors.black,
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.25),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Image.asset(
+                                    'assets/images/app_logo.png',
+                                    width: 16,
+                                    height: 16,
+                                    fit: BoxFit.contain,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  const Text(
+                                    'BATWA',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10.5,
+                                      fontWeight: FontWeight.w900,
+                                      letterSpacing: 1.2,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+
+                          // 🌟 Top Header Row (User Avatar + Welcome Name on Left; Mascot Bot + 3D Bell on Right)
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 10, 20, 12),
+                            padding: const EdgeInsets.fromLTRB(20, 2, 20, 14),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Row(
-                                  children: [
-                                    if (widget.onMenuTap != null)
-                                      GestureDetector(
-                                        onTap: widget.onMenuTap,
-                                        behavior: HitTestBehavior.opaque,
-                                        child: Container(
-                                          width: 42,
-                                          height: 42,
-                                          margin: const EdgeInsets.only(right: 12),
-                                          decoration: BoxDecoration(
-                                            color: Theme.of(context).brightness == Brightness.dark
-                                                ? AppColors.darkSurface
-                                                : AppColors.lightSurface,
-                                            borderRadius: BorderRadius.circular(14),
-                                            border: Border.all(
-                                              color: Theme.of(context).brightness == Brightness.dark
-                                                  ? AppColors.darkCardBorder
-                                                  : AppColors.lightCardBorder,
-                                            ),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black.withValues(alpha: 0.04),
-                                                blurRadius: 6,
-                                                offset: const Offset(0, 2),
-                                              ),
-                                            ],
-                                          ),
-                                          child: Center(
-                                            child: Icon(
-                                              Icons.grid_view_rounded,
-                                              size: 20,
-                                              color: Theme.of(context).brightness == Brightness.dark
-                                                  ? AppColors.darkTextPrimary
-                                                  : AppColors.darkNavy,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        widget.onMenuTap?.call();
-                                        _loadUserAvatar();
-                                      },
-                                      behavior: HitTestBehavior.opaque,
-                                      child: UserAvatarHelper.buildAvatarWidget(
+                                // Left: Avatar + User Welcome text
+                                GestureDetector(
+                                  onTap: () {
+                                    widget.onMenuTap?.call();
+                                    _loadUserAvatar();
+                                  },
+                                  behavior: HitTestBehavior.opaque,
+                                  child: Row(
+                                    children: [
+                                      UserAvatarHelper.buildAvatarWidget(
                                         imageUrl: _currentAvatarUrl,
                                         gender: _currentGender,
-                                        size: 44,
-                                        border: Border.all(color: AppColors.primaryMustard, width: 2),
+                                        size: 46,
+                                        border: Border.all(color: const Color(0xFFF3D602), width: 2.2),
                                       ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    BlocBuilder<AuthBloc, AuthState>(
-                                      builder: (context, authState) {
-                                        String name = 'Adom Shafi';
-                                        if (authState is Authenticated) {
-                                          name = authState.user.fullName;
-                                        }
-                                        return Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Welcome Back,',
-                                              style: TextStyle(
-                                                fontSize: 11,
-                                                fontWeight: FontWeight.w600,
-                                                color: Theme.of(context).brightness == Brightness.dark
-                                                    ? AppColors.darkTextSecondary
-                                                    : AppColors.lightTextSecondary,
-                                              ),
-                                            ),
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  name,
-                                                  style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w900,
-                                                    color: Theme.of(context).brightness == Brightness.dark
-                                                        ? AppColors.darkTextPrimary
-                                                        : AppColors.lightTextPrimary,
-                                                    letterSpacing: -0.3,
-                                                  ),
+                                      const SizedBox(width: 10),
+                                      BlocBuilder<AuthBloc, AuthState>(
+                                        builder: (context, authState) {
+                                          String name = 'William Current';
+                                          if (authState is Authenticated && authState.user.fullName.isNotEmpty) {
+                                            name = authState.user.fullName;
+                                          }
+                                          return Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                name,
+                                                style: TextStyle(
+                                                  fontSize: 11.5,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: isDark ? Colors.white70 : const Color(0xFF4B5563),
                                                 ),
-                                                const SizedBox(width: 4),
-                                                const Text('👋', style: TextStyle(fontSize: 14)),
-                                              ],
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    ),
-                                  ],
+                                              ),
+                                              const SizedBox(height: 1),
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    'Welcome Back',
+                                                    style: TextStyle(
+                                                      fontSize: 16.5,
+                                                      fontWeight: FontWeight.w900,
+                                                      color: isDark ? Colors.white : const Color(0xFF1F2937),
+                                                      letterSpacing: -0.3,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 4),
+                                                  const Text('👋', style: TextStyle(fontSize: 14)),
+                                                ],
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                
-                                // Action Bubbles: Theme Toggle + Notification Bell
+
+                                // Right: 🤖 Batwa AI Robot Mascot + 🔔 3D Golden Bell
                                 Row(
                                   children: [
                                     // 🤖 Batwa AI Assistant Bot Mascot
@@ -397,85 +435,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                         );
                                       },
                                       behavior: HitTestBehavior.opaque,
-                                      child: Container(
-                                        width: 44,
-                                        height: 44,
-                                        margin: const EdgeInsets.only(right: 8),
-                                        decoration: BoxDecoration(
-                                          color: Theme.of(context).brightness == Brightness.dark
-                                              ? AppColors.darkSurface
-                                              : AppColors.lightSurface,
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: const Color(0xFF10B981).withValues(alpha: 0.5),
-                                            width: 1.5,
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: const Color(0xFF10B981).withValues(alpha: 0.25),
-                                              blurRadius: 10,
-                                              offset: const Offset(0, 2),
-                                            ),
-                                          ],
-                                        ),
-                                        child: Center(
-                                          child: Image.asset(
-                                            'assets/images/batwa_ai_bot.png',
-                                            width: 32,
-                                            height: 32,
-                                            fit: BoxFit.contain,
-                                            errorBuilder: (_, __, ___) => const Icon(
-                                              Icons.auto_awesome_rounded,
-                                              color: Color(0xFF10B981),
-                                              size: 24,
-                                            ),
+                                      child: SizedBox(
+                                        width: 42,
+                                        height: 42,
+                                        child: Image.asset(
+                                          'assets/images/batwa_ai_bot.png',
+                                          fit: BoxFit.contain,
+                                          errorBuilder: (_, __, ___) => const Icon(
+                                            Icons.auto_awesome_rounded,
+                                            color: Color(0xFF10B981),
+                                            size: 24,
                                           ),
                                         ),
                                       ),
                                     ),
+                                    const SizedBox(width: 8),
 
-                                    // ☀️ / 🌙 Theme Toggle Button
-                                    BlocBuilder<ThemeCubit, ThemeMode>(
-                                      builder: (context, themeMode) {
-                                        final isDark = themeMode == ThemeMode.dark ||
-                                            (themeMode == ThemeMode.system &&
-                                                MediaQuery.of(context).platformBrightness == Brightness.dark);
-                                        return GestureDetector(
-                                          onTap: () {
-                                            context.read<ThemeCubit>().toggleTheme();
-                                          },
-                                          behavior: HitTestBehavior.opaque,
-                                          child: Container(
-                                            width: 40,
-                                            height: 40,
-                                            margin: const EdgeInsets.only(right: 8),
-                                            decoration: BoxDecoration(
-                                              color: isDark ? AppColors.darkSurface : AppColors.lightSurface,
-                                              shape: BoxShape.circle,
-                                              border: Border.all(
-                                                color: isDark ? AppColors.darkCardBorder : AppColors.lightCardBorder,
-                                              ),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
-                                                  blurRadius: 8,
-                                                  offset: const Offset(0, 2),
-                                                ),
-                                              ],
-                                            ),
-                                            child: Center(
-                                              child: Icon(
-                                                isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
-                                                size: 20,
-                                                color: isDark ? const Color(0xFFFFC107) : AppColors.brandTeal,
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-
-                                    // Notification Bell Bubble (3D Golden Bell)
+                                    // 🔔 3D Golden Bell with green badge (3)
                                     GestureDetector(
                                       onTap: () {
                                         Navigator.push(
@@ -483,59 +459,40 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                           MaterialPageRoute(builder: (_) => const NotificationsScreen()),
                                         );
                                       },
-                                      child: Container(
-                                        width: 42,
-                                        height: 42,
-                                        decoration: BoxDecoration(
-                                          color: Theme.of(context).brightness == Brightness.dark
-                                              ? AppColors.darkSurface
-                                              : AppColors.lightSurface,
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: Theme.of(context).brightness == Brightness.dark
-                                                ? AppColors.darkCardBorder
-                                                : AppColors.lightCardBorder,
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black.withValues(alpha: 0.06),
-                                              blurRadius: 8,
-                                              offset: const Offset(0, 2),
-                                            ),
-                                          ],
-                                        ),
+                                      behavior: HitTestBehavior.opaque,
+                                      child: SizedBox(
+                                        width: 40,
+                                        height: 40,
                                         child: Stack(
                                           clipBehavior: Clip.none,
                                           children: [
                                             Center(
                                               child: Image.asset(
                                                 'assets/images/notification_3d_bell.png',
-                                                width: 25,
-                                                height: 25,
+                                                width: 34,
+                                                height: 34,
                                                 fit: BoxFit.contain,
-                                                errorBuilder: (_, __, ___) => Icon(
-                                                  Icons.notifications_outlined,
-                                                  size: 20,
-                                                  color: Theme.of(context).brightness == Brightness.dark
-                                                      ? AppColors.darkTextPrimary
-                                                      : AppColors.lightTextPrimary,
-                                                ),
                                               ),
                                             ),
                                             Positioned(
-                                              top: 7,
-                                              right: 7,
+                                              top: 0,
+                                              right: 0,
                                               child: Container(
-                                                width: 8,
-                                                height: 8,
+                                                width: 15,
+                                                height: 15,
                                                 decoration: BoxDecoration(
-                                                  color: AppColors.error,
+                                                  color: const Color(0xFF10B981),
                                                   shape: BoxShape.circle,
-                                                  border: Border.all(
-                                                    color: Theme.of(context).brightness == Brightness.dark
-                                                        ? AppColors.darkSurface
-                                                        : Colors.white,
-                                                    width: 1.5,
+                                                  border: Border.all(color: Colors.white, width: 1.2),
+                                                ),
+                                                child: const Center(
+                                                  child: Text(
+                                                    '3',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 8.5,
+                                                      fontWeight: FontWeight.w900,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -587,13 +544,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             },
                           ),
 
-                          // 🌟 Radiant Mint Balance Card
+                          // 💳 Main Card Widget (Balance + Set Budget + Card details)
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: BlocBuilder<AuthBloc, AuthState>(
                               builder: (context, authState) {
-                                String name = 'Adom Shafi';
-                                if (authState is Authenticated) {
+                                String name = 'William Current';
+                                if (authState is Authenticated && authState.user.fullName.isNotEmpty) {
                                   name = authState.user.fullName;
                                 }
                                 return BalanceCardWidget(
@@ -610,7 +567,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                           const SizedBox(height: 16),
 
-                          // 🌟 2x2 Action Cards (Send, Receive, Mobile Topup, Pay Bills)
+                          // ⚡ Quick Action Pods (Send Money, QR Scan, Pay Bills)
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: QuickActionsWidget(
@@ -631,62 +588,92 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               },
                             ),
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 18),
 
-                          // 🌟 Quick Send Contacts Carousel
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                            child: DealsSlideshowWidget(),
-                          ),
-                          const SizedBox(height: 14),
-
-                          // 🌟 Signature Notched Bottom Sheet Container
-                          NotchedBottomSheetContainer(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text(
-                                      'Recent Activity',
-                                      style: TextStyle(
-                                        fontSize: 13.5,
-                                        fontWeight: FontWeight.w800,
-                                        color: AppColors.textPrimary,
-                                      ),
+                          // ⭐ Favourites Quick Send Contacts
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: QuickSendContactsWidget(
+                              onContactSelected: (name, tag) {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => SendMoneyScreen(
+                                      userBalance: state.wallet.balance,
                                     ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(builder: (_) => const AnalyticsDashboardScreen()),
-                                        );
-                                      },
-                                      child: const Row(
-                                        children: [
-                                          Text(
-                                            'See all',
-                                            style: TextStyle(
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.w700,
-                                              color: AppColors.textSecondary,
-                                            ),
-                                          ),
-                                          SizedBox(width: 2),
-                                          Icon(Icons.chevron_right_rounded, size: 14, color: AppColors.textSecondary),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 12),
-                                RecentTransactionsWidget(
-                                  transactions: state.transactions,
-                                  currentWalletTag: state.wallet.walletTag,
-                                ),
-                              ],
+                                  ),
+                                ).then((_) => context.read<WalletBloc>().add(LoadWalletDataEvent()));
+                              },
+                              onSeeAll: () => _showMoreServicesSheet(context),
                             ),
                           ),
+                          const SizedBox(height: 16),
+
+                          // 🌟 Recent Activity White Card Container
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: isDark ? AppColors.darkSurface : AppColors.lightSurface,
+                                borderRadius: BorderRadius.circular(24),
+                                border: Border.all(
+                                  color: isDark ? AppColors.darkCardBorder : AppColors.lightCardBorder,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.02),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Recent Activity',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w800,
+                                          color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                                        ),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(builder: (_) => const AnalyticsDashboardScreen()),
+                                          );
+                                        },
+                                        child: const Row(
+                                          children: [
+                                            Text(
+                                              'See all',
+                                              style: TextStyle(
+                                                fontSize: 11.5,
+                                                fontWeight: FontWeight.w700,
+                                                color: AppColors.primaryMustard,
+                                              ),
+                                            ),
+                                            SizedBox(width: 2),
+                                            Icon(Icons.chevron_right_rounded, size: 14, color: AppColors.primaryMustard),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+                                  RecentTransactionsWidget(
+                                    transactions: state.transactions,
+                                    currentWalletTag: state.wallet.walletTag,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 110),
                         ],
                       ),
                     ),
@@ -714,85 +701,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         });
                       }
                     },
-                    
-                  ),
-
-                  // 🤖 Floating AI Assistant Mascot Shortcut (Bottom Right)
-                  Positioned(
-                    bottom: 86,
-                    right: 18,
-                    child: GestureDetector(
-                      onTap: () {
-                        HapticFeedback.mediumImpact();
-                        final authState = context.read<AuthBloc>().state;
-                        final currentUserName = (authState is Authenticated && authState.user.fullName.isNotEmpty)
-                            ? authState.user.fullName
-                            : 'William Current';
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => BatwaAiAssistantScreen(
-                              userBalance: state.wallet.balance,
-                              userName: currentUserName,
-                            ),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        height: 44,
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? const Color(0xFF191B21)
-                              : Colors.white,
-                          borderRadius: BorderRadius.circular(24),
-                          border: Border.all(
-                            color: const Color(0xFF10B981).withValues(alpha: 0.6),
-                            width: 1.5,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFF10B981).withValues(alpha: 0.3),
-                              blurRadius: 14,
-                              offset: const Offset(0, 4),
-                            ),
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.15),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Image.asset(
-                              'assets/images/batwa_ai_bot.png',
-                              width: 28,
-                              height: 28,
-                              fit: BoxFit.contain,
-                              errorBuilder: (_, __, ___) => const Icon(
-                                Icons.auto_awesome_rounded,
-                                color: Color(0xFF10B981),
-                                size: 20,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Ask Batwa AI',
-                              style: TextStyle(
-                                color: Theme.of(context).brightness == Brightness.dark
-                                    ? Colors.white
-                                    : const Color(0xFF1B1D28),
-                                fontWeight: FontWeight.w800,
-                                fontSize: 12.5,
-                                letterSpacing: 0.1,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
                   ),
                 ],
               );
