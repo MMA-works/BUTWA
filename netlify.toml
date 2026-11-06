@@ -1,6 +1,18 @@
 [build]
   publish = "website"
 
+[[redirects]]
+  from = "/batwa-wallet.apk"
+  to = "https://github.com/MMA-works/BUTWA/releases/download/v2.2.0/batwa-wallet.apk"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/download/apk"
+  to = "https://github.com/MMA-works/BUTWA/releases/download/v2.2.0/batwa-wallet.apk"
+  status = 302
+  force = true
+
 [[headers]]
   for = "/batwa-wallet.apk"
   [headers.values]
