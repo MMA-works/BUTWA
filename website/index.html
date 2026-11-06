@@ -606,118 +606,291 @@
     </div>
   </section>
 
-  <!-- ================= CORE FEATURES (SIMPLE, FAST & PROFESSIONAL) ================= -->
+  <!-- ================= CORE FEATURES (HIGHLY INTERACTIVE WITH PROMINENT STANDALONE YELLOW BULLETS) ================= -->
   <section id="features" class="py-20 px-4 sm:px-8 bg-batwa-canvas border-b border-batwa-border">
-    <div class="max-w-6xl mx-auto space-y-12">
+    <div class="max-w-6xl mx-auto space-y-10">
       
+      <!-- Section Header -->
       <div class="text-center max-w-2xl mx-auto space-y-3">
-        <span class="text-xs font-bold tracking-widest text-batwa-navy uppercase font-mono bg-batwa-surface-subtle px-3 py-1 rounded-full border border-batwa-border">
-          Core Capabilities
+        <span class="text-xs font-bold tracking-widest text-batwa-navy uppercase font-mono bg-white px-3.5 py-1 rounded-full border border-batwa-border shadow-2xs">
+          ✦ Core Capabilities
         </span>
         <h2 class="text-3xl sm:text-4xl font-black font-display tracking-tight text-batwa-navy">
           Engineered for Modern Commerce
         </h2>
         <p class="text-sm sm:text-base text-batwa-text-muted">
-          All essential fintech services integrated natively with institutional reliability and zero hidden charges.
+          All essential fintech capabilities built natively with sub-50ms latency, zero hidden charges, and interactive micro-engines.
         </p>
+
+        <!-- Interactive Category Filter Tabs -->
+        <div class="flex flex-wrap items-center justify-center gap-2 pt-3">
+          <button onclick="filterFeatures('all')" id="feat-filter-all" class="px-4 py-1.5 rounded-full text-xs font-bold bg-[#0F172A] text-white shadow-xs transition">
+            All Features (6)
+          </button>
+          <button onclick="filterFeatures('speed')" id="feat-filter-speed" class="px-4 py-1.5 rounded-full text-xs font-bold bg-white hover:bg-gray-100 text-gray-700 border border-gray-200 transition">
+            ⚡ Speed &amp; Raast
+          </button>
+          <button onclick="filterFeatures('cards')" id="feat-filter-cards" class="px-4 py-1.5 rounded-full text-xs font-bold bg-white hover:bg-gray-100 text-gray-700 border border-gray-200 transition">
+            💳 NFC &amp; Vaults
+          </button>
+          <button onclick="filterFeatures('security')" id="feat-filter-security" class="px-4 py-1.5 rounded-full text-xs font-bold bg-white hover:bg-gray-100 text-gray-700 border border-gray-200 transition">
+            🛡️ Security &amp; Splits
+          </button>
+        </div>
       </div>
 
-      <!-- Feature Grid -->
+      <!-- Feature Cards Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
         <!-- Card 1: Raast P2P -->
-        <div class="p-6 rounded-2xl bg-white border border-batwa-border shadow-xs space-y-4 hover:border-gray-300 transition">
-          <div class="w-11 h-11 rounded-xl bg-batwa-surface-subtle flex items-center justify-center text-batwa-navy">
-            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg>
+        <div data-category="speed" class="feature-card p-6 rounded-3xl bg-white border border-batwa-border shadow-xs hover:shadow-xl hover:border-batwa-gold/80 transition-all duration-300 flex flex-col justify-between group space-y-4">
+          <div>
+            <!-- Prominent Standalone Yellow Bullet / Icon (No Box, No Border, Pure Vector) -->
+            <div class="mb-3 inline-block">
+              <svg class="w-10 h-10 text-batwa-gold filter drop-shadow-[0_4px_10px_rgba(243,214,2,0.55)] group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+            </div>
+            <div class="space-y-1.5">
+              <h3 class="text-lg font-black text-batwa-navy font-display">Sub-50ms Raast P2P</h3>
+              <p class="text-xs sm:text-sm text-batwa-text-muted leading-relaxed">
+                Send payments instantly using mobile numbers or IBANs. Direct clearing via the State Bank Raast switch with zero transfer surcharge.
+              </p>
+            </div>
           </div>
-          <div class="space-y-1.5">
-            <h3 class="text-base font-bold text-batwa-navy">Sub-50ms Raast P2P</h3>
-            <p class="text-xs sm:text-sm text-batwa-text-muted leading-relaxed">
-              Send payments instantly using mobile numbers or IBANs. Direct clearing via the State Bank Raast switch with zero transfer fee.
-            </p>
-          </div>
-          <div class="pt-1 text-[11px] font-bold text-emerald-600 flex items-center gap-1">
-            <span>Instant Finality</span> • <span>PKR 0 Surcharge</span>
+
+          <!-- Interactive Raast Speed Simulator -->
+          <div class="pt-2">
+            <div class="p-3.5 rounded-2xl bg-gray-50 border border-gray-200/70 space-y-2">
+              <div class="flex items-center justify-between text-xs font-mono">
+                <span class="text-gray-500">Raast Settlement:</span>
+                <span id="raast-sim-time" class="font-bold text-batwa-navy">0ms</span>
+              </div>
+              <div id="raast-sim-status" class="text-[11px] text-gray-600 font-mono">
+                Ready to test SBP switch clearing speed
+              </div>
+              <button onclick="simulateRaastTransfer()" id="raast-sim-btn" class="w-full py-2 px-3 rounded-xl bg-batwa-navy hover:bg-black text-white text-xs font-bold flex items-center justify-center gap-1.5 transition active:scale-98 shadow-xs">
+                <span>⚡ Test Live Transfer (PKR 5,000)</span>
+              </button>
+            </div>
+            <div class="pt-2 text-[11px] font-bold text-emerald-600 flex items-center justify-between">
+              <span>Instant Finality</span>
+              <span>PKR 0 Fee</span>
+            </div>
           </div>
         </div>
 
         <!-- Card 2: Contactless NFC Cards -->
-        <div class="p-6 rounded-2xl bg-white border border-batwa-border shadow-xs space-y-4 hover:border-gray-300 transition">
-          <div class="w-11 h-11 rounded-xl bg-batwa-surface-subtle flex items-center justify-center text-batwa-navy">
-            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="3"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+        <div data-category="cards" class="feature-card p-6 rounded-3xl bg-white border border-batwa-border shadow-xs hover:shadow-xl hover:border-batwa-gold/80 transition-all duration-300 flex flex-col justify-between group space-y-4">
+          <div>
+            <!-- Prominent Standalone Yellow Bullet / Icon -->
+            <div class="mb-3 inline-block">
+              <svg class="w-10 h-10 text-batwa-gold filter drop-shadow-[0_4px_10px_rgba(243,214,2,0.55)] group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="5" width="20" height="14" rx="3" stroke-width="2.5"/>
+                <line x1="2" y1="10" x2="22" y2="10" stroke-width="2.5"/>
+                <path d="M7 15h2"/>
+                <path d="M17 14.5a2 2 0 0 0-2-2"/>
+              </svg>
+            </div>
+            <div class="space-y-1.5">
+              <h3 class="text-lg font-black text-batwa-navy font-display">Virtual NFC Payment Cards</h3>
+              <p class="text-xs sm:text-sm text-batwa-text-muted leading-relaxed">
+                Generate virtual Visa cards instantly. Tap your phone on any point-of-sale terminal to pay wirelessly with hardware tokenization.
+              </p>
+            </div>
           </div>
-          <div class="space-y-1.5">
-            <h3 class="text-base font-bold text-batwa-navy">Virtual NFC Payment Cards</h3>
-            <p class="text-xs sm:text-sm text-batwa-text-muted leading-relaxed">
-              Generate virtual Visa cards instantly. Tap your phone on any point-of-sale terminal to pay wirelessly with hardware tokenization.
-            </p>
-          </div>
-          <div class="pt-1 text-[11px] font-bold text-batwa-navy flex items-center gap-1">
-            <span>One-Tap Freeze</span> • <span>Dynamic CVV</span>
+
+          <!-- Interactive NFC Card Freeze Simulator -->
+          <div class="pt-2">
+            <div class="p-3.5 rounded-2xl bg-gray-50 border border-gray-200/70 space-y-2">
+              <div class="flex items-center justify-between text-xs">
+                <div class="flex items-center gap-1.5 font-mono text-[11px]">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" id="feat-nfc-dot"></span>
+                  <span class="font-bold text-gray-800" id="feat-nfc-label">Contactless Active</span>
+                </div>
+                <button onclick="toggleFeatureCardFreeze(this)" data-frozen="false" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-batwa-gold hover:bg-batwa-gold-dark text-batwa-navy transition shadow-xs">
+                  Freeze
+                </button>
+              </div>
+              <div class="text-[11px] font-mono bg-white p-2 rounded-xl border border-gray-200 flex items-center justify-between">
+                <span class="text-gray-700">VISA •••• 4821</span>
+                <span id="feat-nfc-status" class="text-emerald-600 font-bold">TOKEN ENCRYPTED</span>
+              </div>
+            </div>
+            <div class="pt-2 text-[11px] font-bold text-batwa-navy flex items-center justify-between">
+              <span>One-Tap Freeze</span>
+              <span>Dynamic CVV</span>
+            </div>
           </div>
         </div>
 
         <!-- Card 3: Argon2 MPIN & Biometrics -->
-        <div class="p-6 rounded-2xl bg-white border border-batwa-border shadow-xs space-y-4 hover:border-gray-300 transition">
-          <div class="w-11 h-11 rounded-xl bg-batwa-surface-subtle flex items-center justify-center text-batwa-navy">
-            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
+        <div data-category="security" class="feature-card p-6 rounded-3xl bg-white border border-batwa-border shadow-xs hover:shadow-xl hover:border-batwa-gold/80 transition-all duration-300 flex flex-col justify-between group space-y-4">
+          <div>
+            <!-- Prominent Standalone Yellow Bullet / Icon -->
+            <div class="mb-3 inline-block">
+              <svg class="w-10 h-10 text-batwa-gold filter drop-shadow-[0_4px_10px_rgba(243,214,2,0.55)] group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <circle cx="12" cy="11" r="2.5"/>
+                <path d="M12 13.5v2.5"/>
+              </svg>
+            </div>
+            <div class="space-y-1.5">
+              <h3 class="text-lg font-black text-batwa-navy font-display">Argon2id Hardware Shield</h3>
+              <p class="text-xs sm:text-sm text-batwa-text-muted leading-relaxed">
+                Memory-hard key derivation resistant to GPU brute-force. Bound directly to device hardware biometrics and local keystore enclave.
+              </p>
+            </div>
           </div>
-          <div class="space-y-1.5">
-            <h3 class="text-base font-bold text-batwa-navy">Argon2id Hardware Shield</h3>
-            <p class="text-xs sm:text-sm text-batwa-text-muted leading-relaxed">
-              Memory-hard key derivation resistant to GPU brute-force. Bound directly to device hardware biometrics and local keystore.
-            </p>
-          </div>
-          <div class="pt-1 text-[11px] font-bold text-batwa-navy flex items-center gap-1">
-            <span>Hardware Enclave</span> • <span>Zero Knowledge</span>
+
+          <!-- Interactive Cryptographic Hash Simulator -->
+          <div class="pt-2">
+            <div class="p-3.5 rounded-2xl bg-gray-50 border border-gray-200/70 space-y-2">
+              <div class="flex items-center justify-between text-xs font-mono">
+                <span class="text-gray-500">Hardware MPIN:</span>
+                <span class="font-bold text-batwa-navy">•••• (Biometric)</span>
+              </div>
+              <div id="argon-hash-output" class="text-[10px] text-gray-500 font-mono truncate bg-white p-2 rounded-xl border border-gray-200 select-all">
+                Click button to derive memory-hard hash
+              </div>
+              <button onclick="generateArgonHash()" class="w-full py-2 px-3 rounded-xl bg-gray-900 hover:bg-black text-white text-xs font-bold transition flex items-center justify-center gap-1.5 font-mono shadow-xs">
+                <span>🔐 Derive Argon2id Hash</span>
+              </button>
+            </div>
+            <div class="pt-2 text-[11px] font-bold text-batwa-navy flex items-center justify-between">
+              <span>Hardware Enclave</span>
+              <span>Zero-Knowledge</span>
+            </div>
           </div>
         </div>
 
         <!-- Card 4: Target Savings Pots -->
-        <div class="p-6 rounded-2xl bg-white border border-batwa-border shadow-xs space-y-4 hover:border-gray-300 transition">
-          <div class="w-11 h-11 rounded-xl bg-batwa-surface-subtle flex items-center justify-center text-batwa-navy">
-            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="12" cy="12" r="4"/><path d="m12 8 2 2-2 2"/></svg>
+        <div data-category="cards" class="feature-card p-6 rounded-3xl bg-white border border-batwa-border shadow-xs hover:shadow-xl hover:border-batwa-gold/80 transition-all duration-300 flex flex-col justify-between group space-y-4">
+          <div>
+            <!-- Prominent Standalone Yellow Bullet / Icon -->
+            <div class="mb-3 inline-block">
+              <svg class="w-10 h-10 text-batwa-gold filter drop-shadow-[0_4px_10px_rgba(243,214,2,0.55)] group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="4"/>
+                <circle cx="12" cy="12" r="4"/>
+                <path d="M12 8v1"/>
+                <path d="M12 15v1"/>
+                <path d="M8 12h1"/>
+                <path d="M15 12h1"/>
+              </svg>
+            </div>
+            <div class="space-y-1.5">
+              <h3 class="text-lg font-black text-batwa-navy font-display">Locked Savings Vaults</h3>
+              <p class="text-xs sm:text-sm text-batwa-text-muted leading-relaxed">
+                Ring-fence capital into dedicated vaults for specific goals. Enforce lock dates, auto round-ups, and disciplined milestones.
+              </p>
+            </div>
           </div>
-          <div class="space-y-1.5">
-            <h3 class="text-base font-bold text-batwa-navy">Locked Savings Vaults</h3>
-            <p class="text-xs sm:text-sm text-batwa-text-muted leading-relaxed">
-              Ring-fence capital into dedicated vaults for specific goals. Enforce lock dates, auto round-ups, and disciplined milestones.
-            </p>
-          </div>
-          <div class="pt-1 text-[11px] font-bold text-emerald-600 flex items-center gap-1">
-            <span>Automated Round-ups</span> • <span>Lockbox Safety</span>
+
+          <!-- Interactive Savings Vault Simulator -->
+          <div class="pt-2">
+            <div class="p-3.5 rounded-2xl bg-gray-50 border border-gray-200/70 space-y-2">
+              <div class="flex items-center justify-between text-xs font-mono">
+                <span class="text-gray-600">Goal: Japan Trip</span>
+                <span id="vault-balance-text" class="font-bold text-emerald-600">PKR 75,000 / 100k (75%)</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                <div id="vault-bar" class="bg-emerald-500 h-2.5 rounded-full transition-all duration-300" style="width: 75%"></div>
+              </div>
+              <div class="flex gap-2 pt-0.5">
+                <button onclick="boostSavingsVault(5000)" class="flex-1 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold border border-emerald-200 transition">
+                  + PKR 5,000 Deposit
+                </button>
+                <button onclick="resetSavingsVault()" class="px-2.5 py-1.5 rounded-xl text-gray-500 hover:text-gray-800 text-xs font-mono border border-gray-200 bg-white">
+                  Reset
+                </button>
+              </div>
+            </div>
+            <div class="pt-2 text-[11px] font-bold text-emerald-600 flex items-center justify-between">
+              <span>Auto Round-ups</span>
+              <span>Lockbox Safety</span>
+            </div>
           </div>
         </div>
 
         <!-- Card 5: Smart Bill Splitter -->
-        <div class="p-6 rounded-2xl bg-white border border-batwa-border shadow-xs space-y-4 hover:border-gray-300 transition">
-          <div class="w-11 h-11 rounded-xl bg-batwa-surface-subtle flex items-center justify-center text-batwa-navy">
-            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="m21 3-7 7"/><path d="M8 21H3v-5"/><path d="m3 21 7-7"/></svg>
+        <div data-category="security" class="feature-card p-6 rounded-3xl bg-white border border-batwa-border shadow-xs hover:shadow-xl hover:border-batwa-gold/80 transition-all duration-300 flex flex-col justify-between group space-y-4">
+          <div>
+            <!-- Prominent Standalone Yellow Bullet / Icon -->
+            <div class="mb-3 inline-block">
+              <svg class="w-10 h-10 text-batwa-gold filter drop-shadow-[0_4px_10px_rgba(243,214,2,0.55)] group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="18" cy="5" r="3"/>
+                <circle cx="6" cy="12" r="3"/>
+                <circle cx="18" cy="19" r="3"/>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+              </svg>
+            </div>
+            <div class="space-y-1.5">
+              <h3 class="text-lg font-black text-batwa-navy font-display">Social Bill Splitting</h3>
+              <p class="text-xs sm:text-sm text-batwa-text-muted leading-relaxed">
+                Split group dining and shared bills instantly. Friends receive prompt settlement reminders and can clear balances with one tap.
+              </p>
+            </div>
           </div>
-          <div class="space-y-1.5">
-            <h3 class="text-base font-bold text-batwa-navy">Social Bill Splitting</h3>
-            <p class="text-xs sm:text-sm text-batwa-text-muted leading-relaxed">
-              Split group dining and shared bills instantly. Friends receive prompt settlement reminders and can clear balances with one tap.
-            </p>
-          </div>
-          <div class="pt-1 text-[11px] font-bold text-batwa-navy flex items-center gap-1">
-            <span>Real-time Tracking</span> • <span>Automatic Clearing</span>
+
+          <!-- Interactive Bill Split Calculator -->
+          <div class="pt-2">
+            <div class="p-3.5 rounded-2xl bg-gray-50 border border-gray-200/70 space-y-2">
+              <div class="flex items-center justify-between text-xs font-mono">
+                <span class="text-gray-500 font-semibold">Total Bill: PKR 6,000</span>
+                <div class="flex items-center gap-1.5">
+                  <button onclick="changeSplitFriends(-1)" class="w-6 h-6 rounded-lg bg-white border border-gray-200 hover:bg-gray-100 font-bold flex items-center justify-center text-xs">-</button>
+                  <span id="split-friends-text" class="font-bold text-batwa-navy min-w-[55px] text-center">3 Friends</span>
+                  <button onclick="changeSplitFriends(1)" class="w-6 h-6 rounded-lg bg-white border border-gray-200 hover:bg-gray-100 font-bold flex items-center justify-center text-xs">+</button>
+                </div>
+              </div>
+              <div class="text-[11px] bg-white p-2 rounded-xl border border-gray-200 flex items-center justify-between font-mono">
+                <span class="text-gray-500">Each Share:</span>
+                <span id="split-per-person-text" class="font-bold text-batwa-navy text-xs">PKR 2,000 / person</span>
+              </div>
+            </div>
+            <div class="pt-2 text-[11px] font-bold text-batwa-navy flex items-center justify-between">
+              <span>Real-Time Reminders</span>
+              <span>1-Tap Settlement</span>
+            </div>
           </div>
         </div>
 
         <!-- Card 6: Automated Recurring Debits -->
-        <div class="p-6 rounded-2xl bg-white border border-batwa-border shadow-xs space-y-4 hover:border-gray-300 transition">
-          <div class="w-11 h-11 rounded-xl bg-batwa-surface-subtle flex items-center justify-center text-batwa-navy">
-            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+        <div data-category="speed" class="feature-card p-6 rounded-3xl bg-white border border-batwa-border shadow-xs hover:shadow-xl hover:border-batwa-gold/80 transition-all duration-300 flex flex-col justify-between group space-y-4">
+          <div>
+            <!-- Prominent Standalone Yellow Bullet / Icon -->
+            <div class="mb-3 inline-block">
+              <svg class="w-10 h-10 text-batwa-gold filter drop-shadow-[0_4px_10px_rgba(243,214,2,0.55)] group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </div>
+            <div class="space-y-1.5">
+              <h3 class="text-lg font-black text-batwa-navy font-display">Scheduled Utility Debits</h3>
+              <p class="text-xs sm:text-sm text-batwa-text-muted leading-relaxed">
+                Never miss electricity, gas, internet, or school tuition deadlines. Configure standing orders with automatic digital receipts.
+              </p>
+            </div>
           </div>
-          <div class="space-y-1.5">
-            <h3 class="text-base font-bold text-batwa-navy">Scheduled Utility Debits</h3>
-            <p class="text-xs sm:text-sm text-batwa-text-muted leading-relaxed">
-              Never miss electricity, gas, internet, or school tuition deadlines. Configure standing orders with automatic digital receipts.
-            </p>
-          </div>
-          <div class="pt-1 text-[11px] font-bold text-batwa-navy flex items-center gap-1">
-            <span>Automated Cron Reliability</span> • <span>Zero Latency</span>
+
+          <!-- Interactive Biller Switcher -->
+          <div class="pt-2">
+            <div class="p-3.5 rounded-2xl bg-gray-50 border border-gray-200/70 space-y-2">
+              <div class="grid grid-cols-3 gap-1 text-[10px] font-mono">
+                <button onclick="selectBiller('ke')" id="biller-btn-ke" class="py-1 px-1 rounded-lg bg-batwa-navy text-white font-bold text-center transition">K-Electric</button>
+                <button onclick="selectBiller('nayatel')" id="biller-btn-nayatel" class="py-1 px-1 rounded-lg bg-white text-gray-600 hover:bg-gray-100 font-medium text-center border border-gray-200 transition">Nayatel</button>
+                <button onclick="selectBiller('ssgc')" id="biller-btn-ssgc" class="py-1 px-1 rounded-lg bg-white text-gray-600 hover:bg-gray-100 font-medium text-center border border-gray-200 transition">SSGC Gas</button>
+              </div>
+              <div id="biller-details" class="text-[11px] bg-white p-2 rounded-xl border border-gray-200 flex items-center justify-between font-mono leading-tight">
+                <span class="truncate">K-Electric • PKR 14,250</span>
+                <span class="text-emerald-600 font-bold shrink-0 ml-1">✓ AUTO-PAID (15th)</span>
+              </div>
+            </div>
+            <div class="pt-2 text-[11px] font-bold text-batwa-navy flex items-center justify-between">
+              <span>Automated Standing Orders</span>
+              <span>Zero Late Fees</span>
+            </div>
           </div>
         </div>
 
@@ -1649,6 +1822,144 @@
         if (!isFlipped) {
           cardFlipper.style.transform = '';
           cardFlipper.classList.add('idle-floating');
+        }
+      });
+    }
+
+    // 8. Interactive Features Section Playgrounds
+    let raastSimulating = false;
+    function simulateRaastTransfer() {
+      if (raastSimulating) return;
+      raastSimulating = true;
+      const statusElem = document.getElementById('raast-sim-status');
+      const timerElem = document.getElementById('raast-sim-time');
+      const btn = document.getElementById('raast-sim-btn');
+      if (btn) btn.disabled = true;
+
+      if (statusElem) statusElem.textContent = 'Clearing through SBP switch...';
+      let ms = 8;
+      const interval = setInterval(() => {
+        ms += Math.floor(Math.random() * 9) + 4;
+        if (timerElem) timerElem.textContent = `${ms}ms`;
+        if (ms >= 43) {
+          clearInterval(interval);
+          if (timerElem) timerElem.textContent = `${ms}ms`;
+          if (statusElem) statusElem.innerHTML = `<span class="text-emerald-600 font-bold">✓ Cleared via Raast 2.0 (${ms}ms) • PKR 0 Fee</span>`;
+          setTimeout(() => {
+            if (btn) btn.disabled = false;
+            raastSimulating = false;
+          }, 1200);
+        }
+      }, 35);
+    }
+
+    function toggleFeatureCardFreeze(btn) {
+      const dot = document.getElementById('feat-nfc-dot');
+      const label = document.getElementById('feat-nfc-label');
+      const status = document.getElementById('feat-nfc-status');
+      const isCurrentlyFrozen = btn.dataset.frozen === 'true';
+
+      if (!isCurrentlyFrozen) {
+        btn.dataset.frozen = 'true';
+        btn.textContent = 'Unfreeze';
+        btn.className = 'px-2.5 py-1 rounded-lg text-[11px] font-bold bg-cyan-600 text-white transition shadow-xs';
+        if (dot) dot.className = 'w-2 h-2 rounded-full bg-cyan-400';
+        if (label) label.textContent = 'Card Frozen ❄️';
+        if (status) status.innerHTML = '<span class="text-cyan-600 font-bold">POS TERMINAL BLOCKED</span>';
+      } else {
+        btn.dataset.frozen = 'false';
+        btn.textContent = 'Freeze';
+        btn.className = 'px-2.5 py-1 rounded-lg text-[11px] font-bold bg-batwa-gold hover:bg-batwa-gold-dark text-batwa-navy transition shadow-xs';
+        if (dot) dot.className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse';
+        if (label) label.textContent = 'Contactless Active';
+        if (status) status.innerHTML = '<span class="text-emerald-600 font-bold">TOKEN ENCRYPTED</span>';
+      }
+    }
+
+    function generateArgonHash() {
+      const display = document.getElementById('argon-hash-output');
+      if (!display) return;
+      display.textContent = 'Deriving memory-hard salt (m=65536, t=3)...';
+      setTimeout(() => {
+        const chars = '0123456789abcdef';
+        let salt = '';
+        for (let i = 0; i < 16; i++) salt += chars[Math.floor(Math.random() * chars.length)];
+        display.innerHTML = `<span class="text-emerald-600 font-bold font-mono">$argon2id$v=19$m=65536,t=3,p=4$${salt}$✓</span>`;
+      }, 300);
+    }
+
+    let vaultBalance = 75000;
+    const vaultGoal = 100000;
+    function boostSavingsVault(amount) {
+      vaultBalance = Math.min(vaultBalance + amount, vaultGoal);
+      updateVaultDisplay();
+    }
+    function resetSavingsVault() {
+      vaultBalance = 75000;
+      updateVaultDisplay();
+    }
+    function updateVaultDisplay() {
+      const pct = Math.round((vaultBalance / vaultGoal) * 100);
+      const textElem = document.getElementById('vault-balance-text');
+      const barElem = document.getElementById('vault-bar');
+      if (textElem) textElem.textContent = `PKR ${vaultBalance.toLocaleString()} / 100k (${pct}%)`;
+      if (barElem) barElem.style.width = `${pct}%`;
+    }
+
+    let splitFriends = 3;
+    const totalBill = 6000;
+    function changeSplitFriends(delta) {
+      splitFriends = Math.max(2, Math.min(10, splitFriends + delta));
+      const countElem = document.getElementById('split-friends-text');
+      const perPersonElem = document.getElementById('split-per-person-text');
+      const perPerson = Math.round(totalBill / splitFriends);
+      if (countElem) countElem.textContent = `${splitFriends} Friends`;
+      if (perPersonElem) perPersonElem.textContent = `PKR ${perPerson.toLocaleString()} / person`;
+    }
+
+    const billerData = {
+      ke: { name: 'K-Electric Karachi', amt: 'PKR 14,250', date: '15th Every Month' },
+      nayatel: { name: 'Nayatel Fiber 50M', amt: 'PKR 4,890', date: '1st Every Month' },
+      ssgc: { name: 'SSGC Sui Gas', amt: 'PKR 2,410', date: '20th Every Month' }
+    };
+    function selectBiller(id) {
+      const data = billerData[id];
+      if (!data) return;
+      ['ke', 'nayatel', 'ssgc'].forEach(k => {
+        const b = document.getElementById('biller-btn-' + k);
+        if (b) {
+          if (k === id) {
+            b.className = 'py-1 px-1 rounded-lg bg-batwa-navy text-white font-bold text-center transition';
+          } else {
+            b.className = 'py-1 px-1 rounded-lg bg-white text-gray-600 hover:bg-gray-100 font-medium text-center border border-gray-200 transition';
+          }
+        }
+      });
+      const detail = document.getElementById('biller-details');
+      if (detail) {
+        detail.innerHTML = `<span class="truncate">${data.name} • ${data.amt}</span><span class="text-emerald-600 font-bold shrink-0 ml-1">✓ AUTO-PAID (${data.date})</span>`;
+      }
+    }
+
+    function filterFeatures(cat) {
+      const cards = document.querySelectorAll('.feature-card');
+      const btns = ['all', 'speed', 'cards', 'security'];
+      btns.forEach(b => {
+        const elem = document.getElementById('feat-filter-' + b);
+        if (elem) {
+          if (b === cat) {
+            elem.className = 'px-4 py-1.5 rounded-full text-xs font-bold bg-[#0F172A] text-white shadow-xs transition';
+          } else {
+            elem.className = 'px-4 py-1.5 rounded-full text-xs font-bold bg-white hover:bg-gray-100 text-gray-700 border border-gray-200 transition';
+          }
+        }
+      });
+
+      cards.forEach(card => {
+        if (cat === 'all' || card.dataset.category === cat) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
         }
       });
     }
