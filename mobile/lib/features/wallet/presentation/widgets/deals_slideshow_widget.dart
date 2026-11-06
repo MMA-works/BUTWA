@@ -56,100 +56,84 @@ class DealsSlideshowWidget extends StatefulWidget {
 }
 
 class _DealsSlideshowWidgetState extends State<DealsSlideshowWidget> {
-  late final PageController _pageController;
-  Timer? _slideshowTimer;
-  int _currentPage = 0;
-
-  // 3 Signature Batwa Deals matching the official brand palette
+  // 🌟 3 Signature Batwa Deals: ALL in Dark Green Shades with Radiant Yellow Typography
   final List<DealItem> _deals = const [
-    // 🟡 Deal 1: Food & Dining (Signature Forest Green & Brand Yellow)
+    // 🟢 Deal 1: Food & Dining (Deep Emerald Forest & Batwa Yellow)
     DealItem(
       id: 'deal-food-40',
-      tag: '🔥 HOT DEAL • FOODPANDA',
+      tag: 'FOOD',
       title: 'Flat 40% OFF on Food Orders',
       subTitle: 'Order on Foodpanda via Batwa & get instant Rs 350 cashback',
       discountPercent: 40,
       voucherCode: 'BATWAFOOD40',
       type: 'FOOD',
-      primaryColor: Color(0xFF031E14),
-      secondaryColor: Color(0xFF073826),
+      primaryColor: Color(0xFF01180E),
+      secondaryColor: Color(0xFF07482D),
       accentColor: Color(0xFFF3D602),
-      textColor: Colors.white,
+      textColor: Color(0xFFF3D602), // 🌟 Yellow font on Dark Green
       icon: Icons.fastfood_rounded,
       expiryText: 'Ends in 2 days',
       terms: 'Valid on food orders above Rs 700 paid via Batwa QR or Virtual Card.',
     ),
 
-    // ⚡ Deal 2: Electricity & Utility Bills (Signature Brand Yellow & Dark Forest)
+    // 🟢 Deal 2: Electricity & Utility Bills (Deep Pine Emerald & Batwa Yellow)
     DealItem(
       id: 'deal-bill-25',
-      tag: '⚡ SUPER CASHBACK • BILLS',
+      tag: 'UTILITY',
       title: '25% Cashback on Electric Bills',
       subTitle: 'Zero fee on K-Electric, LESCO, IESCO & SNGPL with Batwa Pay',
       discountPercent: 25,
       voucherCode: 'POWERFREE25',
       type: 'UTILITY',
-      primaryColor: Color(0xFFF3D602),
-      secondaryColor: Color(0xFFE5B800),
-      accentColor: Color(0xFF031E14),
-      textColor: Color(0xFF031E14),
+      primaryColor: Color(0xFF021D12),
+      secondaryColor: Color(0xFF0A5538),
+      accentColor: Color(0xFFF3D602),
+      textColor: Color(0xFFF3D602), // 🌟 Yellow font on Dark Green
       icon: Icons.bolt_rounded,
       expiryText: 'Valid this week',
       terms: 'Applicable once per user on any electricity or gas bill payment.',
     ),
 
-    // 🛍️ Deal 3: Mega Shopping & Brands (Signature Emerald & Cyan Teal)
+    // 🟢 Deal 3: Mega Shopping & Brands (Deep Jade Forest & Batwa Yellow)
     DealItem(
       id: 'deal-shop-35',
-      tag: '🛍️ MEGA SAVINGS • SHOPPING',
+      tag: 'SHOPPING',
       title: 'Up to 35% OFF on Top Brands',
       subTitle: 'Discounts on Daraz, Khaadi, Outfitters & Tech via Virtual Card',
       discountPercent: 35,
       voucherCode: 'BATWASHOP35',
       type: 'SHOPPING',
-      primaryColor: Color(0xFF04281B),
-      secondaryColor: Color(0xFF0A4430),
-      accentColor: Color(0xFF00D2D3),
-      textColor: Colors.white,
+      primaryColor: Color(0xFF011A10),
+      secondaryColor: Color(0xFF084E32),
+      accentColor: Color(0xFFF3D602),
+      textColor: Color(0xFFF3D602), // 🌟 Yellow font on Dark Green
       icon: Icons.shopping_bag_rounded,
       expiryText: 'Limited time offer',
       terms: 'Avail discount instantly on checkout with your Batwa Visa Virtual Card.',
     ),
-
-    // 📱 Deal 4: Mobile Network Packages & Load (Jazz, Zong, Telenor, Ufone)
-    DealItem(
-      id: 'deal-sim-50',
-      tag: '📱 50% CASHBACK • SIM PACKAGES',
-      title: '50% Cashback on All SIM Packages',
-      subTitle: 'Recharge Jazz, Zong, Ufone or Telenor & get instant 50% cashback',
-      discountPercent: 50,
-      voucherCode: 'SIMSUPER50',
-      type: 'UTILITY',
-      primaryColor: Color(0xFF1E1B4B),
-      secondaryColor: Color(0xFF312E81),
-      accentColor: Color(0xFFF3D602),
-      textColor: Colors.white,
-      icon: Icons.phone_android_rounded,
-      expiryText: 'Active Today',
-      terms: 'Applicable on any prepaid/postpaid package or load above Rs 300.',
-    ),
   ];
+
+  static const int _loopMultiplier = 10000;
+  late final int _initialPage;
+  late final PageController _pageController;
+  Timer? _slideshowTimer;
+  int _currentPage = 0;
 
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
+    _initialPage = (_loopMultiplier ~/ 2) * _deals.length;
+    _currentPage = _initialPage;
+    _pageController = PageController(initialPage: _initialPage);
     _startAutoSlideTimer();
     _tryFetchBackendPromotions();
   }
 
   void _startAutoSlideTimer() {
     _slideshowTimer?.cancel();
-    _slideshowTimer = Timer.periodic(const Duration(milliseconds: 2500), (timer) {
+    _slideshowTimer = Timer.periodic(const Duration(milliseconds: 2800), (timer) {
       if (_pageController.hasClients) {
-        final nextPage = (_currentPage + 1) % _deals.length;
-        _pageController.animateToPage(
-          nextPage,
+        _pageController.nextPage(
           duration: const Duration(milliseconds: 650),
           curve: Curves.easeInOutCubic,
         );
@@ -204,7 +188,7 @@ class _DealsSlideshowWidgetState extends State<DealsSlideshowWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header row with Fire icon & 'Special Deals'
+          // Header row with Star icon & 'Favorite Deals & Offers'
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -226,44 +210,34 @@ class _DealsSlideshowWidgetState extends State<DealsSlideshowWidget> {
                   ),
                 ],
               ),
-
-              // Auto-play pulse badge
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withValues(alpha: 0.14),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: const Color(0xFF10B981).withValues(alpha: 0.35),
+              if (widget.onSeeAll != null)
+                GestureDetector(
+                  onTap: widget.onSeeAll,
+                  behavior: HitTestBehavior.opaque,
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'See all',
+                        style: TextStyle(
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFFE5B800),
+                        ),
+                      ),
+                      SizedBox(width: 2),
+                      Icon(Icons.chevron_right_rounded, size: 15, color: Color(0xFFE5B800)),
+                    ],
                   ),
                 ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CircleAvatar(
-                      radius: 3,
-                      backgroundColor: Color(0xFF10B981),
-                    ),
-                    SizedBox(width: 4),
-                    Text(
-                      'Live Deals',
-                      style: TextStyle(
-                        fontSize: 9.5,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFF10B981),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
 
           const SizedBox(height: 12),
 
-          // 🌟 Rotating Slideshow Carousel Container
+          // 🌟 Rotating Infinite Slideshow Carousel Container
           SizedBox(
-            height: 154,
+            height: 156,
             child: NotificationListener<ScrollNotification>(
               onNotification: (notification) {
                 if (notification is ScrollStartNotification) {
@@ -275,14 +249,14 @@ class _DealsSlideshowWidgetState extends State<DealsSlideshowWidget> {
               },
               child: PageView.builder(
                 controller: _pageController,
-                itemCount: _deals.length,
+                itemCount: _deals.length * _loopMultiplier,
                 onPageChanged: (index) {
                   setState(() {
                     _currentPage = index;
                   });
                 },
                 itemBuilder: (context, index) {
-                  final deal = _deals[index];
+                  final deal = _deals[index % _deals.length];
                   return _buildDealCard(deal);
                 },
               ),
@@ -291,231 +265,310 @@ class _DealsSlideshowWidgetState extends State<DealsSlideshowWidget> {
 
           const SizedBox(height: 10),
 
-          // 🌟 Dots Indicator (3 dots: active is elongated pill in Brand Yellow)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(_deals.length, (index) {
-              final isCurrent = index == _currentPage;
-              return AnimatedContainer(
-                duration: const Duration(milliseconds: 280),
-                curve: Curves.easeInOutCubic,
-                width: isCurrent ? 20 : 6,
-                height: 5,
-                margin: const EdgeInsets.symmetric(horizontal: 2.5),
-                decoration: BoxDecoration(
-                  color: isCurrent
-                      ? const Color(0xFFF3D602)
-                      : (isDark ? Colors.white24 : Colors.black12),
-                  borderRadius: BorderRadius.circular(4),
-                ),
+          // 🌟 Dots Indicator (smoothly tracking normalized current index 0..3)
+          Builder(
+            builder: (context) {
+              final normalizedIndex = _currentPage % _deals.length;
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(_deals.length, (index) {
+                  final isCurrent = index == normalizedIndex;
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 280),
+                    curve: Curves.easeInOutCubic,
+                    width: isCurrent ? 22 : 6,
+                    height: 5,
+                    margin: const EdgeInsets.symmetric(horizontal: 2.5),
+                    decoration: BoxDecoration(
+                      color: isCurrent
+                          ? const Color(0xFFF3D602)
+                          : (isDark ? Colors.white24 : Colors.black12),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  );
+                }),
               );
-            }),
+            },
           ),
         ],
       ),
     );
   }
 
+  // 🌟 Rich Multi-Stop Gradients in High-Contrast Luxury Dark Green
+  List<Color> _getGradientColors(DealItem deal) {
+    if (deal.id == 'deal-food-40') {
+      // 🟢 Deep Emerald Gemstone (Forest Green Multi-stop)
+      return const [
+        Color(0xFF01180E),
+        Color(0xFF032B1A),
+        Color(0xFF07482D),
+        Color(0xFF021B10),
+      ];
+    } else if (deal.id == 'deal-bill-25') {
+      // 🟢 Deep Pine & Malachite Emerald (Replaced Yellow per user request)
+      return const [
+        Color(0xFF021D12),
+        Color(0xFF053823),
+        Color(0xFF0A5538),
+        Color(0xFF022115),
+      ];
+    } else {
+      // 🟢 Luxury Jade Forest
+      return const [
+        Color(0xFF011910),
+        Color(0xFF043522),
+        Color(0xFF084E32),
+        Color(0xFF021B11),
+      ];
+    }
+  }
+
   // 🌟 Single Deal Banner Card
   Widget _buildDealCard(DealItem deal) {
+    final gradientColors = _getGradientColors(deal);
+
     return GestureDetector(
       onTap: () => _handleDealTap(deal),
       behavior: HitTestBehavior.opaque,
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 2),
-        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              deal.primaryColor,
-              deal.secondaryColor,
-            ],
+            colors: gradientColors,
+            stops: const [0.0, 0.38, 0.78, 1.0],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: deal.accentColor.withValues(alpha: 0.42),
+            width: 1.4,
+          ),
           boxShadow: [
             BoxShadow(
-              color: deal.primaryColor.withValues(alpha: 0.35),
+              color: deal.primaryColor.withValues(alpha: 0.7),
+              blurRadius: 14,
+              offset: const Offset(0, 5),
+            ),
+            BoxShadow(
+              color: deal.accentColor.withValues(alpha: 0.10),
               blurRadius: 10,
-              offset: const Offset(0, 4),
+              offset: const Offset(0, 1),
             ),
           ],
         ),
-        child: Stack(
-          children: [
-            // Watermark Icon in background
-            Positioned(
-              right: -10,
-              bottom: -10,
-              child: Opacity(
-                opacity: 0.12,
-                child: Icon(
-                  deal.icon,
-                  size: 96,
-                  color: deal.textColor,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(18.6),
+          child: Stack(
+            children: [
+              // 🌟 1. Full-Card Edge-to-Edge Texture Painter (100% of entire box covered)
+              Positioned.fill(
+                child: RepaintBoundary(
+                  child: CustomPaint(
+                    painter: DealCardTexturePainter(
+                      accentColor: deal.accentColor,
+                    ),
+                  ),
                 ),
               ),
-            ),
 
-            // Content Column
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Top Tag & Expiry
-                Row(
+              // 🌟 2. Watermark Icon in background
+              Positioned(
+                right: -10,
+                bottom: -10,
+                child: Opacity(
+                  opacity: 0.12,
+                  child: Icon(
+                    deal.icon,
+                    size: 96,
+                    color: deal.accentColor,
+                  ),
+                ),
+              ),
+
+              // 🌟 3. Foreground Content with inner padding
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 13, 16, 13),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
-                      decoration: BoxDecoration(
-                        color: deal.accentColor.withValues(alpha: 0.22),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
+                    // Top Row: Clean Validity Badge (Tag removed per user request)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.35),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: deal.accentColor.withValues(alpha: 0.45),
+                              width: 1,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.access_time_rounded,
+                                size: 11,
+                                color: deal.accentColor,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                deal.expiryText,
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w800,
+                                  color: deal.accentColor,
+                                  letterSpacing: 0.2,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        _DealSparkleStar(
+                          size: 14,
                           color: deal.accentColor.withValues(alpha: 0.5),
-                          width: 1,
                         ),
-                      ),
-                      child: Text(
-                        deal.tag,
-                        style: TextStyle(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w900,
-                          color: deal.accentColor,
-                          letterSpacing: 0.2,
-                        ),
-                      ),
+                      ],
                     ),
 
-                    // Expiry Pill
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
+                    // Title & Subtitle (🌟 Yellow font on dark green cards!)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(
-                          Icons.access_time_rounded,
-                          size: 11,
-                          color: deal.textColor.withValues(alpha: 0.8),
-                        ),
-                        const SizedBox(width: 3),
                         Text(
-                          deal.expiryText,
+                          deal.title,
                           style: TextStyle(
-                            fontSize: 9.5,
-                            fontWeight: FontWeight.w700,
-                            color: deal.textColor.withValues(alpha: 0.8),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w900,
+                            color: deal.textColor,
+                            letterSpacing: -0.3,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          deal.subTitle,
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: deal.textColor.withValues(alpha: 0.88),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+
+                    // Bottom Row: Voucher Code & Claim Button
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Voucher Code Pill (with 1-tap fast copy)
+                        GestureDetector(
+                          onTap: () {
+                            Clipboard.setData(ClipboardData(text: deal.voucherCode));
+                            HapticFeedback.lightImpact();
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Row(
+                                  children: [
+                                    const Icon(Icons.check_circle_rounded, color: Colors.black, size: 16),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'Promo code ${deal.voucherCode} copied!',
+                                      style: const TextStyle(fontWeight: FontWeight.w800, color: Colors.black, fontSize: 12),
+                                    ),
+                                  ],
+                                ),
+                                backgroundColor: const Color(0xFFF3D602),
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                duration: const Duration(milliseconds: 1400),
+                              ),
+                            );
+                          },
+                          behavior: HitTestBehavior.opaque,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.32),
+                              borderRadius: BorderRadius.circular(9),
+                              border: Border.all(
+                                color: deal.accentColor.withValues(alpha: 0.55),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.copy_rounded,
+                                  size: 11,
+                                  color: deal.accentColor,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  deal.voucherCode,
+                                  style: TextStyle(
+                                    fontSize: 10.5,
+                                    fontWeight: FontWeight.w900,
+                                    color: deal.accentColor,
+                                    letterSpacing: 0.6,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        // Claim Button
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: deal.accentColor,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: deal.accentColor.withValues(alpha: 0.35),
+                                blurRadius: 6,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Claim Deal',
+                                style: TextStyle(
+                                  fontSize: 10.5,
+                                  fontWeight: FontWeight.w900,
+                                  color: deal.primaryColor,
+                                ),
+                              ),
+                              const SizedBox(width: 3),
+                              Icon(
+                                Icons.arrow_forward_rounded,
+                                size: 11,
+                                color: deal.primaryColor,
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
                   ],
                 ),
-
-                // Title & Subtitle
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      deal.title,
-                      style: TextStyle(
-                        fontSize: 15.5,
-                        fontWeight: FontWeight.w900,
-                        color: deal.textColor,
-                        letterSpacing: -0.4,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      deal.subTitle,
-                      style: TextStyle(
-                        fontSize: 10.5,
-                        fontWeight: FontWeight.w600,
-                        color: deal.textColor.withValues(alpha: 0.82),
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-
-                // Bottom Row: Voucher Code & Claim Button
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Voucher Code Pill
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4.5),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.25),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: deal.accentColor.withValues(alpha: 0.4),
-                          style: BorderStyle.solid,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.confirmation_number_outlined,
-                            size: 11,
-                            color: deal.accentColor,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            deal.voucherCode,
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w900,
-                              color: deal.accentColor,
-                              letterSpacing: 0.6,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Claim Button
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: deal.accentColor,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: deal.accentColor.withValues(alpha: 0.3),
-                            blurRadius: 6,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'Claim Deal',
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w900,
-                              color: deal.primaryColor,
-                            ),
-                          ),
-                          const SizedBox(width: 3),
-                          Icon(
-                            Icons.arrow_forward_rounded,
-                            size: 11,
-                            color: deal.primaryColor,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -763,4 +816,119 @@ class _DealsSlideshowWidgetState extends State<DealsSlideshowWidget> {
       },
     );
   }
+}
+
+/// 🌟 Luxury Background Texture Painter for Deals Card (Herringbone Weave + Micro-dots + Specular Glow)
+class DealCardTexturePainter extends CustomPainter {
+  final Color accentColor;
+
+  const DealCardTexturePainter({required this.accentColor});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // 🌟 1. Full-bleed diagonal geometric micro-chevron weave covering 100% of the canvas
+    final linePaint = Paint()
+      ..color = accentColor.withValues(alpha: 0.08)
+      ..strokeWidth = 1.0
+      ..style = PaintingStyle.stroke;
+
+    const spacing = 13.0;
+    final maxDist = size.width + size.height * 2;
+    for (double x = -size.height * 2; x < maxDist; x += spacing) {
+      final path = Path();
+      for (double y = 0; y <= size.height + 16; y += 14) {
+        path.moveTo(x + y, y);
+        path.lineTo(x + y + 7, y + 7);
+        path.lineTo(x + y, y + 14);
+      }
+      canvas.drawPath(path, linePaint);
+    }
+
+    // 🌟 2. Full-bleed micro-dot matrix grid covering 100% edge-to-edge
+    final dotPaint = Paint()
+      ..color = accentColor.withValues(alpha: 0.09)
+      ..style = PaintingStyle.fill;
+
+    for (double dx = 6; dx <= size.width; dx += 20) {
+      for (double dy = 6; dy <= size.height; dy += 18) {
+        canvas.drawCircle(Offset(dx, dy), 1.0, dotPaint);
+      }
+    }
+
+    // 🌟 3. Ambient specular glow orbs (Top-Right and Bottom-Left)
+    final glowPaint1 = Paint()
+      ..shader = RadialGradient(
+        colors: [
+          accentColor.withValues(alpha: 0.18),
+          accentColor.withValues(alpha: 0.0),
+        ],
+      ).createShader(Rect.fromCircle(
+        center: Offset(size.width * 0.85, 20),
+        radius: 90,
+      ));
+    canvas.drawCircle(Offset(size.width * 0.85, 20), 90, glowPaint1);
+
+    final glowPaint2 = Paint()
+      ..shader = RadialGradient(
+        colors: [
+          accentColor.withValues(alpha: 0.10),
+          accentColor.withValues(alpha: 0.0),
+        ],
+      ).createShader(Rect.fromCircle(
+        center: Offset(20, size.height * 0.85),
+        radius: 70,
+      ));
+    canvas.drawCircle(Offset(20, size.height * 0.85), 70, glowPaint2);
+  }
+
+  @override
+  bool shouldRepaint(covariant DealCardTexturePainter oldDelegate) =>
+      oldDelegate.accentColor != accentColor;
+}
+
+/// 🌟 4-pointed Sparkle Star for Deals Cards
+class _DealSparkleStar extends StatelessWidget {
+  final double size;
+  final Color color;
+
+  const _DealSparkleStar({required this.size, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      size: Size(size, size),
+      painter: _DealSparklePainter(color: color),
+    );
+  }
+}
+
+class _DealSparklePainter extends CustomPainter {
+  final Color color;
+
+  _DealSparklePainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+
+    final center = Offset(size.width / 2, size.height / 2);
+    final w = size.width / 2;
+    final h = size.height / 2;
+    const curvature = 0.22;
+
+    final path = Path()
+      ..moveTo(center.dx, center.dy - h)
+      ..quadraticBezierTo(center.dx + (w * curvature), center.dy - (h * curvature), center.dx + w, center.dy)
+      ..quadraticBezierTo(center.dx + (w * curvature), center.dy + (h * curvature), center.dx, center.dy + h)
+      ..quadraticBezierTo(center.dx - (w * curvature), center.dy + (h * curvature), center.dx - w, center.dy)
+      ..quadraticBezierTo(center.dx - (w * curvature), center.dy - (h * curvature), center.dx, center.dy - h)
+      ..close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _DealSparklePainter oldDelegate) => oldDelegate.color != color;
 }
