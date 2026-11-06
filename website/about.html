@@ -15,6 +15,42 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
 
+  <!-- Hide Netlify Badge & HUD -->
+  <style>
+    #nl-badge-frame, #nl-hud-frame, iframe[title="Powered by Netlify"], iframe[title="Netlify"], .nl-badge, .nl-wrap {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+      height: 0 !important;
+      width: 0 !important;
+      position: absolute !important;
+      left: -9999px !important;
+      bottom: -9999px !important;
+    }
+  </style>
+  <script>
+    (function() {
+      const observer = new MutationObserver(function(mutations) {
+        for (let i = 0; i < mutations.length; i++) {
+          const added = mutations[i].addedNodes;
+          for (let j = 0; j < added.length; j++) {
+            const node = added[j];
+            if (node.nodeType === 1) {
+              if (node.tagName === 'IFRAME' && (node.id === 'nl-badge-frame' || node.id === 'nl-hud-frame' || node.title === 'Powered by Netlify' || node.title === 'Netlify')) {
+                node.remove();
+              }
+              if (node.tagName === 'SCRIPT' && node.dataset && node.dataset.nfVariant) {
+                delete node.dataset.nfVariant;
+              }
+            }
+          }
+        }
+      });
+      observer.observe(document.documentElement, { childList: true, subtree: true });
+    })();
+  </script>
+
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
@@ -31,46 +67,175 @@
       --font-display: 'Space Grotesk', sans-serif;
       --font-sans: 'Plus Jakarta Sans', sans-serif;
     }
+
+    /* Mobile Menu Hamburger Animation */
+    .line-top, .line-mid, .line-bot {
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      transform-origin: center;
+    }
+    .menu-open .line-top {
+      transform: translateY(6px) rotate(45deg);
+    }
+    .menu-open .line-mid {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+    .menu-open .line-bot {
+      transform: translateY(-6px) rotate(-45deg);
+    }
   </style>
 </head>
 <body class="selection:bg-batwa-gold selection:text-batwa-navy bg-batwa-canvas text-batwa-text-primary antialiased min-h-screen flex flex-col justify-between">
 
-  <!-- ================= FLOATING OVAL NAVBAR ================= -->
-  <header class="sticky top-3.5 sm:top-5 z-50 w-full px-3 sm:px-6 pointer-events-none transition-all duration-300">
-    <div class="max-w-5xl mx-auto flex justify-center">
+  <!-- ================= FLOATING OVAL NAVBAR WITH RESPONSIVE MOBILE MENU ================= -->
+  <header class="sticky top-3 sm:top-5 z-50 w-full px-3 sm:px-6 pointer-events-none transition-all duration-300">
+    <div class="max-w-5xl mx-auto flex flex-col items-center w-full">
       
       <!-- Oval Pill Navbar Chassis -->
       <div class="pointer-events-auto w-full bg-white/95 backdrop-blur-xl border border-gray-200/90 shadow-lg shadow-black/[0.04] rounded-full px-3.5 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between gap-3 sm:gap-6 transition-all">
         
         <!-- Left: Pure Brand Logo + Wordmark + BANK -->
-        <a href="index.html#overview" class="flex items-center gap-2.5 shrink-0 select-none group">
-          <img src="assets/batwa_b_transparent.png" alt="BATWA Logo" class="h-8 w-auto object-contain shrink-0 group-hover:scale-105 transition transform" />
+        <a href="index.html#overview" class="flex items-center gap-2 sm:gap-2.5 shrink-0 select-none group">
+          <img src="assets/batwa_b_transparent.png" alt="BATWA Logo" class="h-7 sm:h-8 w-auto object-contain shrink-0 group-hover:scale-105 transition transform" />
           <div class="flex items-center gap-1.5 sm:gap-2">
-            <span class="text-[19px] sm:text-[20px] font-black tracking-[-0.03em] text-[#0F172A] font-display">BATWA</span>
+            <span class="text-[18px] sm:text-[20px] font-black tracking-[-0.03em] text-[#0F172A] font-display">BATWA</span>
             <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-white bg-[#0F172A] px-2 sm:px-2.5 py-0.5 rounded-full font-mono shadow-2xs">BANK</span>
           </div>
         </a>
 
-        <!-- Center: Direct Navigation Links -->
-        <nav class="flex items-center gap-0.5 sm:gap-1 text-[12px] sm:text-[13px] font-semibold text-gray-600 overflow-x-auto no-scrollbar py-0.5">
-          <a href="index.html#overview" class="px-2.5 sm:px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">Overview</a>
-          <a href="index.html#features" class="px-2.5 sm:px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">Features</a>
-          <a href="index.html#nfc-card" class="px-2.5 sm:px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">NFC Card</a>
-          <a href="index.html#update-engine" class="px-2.5 sm:px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">Updates</a>
-          <a href="about.html" class="px-2.5 sm:px-3 py-1.5 rounded-full bg-batwa-navy text-white font-bold transition-colors whitespace-nowrap">About Us</a>
-          <a href="index.html#security" class="px-2.5 sm:px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">Security</a>
+        <!-- Center: Desktop Direct Navigation Links (Hidden on Mobile) -->
+        <nav class="hidden md:flex items-center gap-1 text-[13px] font-semibold text-gray-600">
+          <a href="index.html#overview" class="px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">Overview</a>
+          <a href="index.html#features" class="px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">Features</a>
+          <a href="index.html#nfc-card" class="px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">NFC Card</a>
+          <a href="index.html#update-engine" class="px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">Updates</a>
+          <a href="about.html" class="px-3 py-1.5 rounded-full bg-batwa-navy text-white font-bold transition-colors whitespace-nowrap">About Us</a>
+          <a href="index.html#security" class="px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">Security</a>
         </nav>
 
-        <!-- Right: Action Controls (Download APK) -->
-        <div class="flex items-center gap-2 shrink-0">
-          <a href="index.html#download" class="bg-[#0F172A] hover:bg-black text-white font-extrabold text-[12px] sm:text-[13px] px-4 sm:px-5 py-2 rounded-full flex items-center gap-1.5 sm:gap-2 shadow-sm transition active:scale-95 group shrink-0">
+        <!-- Right: Desktop Download APK Button (Hidden on Mobile) -->
+        <div class="hidden md:flex items-center gap-2 shrink-0">
+          <a href="index.html#download" class="bg-[#0F172A] hover:bg-black text-white font-extrabold text-[13px] px-5 py-2 rounded-full flex items-center gap-2 shadow-sm transition active:scale-95 group shrink-0">
             <svg class="w-3.5 h-3.5 text-batwa-gold group-hover:translate-y-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-            <span class="hidden sm:inline">Download APK</span>
-            <span class="sm:hidden">APK</span>
+            <span>Download APK</span>
           </a>
         </div>
 
+        <!-- Mobile Menu Toggle Button (Visible ONLY on Mobile < md) -->
+        <button id="mobile-menu-btn" type="button" aria-expanded="false" aria-controls="mobile-dropdown-menu" aria-label="Toggle navigation menu" class="md:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-800 text-xs font-bold transition select-none shrink-0 border border-gray-200/80">
+          <span class="text-[11px] font-mono tracking-wider uppercase text-gray-700" id="mobile-menu-text">Menu</span>
+          <div class="w-4 h-4 flex flex-col justify-center items-center gap-1 relative" id="mobile-hamburger-icon">
+            <span class="w-3.5 h-[2px] bg-gray-800 rounded-full line-top"></span>
+            <span class="w-3.5 h-[2px] bg-gray-800 rounded-full line-mid"></span>
+            <span class="w-3.5 h-[2px] bg-gray-800 rounded-full line-bot"></span>
+          </div>
+        </button>
+
       </div>
+
+      <!-- Mobile Dropdown Menu Container (Smooth slide down on mobile) -->
+      <div id="mobile-dropdown-menu" class="pointer-events-auto w-full hidden md:hidden mt-2 transition-all duration-300 ease-out origin-top">
+        <div class="bg-white/98 backdrop-blur-2xl border border-gray-200/90 shadow-2xl rounded-3xl p-3.5 sm:p-4 space-y-1.5 max-h-[80vh] overflow-y-auto">
+          
+          <!-- Section Title / Status -->
+          <div class="px-3 py-1 flex items-center justify-between text-[10px] font-mono text-gray-400 uppercase tracking-wider border-b border-gray-100 pb-2">
+            <span>Navigation Menu</span>
+            <span class="text-emerald-600 font-bold flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>Online</span>
+            </span>
+          </div>
+
+          <!-- Navigation Links List -->
+          <div class="grid grid-cols-1 gap-1 text-[13px] font-semibold text-gray-700 pt-1">
+            
+            <a href="index.html#overview" class="mobile-nav-link flex items-center justify-between px-3.5 py-2.5 rounded-2xl hover:bg-gray-100 hover:text-black transition">
+              <div class="flex items-center gap-3">
+                <span class="text-base">🏛️</span>
+                <div>
+                  <div class="font-bold text-gray-900 leading-tight">Overview</div>
+                  <div class="text-[10px] text-gray-500 font-normal">Sovereign digital banking &amp; Raast 2.0</div>
+                </div>
+              </div>
+              <svg class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </a>
+
+            <a href="index.html#features" class="mobile-nav-link flex items-center justify-between px-3.5 py-2.5 rounded-2xl hover:bg-gray-100 hover:text-black transition">
+              <div class="flex items-center gap-3">
+                <span class="text-base">⚡</span>
+                <div>
+                  <div class="font-bold text-gray-900 leading-tight">Features</div>
+                  <div class="text-[10px] text-gray-500 font-normal">Sub-50ms transfers &amp; bill split</div>
+                </div>
+              </div>
+              <svg class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </a>
+
+            <a href="index.html#nfc-card" class="mobile-nav-link flex items-center justify-between px-3.5 py-2.5 rounded-2xl hover:bg-gray-100 hover:text-black transition">
+              <div class="flex items-center gap-3">
+                <span class="text-base">💳</span>
+                <div>
+                  <div class="font-bold text-gray-900 leading-tight">3D NFC Card</div>
+                  <div class="text-[10px] text-gray-500 font-normal">Simulated titanium contactless card</div>
+                </div>
+              </div>
+              <svg class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </a>
+
+            <a href="index.html#update-engine" class="mobile-nav-link flex items-center justify-between px-3.5 py-2.5 rounded-2xl hover:bg-gray-100 hover:text-black transition">
+              <div class="flex items-center gap-3">
+                <span class="text-base">🔄</span>
+                <div>
+                  <div class="font-bold text-gray-900 leading-tight">Live Updates</div>
+                  <div class="text-[10px] text-gray-400 font-normal">In-app OTA manifest &amp; release engine</div>
+                </div>
+              </div>
+              <svg class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </a>
+
+            <a href="about.html" class="mobile-nav-link flex items-center justify-between px-3.5 py-2.5 rounded-2xl bg-gray-100 text-batwa-navy font-bold transition">
+              <div class="flex items-center gap-3">
+                <span class="text-base">🎓</span>
+                <div>
+                  <div class="font-bold text-gray-900 leading-tight">About Us &amp; Mentors</div>
+                  <div class="text-[10px] text-gray-500 font-normal">OOP project, Faculty &amp; 3 Founders</div>
+                </div>
+              </div>
+              <span class="text-[10px] font-mono font-bold uppercase text-batwa-navy bg-white px-2 py-0.5 rounded-md border border-gray-200">Current</span>
+            </a>
+
+            <a href="index.html#security" class="mobile-nav-link flex items-center justify-between px-3.5 py-2.5 rounded-2xl hover:bg-gray-100 hover:text-black transition">
+              <div class="flex items-center gap-3">
+                <span class="text-base">🛡️</span>
+                <div>
+                  <div class="font-bold text-gray-900 leading-tight">Security &amp; Encryption</div>
+                  <div class="text-[10px] text-gray-400 font-normal">Argon2 MPIN &amp; Biometric Enclave</div>
+                </div>
+              </div>
+              <svg class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </a>
+
+          </div>
+
+          <!-- Action Divider & Full-Width Download APK Button for Mobile -->
+          <div class="border-t border-gray-100 pt-2.5">
+            <a href="index.html#download" class="mobile-nav-link w-full bg-[#0F172A] hover:bg-black text-white font-extrabold text-sm py-3 px-4 rounded-2xl flex items-center justify-between shadow-sm active:scale-98 transition">
+              <div class="flex items-center gap-2.5">
+                <div class="w-7 h-7 rounded-xl bg-white/10 flex items-center justify-center text-batwa-gold">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                </div>
+                <div class="text-left">
+                  <div class="leading-tight text-white font-bold">Download APK (74.4 MB)</div>
+                  <div class="text-[10px] text-gray-400 font-normal">Direct Android Build • SBP Aligned</div>
+                </div>
+              </div>
+              <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-batwa-gold bg-batwa-gold/15 px-2 py-0.5 rounded-full border border-batwa-gold/30">v2.2.0</span>
+            </a>
+          </div>
+
+        </div>
+      </div>
+
     </div>
   </header>
 
@@ -292,5 +457,70 @@
     </div>
   </footer>
 
+  <!-- ================= JAVASCRIPT ================= -->
+  <script>
+    // Responsive Mobile Dropdown Menu Logic
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileDropdownMenu = document.getElementById('mobile-dropdown-menu');
+    const mobileMenuText = document.getElementById('mobile-menu-text');
+    let isMobileMenuOpen = false;
+
+    function toggleMobileMenu(forceState) {
+      if (typeof forceState === 'boolean') {
+        isMobileMenuOpen = forceState;
+      } else {
+        isMobileMenuOpen = !isMobileMenuOpen;
+      }
+
+      if (mobileDropdownMenu && mobileMenuBtn) {
+        if (isMobileMenuOpen) {
+          mobileDropdownMenu.classList.remove('hidden');
+          mobileMenuBtn.setAttribute('aria-expanded', 'true');
+          mobileMenuBtn.classList.add('menu-open', 'bg-gray-200');
+          if (mobileMenuText) mobileMenuText.textContent = 'Close';
+        } else {
+          mobileDropdownMenu.classList.add('hidden');
+          mobileMenuBtn.setAttribute('aria-expanded', 'false');
+          mobileMenuBtn.classList.remove('menu-open', 'bg-gray-200');
+          if (mobileMenuText) mobileMenuText.textContent = 'Menu';
+        }
+      }
+    }
+
+    if (mobileMenuBtn) {
+      mobileMenuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleMobileMenu();
+      });
+    }
+
+    // Close when tapping any link inside mobile menu
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        toggleMobileMenu(false);
+      });
+    });
+
+    // Close on click outside
+    document.addEventListener('click', (e) => {
+      if (isMobileMenuOpen && mobileDropdownMenu && !mobileDropdownMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+        toggleMobileMenu(false);
+      }
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isMobileMenuOpen) {
+        toggleMobileMenu(false);
+      }
+    });
+
+    // Close when screen resized to desktop
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 768 && isMobileMenuOpen) {
+        toggleMobileMenu(false);
+      }
+    });
+  </script>
 </body>
 </html>
