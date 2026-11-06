@@ -1,5 +1,12 @@
 # BATWA - Production-Ready Digital E-Wallet
 
+[![Website](https://img.shields.io/badge/Official%20Website-buttwaa.online-F3D602?style=flat&logo=googlechrome&logoColor=black)](https://buttwaa.online)
+[![Download APK](https://img.shields.io/badge/Android%20APK-v2.2.0%20(74.4MB)-0F172A?style=flat&logo=android&logoColor=white)](https://buttwaa.online/batwa-wallet.apk)
+[![Security Architecture](https://img.shields.io/badge/Security-Argon2id%20Enclave-00D2D3?style=flat)](https://buttwaa.online/security)
+[![About Founders](https://img.shields.io/badge/Founders-M.%20Ali%20%7C%20M.%20Razi%20%7C%20Deepak-black?style=flat)](https://buttwaa.online/about)
+
+**Official Portal:** [https://buttwaa.online](https://buttwaa.online) | **Security Mesh:** [https://buttwaa.online/security](https://buttwaa.online/security) | **Release Package:** [Download APK v2.2.0](https://buttwaa.online/batwa-wallet.apk)
+
 BATWA is a secure, full-stack, cross-platform digital wallet solution engineered with strict financial invariants, zero-trust security, and Clean Architecture.
 
 ---

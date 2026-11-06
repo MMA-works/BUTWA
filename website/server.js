@@ -38,6 +38,10 @@ const server = http.createServer((req, res) => {
     reqPath = '/about.html';
   } else if (reqPath === '/security') {
     reqPath = '/security.html';
+  } else if (reqPath === '/privacy') {
+    reqPath = '/privacy.html';
+  } else if (reqPath === '/terms') {
+    reqPath = '/terms.html';
   }
 
   const filePath = path.join(PUBLIC_DIR, reqPath);
