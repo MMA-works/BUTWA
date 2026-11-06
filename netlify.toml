@@ -2,6 +2,16 @@
   publish = "website"
 
 [[redirects]]
+  from = "/about"
+  to = "/about.html"
+  status = 200
+
+[[redirects]]
+  from = "/security"
+  to = "/security.html"
+  status = 200
+
+[[redirects]]
   from = "/batwa-wallet.apk"
   to = "https://github.com/MMA-works/BUTWA/releases/download/v2.2.0/batwa-wallet.apk"
   status = 302

@@ -34,6 +34,10 @@ const server = http.createServer((req, res) => {
   let reqPath = decodeURI(req.url.split('?')[0]);
   if (reqPath === '/' || reqPath === '') {
     reqPath = '/index.html';
+  } else if (reqPath === '/about') {
+    reqPath = '/about.html';
+  } else if (reqPath === '/security') {
+    reqPath = '/security.html';
   }
 
   const filePath = path.join(PUBLIC_DIR, reqPath);

@@ -317,7 +317,7 @@
           <a href="#nfc-card" class="px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">NFC Card</a>
           <a href="#update-engine" class="px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">Updates</a>
           <a href="#about" class="px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">About Us</a>
-          <a href="#security" class="px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">Agentic Security</a>
+          <a href="security.html" class="px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">Agentic Security</a>
         </nav>
 
         <!-- Right: Desktop Download APK Button (Hidden on Mobile) -->
@@ -411,7 +411,7 @@
               <svg class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
             </a>
 
-            <a href="#security" class="mobile-nav-link flex items-center justify-between px-3.5 py-2.5 rounded-2xl hover:bg-gray-100 hover:text-black transition">
+            <a href="security.html" class="mobile-nav-link flex items-center justify-between px-3.5 py-2.5 rounded-2xl hover:bg-gray-100 hover:text-black transition">
               <div class="flex items-center gap-3">
                 <svg class="w-4 h-4 text-batwa-gold-dark shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 <div>
@@ -1430,8 +1430,8 @@
     </div>
   </section>
 
-  <!-- ================= AGENTIC SECURITY & DEFENSE LAYER ================= -->
-  <section id="security" class="py-20 px-4 sm:px-8 bg-white border-b border-batwa-border relative overflow-hidden">
+  <!-- ================= AGENTIC SECURITY & DEFENSE LAYER (HIDDEN BY DEFAULT ON HOMEPAGE, INDEXED FOR SEARCH ENGINES) ================= -->
+  <section id="security" class="hidden py-20 px-4 sm:px-8 bg-white border-b border-batwa-border relative overflow-hidden">
     <!-- Subtle Ambient Gold Glow in Background -->
     <div class="pointer-events-none absolute -top-40 right-1/4 w-96 h-96 bg-batwa-gold/10 rounded-full blur-3xl"></div>
     <div class="pointer-events-none absolute -bottom-40 left-10 w-96 h-96 bg-amber-400/5 rounded-full blur-3xl"></div>
@@ -1630,7 +1630,7 @@
         <ul class="space-y-1.5">
           <li><a href="version.json" target="_blank" class="hover:text-batwa-navy transition">version.json</a></li>
           <li><a href="#update-engine" class="hover:text-batwa-navy transition">Auto-Update System</a></li>
-          <li><a href="#security" class="hover:text-batwa-navy transition">Argon2id Enclave</a></li>
+          <li><a href="security.html" class="hover:text-batwa-navy transition">Argon2id Enclave</a></li>
           <li><a href="DEPLOYMENT_GUIDE.md" target="_blank" class="hover:text-batwa-navy transition">Deploy Guide</a></li>
         </ul>
       </div>
@@ -2013,6 +2013,22 @@
         }
       });
     }
+
+    // 7. Security Section Dynamic Reveal (Hidden by default on homepage, shown if directly navigated or searched)
+    function showSecuritySection() {
+      const sec = document.getElementById('security');
+      if (sec) {
+        sec.classList.remove('hidden');
+        sec.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+    function checkSecurityHash() {
+      if (window.location.hash === '#security' || window.location.search.includes('security')) {
+        showSecuritySection();
+      }
+    }
+    window.addEventListener('hashchange', checkSecurityHash);
+    window.addEventListener('DOMContentLoaded', checkSecurityHash);
   </script>
 </body>
 </html>
