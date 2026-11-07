@@ -1,20 +1,22 @@
 {
-    "version": "2.4.7",
-    "versionCode": 247,
+    "version": "2.4.8",
+    "versionCode": 248,
     "minSupportedVersion": "1.0.0",
     "releaseDate": "2026-11-07",
     "apkName": "batwa-wallet.apk",
-    "apkSize": "80.4 MB",
-    "sha256": "0a9a54e568829136aca4e0924bb6569d2fceab6e8c02ebbd1419d1b17939314a",
+    "apkSize": "80.3 MB",
+    "sha256": "3a215106fe85082e8d0ab092a47694ac177efbc042fd604296b8b951566839e5",
     "downloadUrl": "https://buttwaa.online/batwa-wallet.apk",
     "forceUpdate": false,
-    "title": "BATWA v2.4.7 Direct Card View & Cleaned Services",
-    "message": "Naya update live ho chuka hai! Card option par click karte hi direct Card Screen khulti hai jis mein sirf card ki cheezein (Card Number, Expiry, CVV, Freeze Card, Online toggle) mojood hain.",
+    "title": "BATWA v2.4.8 Restored Authentic Vertical Mastercard Black Edition",
+    "message": "Naya update live ho chuka hai! Aapka kal wala authentic vertical card (BATWA BLACK EDITION, Golden Chip + NFC Wave, Mastercard interlocking circles, 4 Quick Actions, Monthly Card Limit Rs 150,000 progress bar, aur Card Security settings) mukammal tor par bahal kar diya gaya hai.",
     "features": [
-        "Direct Card Navigation: Tapping Cards immediately opens Virtual Card screen without 4-5 dummy service blocks",
-        "Purged dummy card services ('Virtual Visa', 'Order Physical', 'Card Limits', 'Card Security')",
-        "Streamlined Card screen: Only authentic card controls (Hide/Show CVV, Copy Number, Add Card, Freeze Card, Online toggle)",
-        "True zero-meter fresh account support with Rs 0.00 initial state",
-        "New modern Batwa Booting screen with Sign In & Register buttons"
+        "Restored 1:1 authentic Vertical Card (Portrait aspect ratio, Golden EMV Chip, NFC contactless wave, Mastercard Red/Orange circles)",
+        "Batwa Gold badge & BATWA BLACK EDITION typography",
+        "Centered card number container with 1-tap copy icon: 5312 â€¢â€¢â€¢â€¢ â€¢â€¢â€¢â€¢ 8821",
+        "4 Quick Actions row: Freeze Card, Show/Hide CVV, Copy No., Issue Card",
+        "Monthly Card Limit card: Rs 150,000 limit, gold progress bar, Spent Rs 42,000 (28%), Available Rs 108,000",
+        "Card Security & Settings: Online Payments, International Usage, Contactless NFC toggles",
+        "Persistent Floating Pill Nav Bar with active Cards gold pill"
     ]
 }
