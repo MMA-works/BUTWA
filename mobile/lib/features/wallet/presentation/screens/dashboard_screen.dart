@@ -15,7 +15,7 @@ import 'package:batwa_wallet/features/wallet/presentation/widgets/quick_actions_
 import 'package:batwa_wallet/features/wallet/presentation/widgets/deals_slideshow_widget.dart';
 import 'package:batwa_wallet/core/utils/user_avatar_helper.dart';
 import 'package:batwa_wallet/features/wallet/presentation/widgets/floating_pill_nav_bar.dart';
-import 'package:batwa_wallet/features/wallet/presentation/widgets/recent_transactions_widget.dart';
+import 'package:batwa_wallet/features/wallet/presentation/widgets/dashboard_services_widget.dart';
 import 'package:batwa_wallet/features/cards/presentation/screens/cards_screen.dart';
 import 'package:batwa_wallet/features/bills/presentation/screens/bills_hub_screen.dart';
 import 'package:batwa_wallet/features/vaults/presentation/screens/vaults_screen.dart';
@@ -562,71 +562,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                           const SizedBox(height: 16),
 
-                          // 🌟 Recent Activity White Card Container
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: isDark ? AppColors.darkSurface : AppColors.lightSurface,
-                                borderRadius: BorderRadius.circular(24),
-                                border: Border.all(
-                                  color: isDark ? AppColors.darkCardBorder : AppColors.lightCardBorder,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.02),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Recent Activity',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w800,
-                                          color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
-                                        ),
-                                      ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(builder: (_) => const AnalyticsDashboardScreen()),
-                                          );
-                                        },
-                                        child: const Row(
-                                          children: [
-                                            Text(
-                                              'See all',
-                                              style: TextStyle(
-                                                fontSize: 11.5,
-                                                fontWeight: FontWeight.w700,
-                                                color: AppColors.primaryMustard,
-                                              ),
-                                            ),
-                                            SizedBox(width: 2),
-                                            Icon(Icons.chevron_right_rounded, size: 14, color: AppColors.primaryMustard),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 12),
-                                  RecentTransactionsWidget(
-                                    transactions: state.transactions,
-                                    currentWalletTag: state.wallet.walletTag,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                          // ?? Services Hub Widget (Batwa Theme)
+                          DashboardServicesWidget(userBalance: state.wallet.balance),
                           const SizedBox(height: 110),
                         ],
                       ),
