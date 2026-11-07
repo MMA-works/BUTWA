@@ -1,0 +1,30 @@
+{
+  "name": "BATWA Digital Banking & Mobile Wallet",
+  "short_name": "BATWA",
+  "description": "Next-generation digital banking and mobile wallet ecosystem engineered for Pakistan.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#FFFFFF",
+  "theme_color": "#F3D602",
+  "icons": [
+    {
+      "src": "assets/batwa_b_square_gold.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/batwa_b_square_gold.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/batwa_b_transparent.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

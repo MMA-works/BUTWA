@@ -42,6 +42,10 @@ const server = http.createServer((req, res) => {
     reqPath = '/privacy.html';
   } else if (reqPath === '/terms') {
     reqPath = '/terms.html';
+  } else if (reqPath === '/raast-guide') {
+    reqPath = '/raast-guide.html';
+  } else if (reqPath === '/nfc-guide') {
+    reqPath = '/nfc-guide.html';
   }
 
   const filePath = path.join(PUBLIC_DIR, reqPath);

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>State Bank Raast Guide – Sub-50ms Settlement &amp; P2P Transfers | BATWA</title>
+  <meta name="description" content="Comprehensive guide to Pakistan's State Bank Raast payment system: instant finality, zero fees, Raast ID registration, and BATWA's sub-50ms switch integration." />
+  <meta name="keywords" content="Raast Pakistan, State Bank Raast guide, Raast instant payments, SBP Raast switch, Raast limits Pakistan, BATWA Raast transfer, P2P digital payments Pakistan" />
+  <link rel="canonical" href="https://buttwaa.online/raast-guide" />
+  <link rel="manifest" href="/site.webmanifest" />
+
+  <!-- Regional Geo-Targeting -->
+  <meta name="geo.region" content="PK" />
+  <meta name="geo.placename" content="Pakistan" />
+  <meta property="og:locale" content="en_PK" />
+  <link rel="alternate" hreflang="en-PK" href="https://buttwaa.online/raast-guide" />
+  <link rel="alternate" hreflang="x-default" href="https://buttwaa.online/raast-guide" />
+
+  <!-- OpenGraph / Social Metadata -->
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://buttwaa.online/raast-guide" />
+  <meta property="og:title" content="State Bank Raast Guide – Sub-50ms Settlement &amp; P2P Transfers | BATWA" />
+  <meta property="og:description" content="Everything you need to know about Pakistan's instant Raast payment switch, real-time clearing, and sub-50ms transfer speeds." />
+  <meta property="og:image" content="https://buttwaa.online/assets/batwa_b_square_gold.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="State Bank Raast Guide – Sub-50ms Settlement &amp; P2P Transfers | BATWA" />
+  <meta name="twitter:description" content="Everything you need to know about Pakistan's instant Raast payment switch and sub-50ms transfer speeds." />
+
+  <!-- Structured Data: Article & FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Article",
+        "headline": "Understanding State Bank of Pakistan's Raast Instant Payment System",
+        "url": "https://buttwaa.online/raast-guide",
+        "datePublished": "2026-11-07",
+        "dateModified": "2026-11-07",
+        "author": {
+          "@type": "Organization",
+          "name": "BATWA Research Group"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "BATWA",
+          "logo": "https://buttwaa.online/assets/batwa_b_transparent.png"
+        },
+        "description": "An in-depth technical and consumer guide to the State Bank of Pakistan's Raast instant clearing rails and BATWA's low-latency implementation."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is Raast in Pakistan?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Raast is Pakistan's first instant payment system developed by the State Bank of Pakistan (SBP) to offer real-time, zero-fee inter-bank funds transfers using mobile numbers as payment handles."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Are there transaction charges for sending money via Raast?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Under State Bank of Pakistan regulations, person-to-person (P2P) transfers executed across Raast are completely free of charge (PKR 0 fee)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does BATWA achieve sub-50ms Raast transfers?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "BATWA utilizes direct ISO 20022 message serialization with pre-warmed cryptographic TLS sockets directly to SBP gateway endpoints, eliminating typical middleware hops."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/batwa_b_transparent.png" />
+  <link rel="apple-touch-icon" href="assets/batwa_b_square_gold.png" />
+
+  <!-- Google Fonts: Plus Jakarta Sans & Space Grotesk -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+  <style type="text/tailwindcss">
+    @theme {
+      --color-batwa-navy: #0F172A;
+      --color-batwa-gold: #F3D602;
+      --color-batwa-gold-dark: #D4B800;
+      --color-batwa-canvas: #FAFAFA;
+      --color-batwa-surface: #FFFFFF;
+      --color-batwa-border: #E5E7EB;
+      --color-batwa-text-primary: #0F172A;
+      --color-batwa-text-muted: #64748B;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-sans: 'Plus Jakarta Sans', sans-serif;
+    }
+  </style>
+</head>
+<body class="selection:bg-batwa-gold selection:text-batwa-navy bg-batwa-canvas text-batwa-text-primary antialiased min-h-screen flex flex-col justify-between">
+
+  <!-- Floating Oval Navbar -->
+  <header class="sticky top-3 sm:top-5 z-50 w-full px-3 sm:px-6 pointer-events-none transition-all duration-300">
+    <div class="max-w-5xl mx-auto flex flex-col items-center w-full">
+      <div class="pointer-events-auto w-full bg-white/95 backdrop-blur-xl border border-gray-200/90 shadow-lg shadow-black/[0.04] rounded-full px-3.5 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between gap-3 sm:gap-6 transition-all">
+        
+        <a href="/" class="flex items-center gap-2 sm:gap-2.5 shrink-0 select-none group">
+          <img src="assets/batwa_b_transparent.png" alt="BATWA Logo" class="h-7 sm:h-8 w-auto object-contain shrink-0 group-hover:scale-105 transition transform" />
+          <div class="flex items-center gap-1.5 sm:gap-2">
+            <span class="text-[18px] sm:text-[20px] font-black tracking-[-0.03em] text-[#0F172A] font-display">BATWA</span>
+            <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-white bg-[#0F172A] px-2 sm:px-2.5 py-0.5 rounded-full font-mono shadow-2xs">BANK</span>
+          </div>
+        </a>
+
+        <nav class="hidden md:flex items-center gap-1 text-[13px] font-semibold text-gray-600">
+          <a href="/" class="px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">Home</a>
+          <a href="/about" class="px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">Founders</a>
+          <a href="/security" class="px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">Security</a>
+          <a href="/nfc-guide" class="px-3 py-1.5 rounded-full hover:text-gray-950 hover:bg-gray-100 transition-colors whitespace-nowrap">NFC Guide</a>
+        </nav>
+
+        <a href="/batwa-wallet.apk" class="inline-flex items-center justify-center gap-1.5 bg-batwa-gold hover:bg-batwa-gold-dark text-batwa-navy font-bold text-[12px] sm:text-[13px] px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full transition shadow-xs">
+          <span>Get APK</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-16 w-full flex-grow">
+    
+    <div class="border-b border-gray-200 pb-8 mb-10 text-left">
+      <div class="text-xs font-mono text-gray-500 uppercase tracking-widest mb-2">Technical Knowledge Base</div>
+      <h1 class="text-3xl sm:text-4xl font-black text-gray-950 tracking-tight font-display mb-3">State Bank of Pakistan Raast Payment Guide</h1>
+      <p class="text-sm text-gray-600 max-w-2xl leading-relaxed">
+        Everything you need to know about Pakistan's sovereign digital payment rails, zero-fee P2P finality, and BATWA's sub-50ms settlement engine.
+      </p>
+    </div>
+
+    <div class="space-y-10 text-gray-700 text-sm sm:text-base leading-relaxed">
+      
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold text-gray-950 font-display">1. What is Raast?</h2>
+        <p>
+          Raast is Pakistan’s instant payment infrastructure developed by the State Bank of Pakistan (SBP) under the National Financial Inclusion Strategy. Unlike legacy 1Link IBFT switches that rely on multi-stage batch clearing, Raast operates on real-time gross settlement (RTGS) principles, enabling transactions to clear within milliseconds.
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold text-gray-950 font-display">2. Key Features of the Raast Network</h2>
+        <ul class="list-disc pl-5 space-y-2 text-gray-600">
+          <li><strong>Instant Settlement:</strong> Transfers complete in under 500 milliseconds across commercial banks, microfinance banks, and EMIs.</li>
+          <li><strong>Zero Transaction Fees:</strong> Under SBP mandates, P2P transfers across Raast have zero transfer fees (PKR 0.00).</li>
+          <li><strong>Raast ID Alias:</strong> Users can link their registered Pakistani mobile phone number or CNIC as a human-friendly handle, removing the need to remember 24-character IBANs.</li>
+          <li><strong>ISO 20022 Financial Messaging:</strong> Fully compliant with global ISO 20022 messaging standards, ensuring seamless interoperability and fraud metadata detection.</li>
+        </ul>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold text-gray-950 font-display">3. How BATWA Integrates with Raast</h2>
+        <p>
+          BATWA introduces a next-generation client-to-switch architecture. While standard banking apps experience 2 to 4 second spinning loaders during transaction dispatch, BATWA uses pre-warmed TCP/TLS pipelines and lightweight binary protocol buffers, lowering end-to-end clearing latency to sub-50ms.
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold text-gray-950 font-display">4. Security &amp; Idempotency Protection</h2>
+        <p>
+          To prevent double-debiting caused by mobile network drops, every outbound Raast transfer in BATWA is stamped with an immutable cryptographic <code>Idempotency-Key</code>. Even if a user taps "Transfer" multiple times during an elevator ride or signal loss, the transaction executes exactly once.
+        </p>
+      </section>
+
+      <section class="space-y-3 border-t border-gray-200 pt-6">
+        <h2 class="text-lg font-bold text-gray-950 font-display">Get Started with Raast on BATWA</h2>
+        <p class="text-gray-600">
+          Experience sub-50ms Raast transfers with zero transaction charges. Download the verified Android release directly from our portal.
+        </p>
+        <div class="pt-2">
+          <a href="/batwa-wallet.apk" class="inline-flex items-center gap-2 bg-batwa-navy text-white text-xs font-bold px-4 py-2 rounded-full hover:bg-gray-800 transition">
+            Download BATWA APK v2.2.0
+          </a>
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-gray-200 py-10 px-4 sm:px-8 text-xs text-gray-500">
+    <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>© 2026 BATWA Financial Technologies Ltd. (buttwaa.online). All rights reserved.</div>
+      <div class="flex gap-4">
+        <a href="/" class="hover:text-gray-950 transition">Home</a>
+        <a href="/security" class="hover:text-gray-950 transition">Security</a>
+        <a href="/privacy" class="hover:text-gray-950 transition">Privacy</a>
+        <a href="/terms" class="hover:text-gray-950 transition">Terms</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
