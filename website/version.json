@@ -1,14 +1,27 @@
 {
-    "buildNumber":  250,
-    "downloadUrl":  "https://mma-works.github.io/BUTWA/batwa-wallet.apk",
-    "changelog":  [
-                      "Updated official Allied Bank Limited (ABL) logo with authentic orange box, blue curve, and typography",
-                      "Cleaned square icon framing for sharp and clear display across Bank Transfer and Payees"
-                  ],
-    "version":  "2.4.10",
-    "minSupportedVersion":  "2.0.0",
-    "releaseDate":  "2026-11-08",
-    "sha256":  "8d703eadb4616a5772605c840a222235deb41f0da255631d542510a7fb0df224",
-    "fileSizeBytes":  83983473,
-    "fileSize":  "80.1 MB"
+  "version": "2.4.10",
+  "versionCode": 250,
+  "buildNumber": 250,
+  "minSupportedVersion": "1.0.0",
+  "releaseDate": "2026-11-08",
+  "apkName": "batwa-wallet.apk",
+  "apkSize": "80.1 MB",
+  "fileSizeBytes": 83983473,
+  "fileSize": "80.1 MB",
+  "sha256": "8d703eadb4616a5772605c840a222235deb41f0da255631d542510a7fb0df224",
+  "downloadUrl": "https://buttwaa.online/batwa-wallet.apk",
+  "forceUpdate": false,
+  "title": "BATWA v2.4.10 Official Release",
+  "message": "Naya update live ho chuka hai! Authentic HD Allied Bank Limited (ABL) logo, enhanced Bank Transfers, refined utility bills, aur savings vaults updates shamil hain.",
+  "features": [
+    "Official HD Allied Bank Limited (ABL) authentic branding",
+    "Streamlined Bill Inquiry & Service Providers Suite",
+    "Enhanced Wallet Dashboard & Vaults Security",
+    "Supabase 24/7 PostgreSQL Cloud Database & Live Gateway",
+    "Sub-50ms Raast Instant Clearing"
+  ],
+  "changelog": [
+    "Updated official Allied Bank Limited (ABL) logo with authentic orange box, blue curve, and typography",
+    "Cleaned square icon framing for sharp and clear display across Bank Transfer and Payees"
+  ]
 }
