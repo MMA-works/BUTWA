@@ -724,41 +724,37 @@
   </section>
 
   <!-- ================= CORE FEATURES (HIGHLY INTERACTIVE WITH PROMINENT STANDALONE YELLOW BULLETS) ================= -->
-  <section id="features" class="py-20 px-4 sm:px-8 bg-batwa-canvas border-b border-batwa-border">
-    <div class="max-w-6xl mx-auto space-y-10">
+  <section id="features" class="pt-6 sm:pt-8 pb-14 px-4 sm:px-8 bg-batwa-canvas border-b border-batwa-border">
+    <div class="max-w-6xl mx-auto space-y-5">
       
-      <!-- Section Header -->
-      <div class="text-center max-w-2xl mx-auto space-y-3">
-        
-        <h2 class="text-3xl sm:text-4xl font-black font-display tracking-tight text-batwa-navy">
+      <!-- Section Header: Left-Aligned Heading & Compact Filter Tabs in One Row -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-gray-200/80 pb-3.5">
+        <h2 class="text-2xl sm:text-3xl font-black font-display tracking-tight text-batwa-navy">
           Engineered for Modern Commerce
         </h2>
-        <p class="text-sm sm:text-base text-batwa-text-muted">
-          All essential fintech capabilities built natively with sub-50ms latency, zero hidden charges, and interactive micro-engines.
-        </p>
 
         <!-- Interactive Category Filter Tabs -->
-        <div class="flex flex-wrap items-center justify-center gap-2 pt-3">
-          <button onclick="filterFeatures('all')" id="feat-filter-all" class="px-4 py-1.5 rounded-full text-xs font-bold bg-[#0F172A] text-white shadow-xs transition">
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="filterFeatures('all')" id="feat-filter-all" class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#0F172A] text-white shadow-xs transition">
             All Features (6)
           </button>
-          <button onclick="filterFeatures('speed')" id="feat-filter-speed" class="px-4 py-1.5 rounded-full text-xs font-bold bg-white hover:bg-gray-100 text-gray-700 border border-gray-200 transition">
+          <button onclick="filterFeatures('speed')" id="feat-filter-speed" class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-white hover:bg-gray-100 text-gray-700 border border-gray-200 transition">
             Speed &amp; Raast
           </button>
-          <button onclick="filterFeatures('cards')" id="feat-filter-cards" class="px-4 py-1.5 rounded-full text-xs font-bold bg-white hover:bg-gray-100 text-gray-700 border border-gray-200 transition">
+          <button onclick="filterFeatures('cards')" id="feat-filter-cards" class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-white hover:bg-gray-100 text-gray-700 border border-gray-200 transition">
             NFC &amp; Vaults
           </button>
-          <button onclick="filterFeatures('security')" id="feat-filter-security" class="px-4 py-1.5 rounded-full text-xs font-bold bg-white hover:bg-gray-100 text-gray-700 border border-gray-200 transition">
+          <button onclick="filterFeatures('security')" id="feat-filter-security" class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-white hover:bg-gray-100 text-gray-700 border border-gray-200 transition">
             Security &amp; Splits
           </button>
         </div>
       </div>
 
-      <!-- Feature Cards Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Feature Cards Grid (Compact & Immediate Full Visibility) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
 
         <!-- Card 1: Raast P2P -->
-        <div data-category="speed" class="feature-card p-6 sm:p-7 rounded-3xl bg-white border border-batwa-border shadow-xs hover:shadow-xl hover:border-batwa-gold/80 transition-all duration-300 space-y-4 group">
+        <div data-category="speed" class="feature-card p-5 sm:p-6 rounded-3xl bg-white border border-batwa-border shadow-xs hover:shadow-xl hover:border-batwa-gold/80 transition-all duration-300 space-y-4 group">
           <div class="space-y-3">
             <!-- Standalone Yellow Bullet / Icon -->
             <div class="inline-block">
@@ -776,7 +772,7 @@
         </div>
 
         <!-- Card 2: Contactless NFC Cards -->
-        <div data-category="cards" class="feature-card p-6 sm:p-7 rounded-3xl bg-white border border-batwa-border shadow-xs hover:shadow-xl hover:border-batwa-gold/80 transition-all duration-300 space-y-4 group">
+        <div data-category="cards" class="feature-card p-5 sm:p-6 rounded-3xl bg-white border border-batwa-border shadow-xs hover:shadow-xl hover:border-batwa-gold/80 transition-all duration-300 space-y-4 group">
           <div class="space-y-3">
             <!-- Standalone Yellow Bullet / Icon -->
             <div class="inline-block">
@@ -797,7 +793,7 @@
         </div>
 
         <!-- Card 3: Argon2 MPIN & Biometrics -->
-        <div data-category="security" class="feature-card p-6 sm:p-7 rounded-3xl bg-white border border-batwa-border shadow-xs hover:shadow-xl hover:border-batwa-gold/80 transition-all duration-300 space-y-4 group">
+        <div data-category="security" class="feature-card p-5 sm:p-6 rounded-3xl bg-white border border-batwa-border shadow-xs hover:shadow-xl hover:border-batwa-gold/80 transition-all duration-300 space-y-4 group">
           <div class="space-y-3">
             <!-- Standalone Yellow Bullet / Icon -->
             <div class="inline-block">
@@ -817,7 +813,7 @@
         </div>
 
         <!-- Card 4: Target Savings Pots -->
-        <div data-category="cards" class="feature-card p-6 sm:p-7 rounded-3xl bg-white border border-batwa-border shadow-xs hover:shadow-xl hover:border-batwa-gold/80 transition-all duration-300 space-y-4 group">
+        <div data-category="cards" class="feature-card p-5 sm:p-6 rounded-3xl bg-white border border-batwa-border shadow-xs hover:shadow-xl hover:border-batwa-gold/80 transition-all duration-300 space-y-4 group">
           <div class="space-y-3">
             <!-- Standalone Yellow Bullet / Icon -->
             <div class="inline-block">
@@ -840,7 +836,7 @@
         </div>
 
         <!-- Card 5: Smart Bill Splitter -->
-        <div data-category="security" class="feature-card p-6 sm:p-7 rounded-3xl bg-white border border-batwa-border shadow-xs hover:shadow-xl hover:border-batwa-gold/80 transition-all duration-300 space-y-4 group">
+        <div data-category="security" class="feature-card p-5 sm:p-6 rounded-3xl bg-white border border-batwa-border shadow-xs hover:shadow-xl hover:border-batwa-gold/80 transition-all duration-300 space-y-4 group">
           <div class="space-y-3">
             <!-- Standalone Yellow Bullet / Icon -->
             <div class="inline-block">
@@ -862,7 +858,7 @@
         </div>
 
         <!-- Card 6: Automated Recurring Debits -->
-        <div data-category="speed" class="feature-card p-6 sm:p-7 rounded-3xl bg-white border border-batwa-border shadow-xs hover:shadow-xl hover:border-batwa-gold/80 transition-all duration-300 space-y-4 group">
+        <div data-category="speed" class="feature-card p-5 sm:p-6 rounded-3xl bg-white border border-batwa-border shadow-xs hover:shadow-xl hover:border-batwa-gold/80 transition-all duration-300 space-y-4 group">
           <div class="space-y-3">
             <!-- Standalone Yellow Bullet / Icon -->
             <div class="inline-block">
