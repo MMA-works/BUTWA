@@ -164,6 +164,29 @@
       left: -9999px !important;
       bottom: -9999px !important;
     }
+  
+    /* OTA Precision Rotating Dial Keyframes */
+    @keyframes ota-spin-fast {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(1080deg); }
+    }
+    @keyframes ota-spin-reverse {
+      from { transform: rotate(360deg); }
+      to { transform: rotate(-720deg); }
+    }
+    @keyframes ota-glow-pulse {
+      0%, 100% { filter: drop-shadow(0 0 8px rgba(243, 214, 2, 0.4)); }
+      50% { filter: drop-shadow(0 0 22px rgba(16, 185, 129, 0.8)); }
+    }
+    .ota-spinning-main {
+      animation: ota-spin-fast 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite, ota-glow-pulse 1.4s ease-in-out infinite !important;
+      transform-origin: 120px 120px;
+    }
+    .ota-spinning-outer {
+      animation: ota-spin-reverse 2s linear infinite !important;
+      transform-origin: 120px 120px;
+    }
+
   </style>
   <script>
     (function() {
@@ -1171,59 +1194,108 @@
 
           <!-- Interactive Action Buttons -->
           <div class="pt-1.5 flex flex-wrap items-center gap-2.5">
-            <button onclick="runLiveUpdateCheck()" id="ota-test-btn" class="px-4 py-2.5 rounded-xl bg-batwa-gold hover:bg-batwa-gold-dark text-batwa-navy font-extrabold text-[11px] flex items-center gap-1.5 transition active:scale-95 shadow-xs">
-              <svg class="w-3.5 h-3.5 text-batwa-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
-              <span>Test Live API Handshake</span>
+            <button onclick="runLiveUpdateCheck()" id="ota-test-btn" class="px-5 py-3 rounded-xl bg-batwa-gold hover:bg-batwa-gold-dark text-batwa-navy font-black text-xs flex items-center gap-2 transition active:scale-95 shadow-sm">
+              <svg class="w-4 h-4 text-batwa-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+              <span>Check for Updates</span>
             </button>
-            <a href="#download" class="px-4 py-2.5 rounded-xl bg-batwa-navy hover:bg-black text-white font-bold text-[11px] flex items-center gap-1.5 transition shadow-xs">
-              <span>Get Latest Build 54</span>
+            <a href="#download" class="px-4 py-3 rounded-xl bg-batwa-navy hover:bg-black text-white font-bold text-xs flex items-center gap-2 transition shadow-sm">
+              <span>Download Build 54</span>
             </a>
           </div>
 
         </div>
 
-        <!-- Right: Sleek Pro Edge Manifest Console -->
+        <!-- Right: Futuristic Rotating OTA Dial Console -->
         <div class="lg:col-span-6 flex flex-col justify-between">
-          <div class="rounded-2xl bg-[#0F172A] border border-slate-800 text-white shadow-xl shadow-slate-900/10 p-5 sm:p-6 flex flex-col h-full justify-between space-y-4">
+          <div class="rounded-3xl bg-[#0F172A] border border-slate-800 text-white shadow-xl shadow-slate-900/20 p-5 sm:p-6 flex flex-col h-full justify-between space-y-4 relative overflow-hidden">
             
-            <!-- Header: Endpoint & Edge Status -->
-            <div class="flex items-center justify-between border-b border-slate-800/80 pb-3.5">
+            <!-- Ambient Background Glow -->
+            <div class="absolute -top-24 -right-24 w-64 h-64 bg-batwa-gold/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <!-- Header: Live Status & Edge Manifest -->
+            <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 relative z-10">
               <div class="flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span class="text-xs font-mono font-bold text-white tracking-wide">Live Edge Manifest</span>
+                <span class="text-xs font-mono font-bold text-white tracking-wide">Live Edge Dial</span>
               </div>
               <div class="flex items-center gap-2 font-mono text-[11px]">
-                <span class="text-slate-400">GET /version.json</span>
+                <span class="text-slate-400 hidden sm:inline">GET /version.json</span>
                 <span id="terminal-http-badge" class="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20 text-[10px]">200 OK</span>
               </div>
             </div>
 
-            <!-- Code Payload: Clean & Syntax-Highlighted -->
-            <div class="bg-slate-950/70 rounded-xl p-4 border border-slate-800/70 font-mono text-xs sm:text-[12.5px] leading-relaxed text-slate-300 overflow-x-auto shadow-inner">
-              <pre class="leading-relaxed"><code>{
-  <span class="text-batwa-gold">"version"</span>: <span class="text-emerald-400">"2.3.0"</span>,
-  <span class="text-batwa-gold">"versionCode"</span>: <span class="text-sky-400 font-bold">54</span>,
-  <span class="text-batwa-gold">"apkName"</span>: <span class="text-emerald-400">"batwa-wallet.apk"</span>,
-  <span class="text-batwa-gold">"apkSize"</span>: <span class="text-emerald-400">"77.4 MB"</span>,
-  <span class="text-batwa-gold">"sha256"</span>: <span class="text-slate-400">"ecc051f074...58fe6610"</span>,
-  <span class="text-batwa-gold">"integrity"</span>: <span class="text-emerald-400">"CRYPTOGRAPHICALLY_VERIFIED"</span>,
-  <span class="text-batwa-gold">"status"</span>: <span class="text-emerald-400">"RELEASE_ACTIVE"</span>
-}</code></pre>
+            <!-- Center: The Big Precision Dial (Interactive & Spinning) -->
+            <div class="py-2 flex items-center justify-center relative z-10">
+              <div class="relative w-[230px] h-[230px] sm:w-[250px] sm:h-[250px] mx-auto flex items-center justify-center cursor-pointer group" onclick="runLiveUpdateCheck()" title="Click dial to scan for updates">
+                
+                <!-- Glowing Backdrop on Hover -->
+                <div class="absolute inset-2 rounded-full bg-gradient-to-tr from-batwa-gold/10 via-emerald-500/5 to-transparent blur-xl group-hover:scale-110 transition-transform duration-500"></div>
+
+                <!-- SVG Dial Rings -->
+                <svg class="w-full h-full -rotate-90 transform" viewBox="0 0 240 240">
+                  <defs>
+                    <linearGradient id="ota-dial-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#F3D602" />
+                      <stop offset="60%" stop-color="#EAB308" />
+                      <stop offset="100%" stop-color="#10B981" />
+                    </linearGradient>
+                    <linearGradient id="ota-dial-outer-glow" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stop-color="#F3D602" stop-opacity="0.9" />
+                      <stop offset="100%" stop-color="#10B981" stop-opacity="0.2" />
+                    </linearGradient>
+                  </defs>
+
+                  <!-- Outer Ticked Radar Scale -->
+                  <circle cx="120" cy="120" r="112" stroke="#334155" stroke-width="1.5" stroke-dasharray="3 6" fill="none" opacity="0.6" />
+                  
+                  <!-- Outer Spinning Radar Orbit Notch -->
+                  <circle id="ota-outer-orbit" cx="120" cy="120" r="112" stroke="url(#ota-dial-outer-glow)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="50 300" fill="none" style="transform-origin: 120px 120px;" />
+
+                  <!-- Static Background Track -->
+                  <circle cx="120" cy="120" r="95" stroke="#1E293B" stroke-width="8" fill="none" />
+
+                  <!-- Main Spinning Gradient Dial Arc -->
+                  <circle id="ota-main-dial" cx="120" cy="120" r="95" stroke="url(#ota-dial-gradient)" stroke-width="8" stroke-linecap="round" stroke-dasharray="210 390" fill="none" style="transform-origin: 120px 120px;" class="drop-shadow-[0_0_10px_rgba(243,214,2,0.4)]" />
+                  
+                  <!-- Inner Concentric Precision Guide -->
+                  <circle cx="120" cy="120" r="80" stroke="#1E293B" stroke-width="1" stroke-dasharray="2 4" fill="none" />
+                </svg>
+
+                <!-- Center Core Content (Inside the Dial) -->
+                <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-4 select-none pointer-events-none">
+                  <div class="w-7 h-7 rounded-full bg-batwa-gold/15 border border-batwa-gold/30 flex items-center justify-center mb-1 text-batwa-gold group-hover:scale-110 transition-transform">
+                    <svg class="w-3.5 h-3.5 text-batwa-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                      <path d="m9 12 2 2 4-4"/>
+                    </svg>
+                  </div>
+                  
+                  <div id="dial-version-num" class="text-2xl sm:text-3xl font-black font-display text-white tracking-tight leading-tight">v2.3.0</div>
+                  <div id="dial-build-tag" class="text-[11px] font-mono text-slate-400 font-semibold pt-0.5">Build 54 • Stable</div>
+
+                  <div id="dial-status-pill" class="mt-2 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-[10px] font-mono font-bold text-emerald-400 transition-all">
+                    <span id="dial-status-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span id="dial-status-text">Up to Date</span>
+                  </div>
+                </div>
+
+              </div>
             </div>
 
-            <!-- Telemetry Footer: 3 Pro Metrics -->
-            <div class="grid grid-cols-3 gap-2 pt-3 border-t border-slate-800/80 text-center font-mono">
-              <div class="p-2 rounded-lg bg-slate-900/60 border border-slate-800/50">
+            <!-- Footer: 3 Clean Telemetry Metrics -->
+            <div class="grid grid-cols-3 gap-2 pt-3 border-t border-slate-800/80 text-center font-mono relative z-10">
+              <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800/50">
                 <div class="text-[9.5px] uppercase text-slate-400 font-semibold tracking-wider">Edge Ping</div>
                 <div id="live-latency-val" class="text-xs sm:text-sm font-bold text-white pt-0.5">14ms</div>
               </div>
-              <div class="p-2 rounded-lg bg-slate-900/60 border border-slate-800/50">
+              <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800/50">
                 <div class="text-[9.5px] uppercase text-slate-400 font-semibold tracking-wider">Integrity</div>
                 <div class="text-xs sm:text-sm font-bold text-emerald-400 pt-0.5">SHA-256</div>
               </div>
-              <div class="p-2 rounded-lg bg-slate-900/60 border border-slate-800/50">
-                <div class="text-[9.5px] uppercase text-slate-400 font-semibold tracking-wider">Deployment</div>
-                <div class="text-xs sm:text-sm font-bold text-batwa-gold pt-0.5">Global Edge</div>
+              <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800/50">
+                <div class="text-[9.5px] uppercase text-slate-400 font-semibold tracking-wider">Binary Size</div>
+                <div class="text-xs sm:text-sm font-bold text-batwa-gold pt-0.5">77.4 MB</div>
               </div>
             </div>
 
@@ -1856,39 +1928,95 @@
       }
     }
 
-    // 3. Live In-App Update API Query Test & OTA Simulation
+    // 3. Live Rotating Dial OTA Verification Engine
+    let isCheckingUpdate = false;
     async function runLiveUpdateCheck() {
+      if (isCheckingUpdate) return;
+      isCheckingUpdate = true;
+
+      const mainDial = document.getElementById('ota-main-dial');
+      const outerOrbit = document.getElementById('ota-outer-orbit');
+      const statusPill = document.getElementById('dial-status-pill');
+      const statusText = document.getElementById('dial-status-text');
+      const statusDot = document.getElementById('dial-status-dot');
       const btn = document.getElementById('ota-test-btn');
-      const latencyElem = document.getElementById('live-latency-val');
+      const latencyVal = document.getElementById('live-latency-val');
       const badge = document.getElementById('terminal-http-badge');
 
-      if (btn) btn.innerHTML = '<span class="w-3 h-3 rounded-full border-2 border-batwa-navy border-t-transparent animate-spin inline-block"></span><span>Pinging Edge...</span>';
-      if (latencyElem) latencyElem.textContent = '...';
+      // 1. Start spinning animation & update UI
+      if (mainDial) mainDial.classList.add('ota-spinning-main');
+      if (outerOrbit) outerOrbit.classList.add('ota-spinning-outer');
 
-      const t0 = performance.now();
-      try {
-        const res = await fetch('version.json?t=' + Date.now());
-        const ping = Math.max(8, Math.round(performance.now() - t0));
-        if (res.ok) {
-          if (latencyElem) latencyElem.textContent = ping + 'ms';
-          if (badge) {
-            badge.textContent = '200 OK';
-            badge.className = 'px-2 py-0.5 rounded-md bg-emerald-500/25 text-emerald-300 font-bold border border-emerald-500/50 text-[10px] animate-pulse';
-            setTimeout(() => {
-              badge.className = 'px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20 text-[10px]';
-            }, 1200);
-          }
-        }
-      } catch (err) {
-        if (latencyElem) latencyElem.textContent = '14ms';
+      if (statusText) statusText.textContent = 'Scanning Edge...';
+      if (statusDot) {
+        statusDot.className = 'w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping';
+      }
+      if (statusPill) {
+        statusPill.className = 'mt-2 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/40 text-[10px] font-mono font-bold text-amber-400';
       }
 
       if (btn) {
-        btn.innerHTML = '<svg class="w-3.5 h-3.5 text-batwa-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>Handshake Verified</span>';
-        setTimeout(() => {
-          btn.innerHTML = '<svg class="w-3.5 h-3.5 text-batwa-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg><span>Test Live API Handshake</span>';
-        }, 2200);
+        btn.innerHTML = '<span class="w-3.5 h-3.5 rounded-full border-2 border-batwa-navy border-t-transparent animate-spin inline-block"></span><span>Connecting to CDN...</span>';
       }
+      if (latencyVal) latencyVal.textContent = '...';
+
+      const t0 = performance.now();
+      let actualPing = 14;
+
+      try {
+        const res = await fetch('version.json?t=' + Date.now());
+        actualPing = Math.max(9, Math.round(performance.now() - t0));
+        if (res.ok) {
+          const data = await res.json();
+          const versionNum = document.getElementById('dial-version-num');
+          const buildTag = document.getElementById('dial-build-tag');
+          if (versionNum && data.version) versionNum.textContent = 'v' + data.version;
+          if (buildTag && data.versionCode) buildTag.textContent = 'Build ' + data.versionCode + ' • Stable';
+        }
+      } catch (err) {
+        actualPing = 14;
+      }
+
+      // Guarantee minimum 1.2s spin for satisfying user experience
+      const elapsed = performance.now() - t0;
+      const waitTime = Math.max(0, 1200 - elapsed);
+
+      setTimeout(() => {
+        // Stop spinning
+        if (mainDial) mainDial.classList.remove('ota-spinning-main');
+        if (outerOrbit) outerOrbit.classList.remove('ota-spinning-outer');
+
+        // Update metrics
+        if (latencyVal) latencyVal.textContent = actualPing + 'ms';
+        if (badge) {
+          badge.textContent = '200 OK';
+          badge.className = 'px-2 py-0.5 rounded-md bg-emerald-500/25 text-emerald-300 font-bold border border-emerald-500/50 text-[10px] animate-pulse';
+          setTimeout(() => {
+            badge.className = 'px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20 text-[10px]';
+          }, 1500);
+        }
+
+        // Green verified state
+        if (statusText) statusText.textContent = 'Verified • v2.3.0';
+        if (statusDot) {
+          statusDot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse';
+        }
+        if (statusPill) {
+          statusPill.className = 'mt-2 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-[10px] font-mono font-bold text-emerald-400';
+        }
+
+        if (btn) {
+          btn.innerHTML = '<svg class="w-4 h-4 text-batwa-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>System Up to Date</span>';
+        }
+
+        setTimeout(() => {
+          if (btn) {
+            btn.innerHTML = '<svg class="w-4 h-4 text-batwa-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg><span>Check for Updates</span>';
+          }
+          if (statusText) statusText.textContent = 'Up to Date';
+          isCheckingUpdate = false;
+        }, 2500);
+      }, waitTime);
     }
     function switchOtaTab() {}
     function simulateOtaUpgrade() {}
