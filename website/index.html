@@ -1234,10 +1234,8 @@
               
               <div id="dial-version-num" class="text-3xl sm:text-4xl font-black font-display text-batwa-navy tracking-tight leading-tight">v2.3.0</div>
               <div id="dial-build-tag" class="text-xs sm:text-[13px] font-mono text-batwa-text-muted font-semibold pt-0.5">Build 54 • Stable</div>
-
-              <div id="dial-status-pill" class="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-gray-200 text-[11px] font-mono font-bold text-batwa-navy transition-all shadow-2xs">
-                <span id="dial-status-dot" class="w-2 h-2 rounded-full bg-batwa-gold animate-pulse"></span>
-                <span id="dial-status-text">Up to Date</span>
+              <div id="dial-status-text" class="mt-2 text-xs font-mono font-bold uppercase tracking-wider text-emerald-600">
+                Verified
               </div>
             </div>
 
@@ -1829,21 +1827,16 @@
 
       const mainDial = document.getElementById('ota-main-dial');
       const outerOrbit = document.getElementById('ota-outer-orbit');
-      const statusPill = document.getElementById('dial-status-pill');
       const statusText = document.getElementById('dial-status-text');
-      const statusDot = document.getElementById('dial-status-dot');
       const btn = document.getElementById('ota-test-btn');
 
       // 1. Start spinning animation & update UI
       if (mainDial) mainDial.classList.add('ota-spinning-main');
       if (outerOrbit) outerOrbit.classList.add('ota-spinning-outer');
 
-      if (statusText) statusText.textContent = 'Scanning Edge...';
-      if (statusDot) {
-        statusDot.className = 'w-2 h-2 rounded-full bg-batwa-gold animate-ping';
-      }
-      if (statusPill) {
-        statusPill.className = 'mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-[11px] font-mono font-bold text-amber-900 shadow-2xs';
+      if (statusText) {
+        statusText.textContent = 'Scanning Edge...';
+        statusText.className = 'mt-2 text-xs font-mono font-bold uppercase tracking-wider text-amber-500 animate-pulse';
       }
 
       if (btn) {
@@ -1865,7 +1858,6 @@
         console.warn('Live fetch error:', err);
       }
 
-      // Guarantee smooth spin duration
       const elapsed = performance.now() - t0;
       const waitTime = Math.max(0, 1300 - elapsed);
 
@@ -1875,12 +1867,9 @@
         if (outerOrbit) outerOrbit.classList.remove('ota-spinning-outer');
 
         // Verified state
-        if (statusText) statusText.textContent = 'Verified • v2.3.0';
-        if (statusDot) {
-          statusDot.className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse';
-        }
-        if (statusPill) {
-          statusPill.className = 'mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[11px] font-mono font-bold text-emerald-900 shadow-2xs';
+        if (statusText) {
+          statusText.textContent = 'Verified';
+          statusText.className = 'mt-2 text-xs font-mono font-bold uppercase tracking-wider text-emerald-600';
         }
 
         if (btn) {
@@ -1891,9 +1880,10 @@
           if (btn) {
             btn.innerHTML = '<svg class="w-4 h-4 text-batwa-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg><span>Check for Updates</span>';
           }
-          if (statusText) statusText.textContent = 'Up to Date';
-          if (statusDot) statusDot.className = 'w-2 h-2 rounded-full bg-batwa-gold animate-pulse';
-          if (statusPill) statusPill.className = 'mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-gray-200 text-[11px] font-mono font-bold text-batwa-navy shadow-2xs';
+          if (statusText) {
+            statusText.textContent = 'Verified';
+            statusText.className = 'mt-2 text-xs font-mono font-bold uppercase tracking-wider text-emerald-600';
+          }
           isCheckingUpdate = false;
         }, 2500);
       }, waitTime);
