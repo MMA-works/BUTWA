@@ -2,18 +2,6 @@
   "version": 2,
   "cleanUrls": true,
   "trailingSlash": false,
-  "redirects": [
-    {
-      "source": "/batwa-wallet.apk",
-      "destination": "https://github.com/MMA-works/BUTWA/releases/download/v2.2.0/batwa-wallet.apk",
-      "permanent": false
-    },
-    {
-      "source": "/download/apk",
-      "destination": "https://github.com/MMA-works/BUTWA/releases/download/v2.2.0/batwa-wallet.apk",
-      "permanent": false
-    }
-  ],
   "rewrites": [
     {
       "source": "/about",
@@ -53,11 +41,10 @@
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Frame-Options", "value": "DENY" },
         { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" }
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "X-XSS-Protection", "value": "1; mode=block" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
       ]
     }
   ]

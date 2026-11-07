@@ -1,22 +1,19 @@
 {
-  "version": "2.2.0",
-  "versionCode": 53,
+  "version": "2.3.0",
+  "versionCode": 54,
   "minSupportedVersion": "1.0.0",
-  "releaseDate": "2026-10-14",
+  "releaseDate": "2026-11-07",
   "apkName": "batwa-wallet.apk",
-  "apkSize": "74.4 MB",
-  "apkUrl": "https://github.com/MMA-works/BUTWA/releases/download/v2.2.0/batwa-wallet.apk",
-  "latestApkUrl": "https://github.com/MMA-works/BUTWA/releases/latest/download/batwa-wallet.apk",
-  "downloadUrl": "https://battwaa.online/#download",
-  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "apkSize": "77.4 MB",
+  "downloadUrl": "https://battwaa.online/batwa-wallet.apk",
   "forceUpdate": false,
-  "title": "BATWA v2.2.0 Released 🚀",
-  "message": "Naya update live ho chuka hai! Isme ultra-fast Raast payments, 3D contactless cards, aur enhanced security shamil hain.",
+  "title": "BATWA v2.3.0 Live Cloud Release 🚀",
+  "message": "Naya update live ho chuka hai! Naya Services Hub, Supabase 24/7 Cloud Database aur Live Cloudflare Gateway shamil hain.",
   "features": [
-    "⚡ Instant Raast 2.0 P2P clearing (under 50ms)",
-    "💳 Contactless NFC Virtual Cards with live freeze toggle",
-    "🛡️ Argon2 MPIN + Hardware Biometric Enclave",
-    "🤖 Batwa AI Assistant with voice spending analytics",
-    "🧾 Automated Recurring Utility Debits & Split Bills"
+    "🌟 Interactive Services Hub (Bills, Top-up, Electricity, Gas, Education)",
+    "☁️ Supabase 24/7 PostgreSQL Cloud Database Integration",
+    "⚡ Instant Raast P2P & Bank Transfer Simulator",
+    "💳 Contactless NFC Virtual Cards with live controls",
+    "🧾 Automated Utility Inquiry & Smart Digital Receipts"
   ]
 }

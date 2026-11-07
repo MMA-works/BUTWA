@@ -1,7 +1,7 @@
 class ApiConstants {
   // Localhost (USB reverse) & local Wi-Fi LAN IP
-  static String baseUrl = 'http://127.0.0.1:8080/api/v1';
-  static const String defaultBaseUrl = 'http://127.0.0.1:8080/api/v1';
+  static String baseUrl = 'https://maternity-subsection-suddenly-freelance.trycloudflare.com/api/v1';
+  static const String defaultBaseUrl = 'https://maternity-subsection-suddenly-freelance.trycloudflare.com/api/v1';
   
   // Auth Endpoints
   static const String register = '/auth/register';
