@@ -45,6 +45,7 @@ class AppUpdateService {
 
   /// Server URLs where version.json might be hosted
   static List<String> get updateUrls => [
+    'https://buttwaa.online/version.json',
     'https://battwaa.online/version.json',
     '${ApiConstants.baseUrl}/version.json',
     'http://127.0.0.1:3000/version.json',
