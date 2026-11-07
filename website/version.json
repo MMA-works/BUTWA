@@ -5,15 +5,16 @@
   "releaseDate": "2026-11-07",
   "apkName": "batwa-wallet.apk",
   "apkSize": "77.4 MB",
-  "downloadUrl": "https://battwaa.online/batwa-wallet.apk",
+  "sha256": "ecc051f07429bef3d43ffb636df80f5cf2e249b37c070c085ed1d8b658fe6610",
+  "downloadUrl": "https://buttwaa.online/batwa-wallet.apk",
   "forceUpdate": false,
-  "title": "BATWA v2.3.0 Live Cloud Release 🚀",
+  "title": "BATWA v2.3.0 Live Cloud Release",
   "message": "Naya update live ho chuka hai! Naya Services Hub, Supabase 24/7 Cloud Database aur Live Cloudflare Gateway shamil hain.",
   "features": [
-    "🌟 Interactive Services Hub (Bills, Top-up, Electricity, Gas, Education)",
-    "☁️ Supabase 24/7 PostgreSQL Cloud Database Integration",
-    "⚡ Instant Raast P2P & Bank Transfer Simulator",
-    "💳 Contactless NFC Virtual Cards with live controls",
-    "🧾 Automated Utility Inquiry & Smart Digital Receipts"
+    "Interactive Services Hub (Bills, Top-up, Electricity, Gas, Education)",
+    "Supabase 24/7 PostgreSQL Cloud Database Integration",
+    "Instant Raast P2P & Bank Transfer Simulator",
+    "Contactless NFC Virtual Cards with live controls",
+    "Automated Utility Inquiry & Smart Digital Receipts"
   ]
 }
