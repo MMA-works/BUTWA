@@ -128,7 +128,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   Expanded(
                     child: _buildServiceBubble(
                       title: 'Savings Pots',
-                      icon: Icons.savings_rounded,
+                      icon: Icons.account_balance_wallet_rounded,
                       color: const Color(0xFFF59E0B),
                       iconColor: Colors.white,
                       onTap: () {
@@ -580,7 +580,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         setState(() => _selectedTabIndex = 0);
                       } else if (index == 1) {
                         setState(() => _selectedTabIndex = 1);
-                        _showMoreServicesSheet(context);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const CardsScreen()),
+                        ).then((_) {
+                          if (mounted) setState(() => _selectedTabIndex = 0);
+                        });
                       } else if (index == 2) {
                         setState(() => _selectedTabIndex = 2);
                         Navigator.of(context).push(

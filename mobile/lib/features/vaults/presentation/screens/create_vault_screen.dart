@@ -22,7 +22,7 @@ class _CreateVaultScreenState extends State<CreateVaultScreen> {
   bool _isLocked = false;
 
   final List<Map<String, dynamic>> _presetIcons = [
-    {'icon': Icons.savings_rounded, 'name': 'savings', 'label': 'Piggy Pot'},
+    {'icon': Icons.account_balance_wallet_rounded, 'name': 'savings', 'label': 'Savings Vault'},
     {'icon': Icons.flight_takeoff_rounded, 'name': 'travel', 'label': 'Travel'},
     {'icon': Icons.devices_other_rounded, 'name': 'gadgets', 'label': 'Gadgets'},
     {'icon': Icons.directions_car_rounded, 'name': 'car', 'label': 'Vehicle'},

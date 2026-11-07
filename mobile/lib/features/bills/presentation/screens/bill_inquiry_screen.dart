@@ -227,7 +227,14 @@ class _BillInquiryViewState extends State<_BillInquiryView> {
                         ),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'Please enter consumer number';
+                            return 'Please enter consumer number or CNIC';
+                          }
+                          final clean = value.replaceAll(RegExp(r'[^0-9]'), '');
+                          if (clean.length < 8) {
+                            return 'Consumer number must be at least 8 digits';
+                          }
+                          if (clean.length != widget.company.consumerNoLength && clean.length != 13) {
+                            return 'Expected -digit Consumer No. or 13-digit CNIC';
                           }
                           return null;
                         },

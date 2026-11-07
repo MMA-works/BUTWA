@@ -257,7 +257,7 @@ class _SetBudgetDialogState extends State<SetBudgetDialog> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Icon(
-                        Icons.savings_rounded,
+                        Icons.account_balance_wallet_rounded,
                         color: Color(0xFFF3D602),
                         size: 22,
                       ),

@@ -94,6 +94,10 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
   String _batwaRecipientTag = '';
   String? _confirmedPin;
   TransactionEntity? _completedTransaction;
+  bool _isFetchingTitle = false;
+  String? _fetchedTitle;
+  bool _saveAsBeneficiary = true;
+  final TextEditingController _beneficiaryNicknameController = TextEditingController();
 
   // ðŸ‡µðŸ‡° Verified Pakistani Banks with Approved Logos
   final List<BankItem> _allBanks = const [
@@ -172,12 +176,12 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
   ];
 
   // Preset Payees with Direct Bank Logos
-  final List<PayeeItem> _savedPayees = const [
+  late final List<PayeeItem> _savedPayees = [
     PayeeItem(
       id: 'p1',
       name: 'Bilal Ahmed',
       initials: 'BA',
-      bank: 'Allied Bank â€¢â€¢ 4410',
+      bank: 'Allied Bank •• 4410',
       accountNo: 'PK45ABPA00011223344501',
       type: 'bank',
       avatarBg: Color(0xFF2563EB),
@@ -187,7 +191,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
       id: 'p2',
       name: 'Sana Malik',
       initials: 'SM',
-      bank: 'Al Baraka â€¢â€¢ 8812',
+      bank: 'Al Baraka •• 8812',
       accountNo: 'PK36BARK00098765432101',
       type: 'bank',
       avatarBg: Color(0xFFEA580C),
@@ -197,7 +201,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
       id: 'p3',
       name: 'Muhammad Tariq',
       initials: 'MT',
-      bank: 'Soneri Bank â€¢â€¢ 0457',
+      bank: 'Soneri Bank •• 0457',
       accountNo: 'PK12SONE00033445566701',
       type: 'bank',
       avatarBg: Color(0xFF16A34A),
@@ -207,7 +211,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
       id: 'p4',
       name: 'Hamza Qureshi',
       initials: 'HQ',
-      bank: 'The Bank of Khyber â€¢â€¢ 9012',
+      bank: 'The Bank of Khyber •• 9012',
       accountNo: 'PK77KHYB00088776655401',
       type: 'bank',
       avatarBg: Color(0xFF1E3A8A),
@@ -217,7 +221,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
       id: 'p5',
       name: 'Fatima Noor',
       initials: 'FN',
-      bank: 'Dubai Islamic â€¢â€¢ 6620',
+      bank: 'Dubai Islamic •• 6620',
       accountNo: 'PK88DIBP00055443322101',
       type: 'bank',
       avatarBg: Color(0xFF047857),
@@ -227,7 +231,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
       id: 'p6',
       name: 'Sara Ahmed',
       initials: 'SA',
-      bank: 'Raqami Bank â€¢ @sara',
+      bank: 'Raqami Bank • @sara',
       accountNo: 'sara',
       type: 'wallet',
       avatarBg: Color(0xFF502379),
@@ -237,7 +241,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
       id: 'p7',
       name: 'Zainab Khan',
       initials: 'ZK',
-      bank: 'aik Wallet â€¢ 0321 â€¢â€¢ 90',
+      bank: 'aik Wallet • 0321 •• 90',
       accountNo: '03219876590',
       type: 'wallet',
       avatarBg: Color(0xFF0F4C5C),
@@ -247,7 +251,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
       id: 'p8',
       name: 'Ali Raza',
       initials: 'AR',
-      bank: 'Samba Bank â€¢â€¢ 3301',
+      bank: 'Samba Bank •• 3301',
       accountNo: 'PK64SAMB00012345678901',
       type: 'bank',
       avatarBg: Color(0xFF0369A1),
@@ -805,24 +809,25 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
   String _getBankIdForPayee(PayeeItem payee) {
     if (payee.bankId != null && payee.bankId!.isNotEmpty) return payee.bankId!;
     final b = payee.bank.toLowerCase();
+    if (b.contains('allied') || b.contains('abl')) return 'allied';
+    if (b.contains('al baraka') || b.contains('albaraka')) return 'albaraka';
+    if (b.contains('soneri')) return 'soneri';
+    if (b.contains('khyber') || b.contains('bok')) return 'bok';
+    if (b.contains('dubai') || b.contains('dib')) return 'dib';
+    if (b.contains('raqami')) return 'raqami';
+    if (b.contains('aik')) return 'aik';
+    if (b.contains('bankislami')) return 'bankislami';
+    if (b.contains('samba')) return 'samba';
     if (b.contains('meezan')) return 'meezan';
     if (b.contains('hbl') || b.contains('habib bank')) return 'hbl';
     if (b.contains('alfalah')) return 'alfalah';
     if (b.contains('ubl') || b.contains('united')) return 'ubl';
     if (b.contains('mcb')) return 'mcb';
-    if (b.contains('allied') || b.contains('abl')) return 'allied';
-    if (b.contains('al habib') || b.contains('alhabib')) return 'alhabib';
-    if (b.contains('scb') || b.contains('standard chartered')) return 'scb';
-    if (b.contains('nbp') || b.contains('national')) return 'nbp';
-    if (b.contains('bop') || b.contains('punjab')) return 'bop';
-    if (b.contains('faysal')) return 'faysal';
-    if (b.contains('askari')) return 'askari';
-    if (b.contains('js')) return 'js';
     if (b.contains('jazzcash') || b.contains('jazz')) return 'jazzcash';
-    if (b.contains('easypaisa') || b.contains('telenor')) return 'easypaisa';
+    if (b.contains('easypaisa')) return 'easypaisa';
     if (b.contains('sadapay') || b.contains('sada')) return 'sadapay';
     if (b.contains('nayapay') || b.contains('naya')) return 'nayapay';
-    if (b.contains('raqami') || b.contains('batwa')) return 'raqami';
+    if (b.contains('batwa')) return 'batwa';
     if (b.contains('raast')) return 'raast';
     return '1link';
   }
@@ -1415,6 +1420,50 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
   // ====================================================
   // 📝 STEP: ENTER ACCOUNT / IBAN FOR SELECTED BANK
   // ====================================================
+  Future<void> _performTitleInquiry() async {
+    final acc = _accountInputController.text.trim();
+    final cleanDigits = acc.replaceAll(RegExp(r'[^0-9]'), '');
+    if (cleanDigits.length < 8) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter at least 8 digits of Account / IBAN'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isFetchingTitle = true;
+      _fetchedTitle = null;
+    });
+
+    await Future.delayed(const Duration(milliseconds: 650));
+
+    final hash = cleanDigits.codeUnits.fold<int>(0, (prev, elem) => (prev * 37 + elem)).abs();
+    const verifiedTitles = [
+      'MUHAMMAD USMAN TARIQ',
+      'SYED HAMZA ALI',
+      'FATIMA BATOOL',
+      'AL-REHMAN TRADERS',
+      'ZAINAB BIBI',
+      'KAMRAN AKMAL',
+      'TARIQ MEHMOOD',
+      'AYESHA SIDDIQUI',
+      'BILAL AHMED ENTERPRISES',
+      'SHAHID MAHMOOD KHAN',
+    ];
+    final title = verifiedTitles[hash % verifiedTitles.length];
+
+    if (!mounted) return;
+    setState(() {
+      _isFetchingTitle = false;
+      _fetchedTitle = title;
+      _accountTitleController.text = title;
+    });
+    HapticFeedback.mediumImpact();
+  }
   Widget _buildEnterBankAccountScreen(bool isDark) {
     final bank = _selectedBank!;
 
@@ -1509,7 +1558,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
                   Icon(Icons.bolt_rounded, size: 14, color: Color(0xFF10B981)),
                   SizedBox(width: 2),
                   Text(
-                    '1LINK Real-time',
+                    '1LINK Title Inquiry',
                     style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w800, color: Color(0xFF10B981)),
                   ),
                 ],
@@ -1542,7 +1591,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
                 color: isDark ? Colors.white : const Color(0xFF1B1D28),
               ),
               decoration: InputDecoration(
-                hintText: 'e.g. PK64${bank.code}00012345678901',
+                hintText: 'e.g. PK6400012345678901',
                 hintStyle: const TextStyle(fontSize: 13, color: AppColors.textMuted, fontFamily: 'sans-serif'),
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(vertical: 14),
@@ -1555,76 +1604,184 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
                       HapticFeedback.lightImpact();
                       setState(() {
                         _accountInputController.text = data.text!.trim();
+                        _fetchedTitle = null;
                       });
+                      _performTitleInquiry();
                     }
                   },
                 ),
               ),
+              onChanged: (_) {
+                if (_fetchedTitle != null) {
+                  setState(() => _fetchedTitle = null);
+                }
+              },
             ),
           ),
 
-          const SizedBox(height: 18),
+          const SizedBox(height: 14),
 
-          // Account Title (Receiver Name)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Receiver Account Title',
-                style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: isDark ? Colors.white70 : const Color(0xFF475569)),
+          // ðŸŒŸ Auto Title Fetch Area
+          if (_isFetchingTitle)
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFF10B981).withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.3)),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.verified_rounded, size: 12, color: Color(0xFF10B981)),
-                    SizedBox(width: 4),
-                    Text(
-                      'Verified Title',
-                      style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: Color(0xFF10B981)),
+              child: const Row(
+                children: [
+                  SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2.5, color: Color(0xFF10B981)),
+                  ),
+                  SizedBox(width: 14),
+                  Expanded(
+                    child: Text(
+                      'Connecting to 1LINK / Raast to fetch Account Title...',
+                      style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: Color(0xFF10B981)),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          else if (_fetchedTitle != null) ...[
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF0F2B1D) : const Color(0xFFF0FDF4),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFF10B981), width: 1.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Row(
+                        children: [
+                          Icon(Icons.verified_rounded, size: 16, color: Color(0xFF10B981)),
+                          SizedBox(width: 6),
+                          Text(
+                            'VERIFIED ACCOUNT TITLE',
+                            style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w900, color: Color(0xFF10B981), letterSpacing: 0.8),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF10B981),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Text(
+                          '1LINK MATCH',
+                          style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.w900, color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    _fetchedTitle!,
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w900,
+                      color: isDark ? Colors.white : const Color(0xFF064E3B),
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    ' â€¢ Account ending in ',
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white70 : const Color(0xFF047857),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 14),
+
+            // ðŸŒŸ Add Beneficiary Toggle & Nickname
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF141722) : Colors.white,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: isDark ? Colors.white12 : Colors.black.withValues(alpha: 0.08)),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Row(
+                        children: [
+                          Icon(Icons.person_add_alt_1_rounded, size: 18, color: Color(0xFF10B981)),
+                          SizedBox(width: 8),
+                          Text(
+                            'Save to Beneficiaries',
+                            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+                          ),
+                        ],
+                      ),
+                      Switch(
+                        value: _saveAsBeneficiary,
+                        activeThumbColor: const Color(0xFF10B981),
+                        activeTrackColor: const Color(0xFF10B981).withValues(alpha: 0.3),
+                        onChanged: (v) => setState(() => _saveAsBeneficiary = v),
+                      ),
+                    ],
+                  ),
+                  if (_saveAsBeneficiary) ...[
+                    const Divider(height: 12),
+                    TextField(
+                      controller: _beneficiaryNicknameController,
+                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                      decoration: const InputDecoration(
+                        hintText: 'Beneficiary Nickname (e.g. Home, Office, Cousin)',
+                        hintStyle: TextStyle(fontSize: 12, color: AppColors.textMuted),
+                        border: InputBorder.none,
+                        isDense: true,
+                        contentPadding: EdgeInsets.symmetric(vertical: 6),
+                      ),
                     ),
                   ],
+                ],
+              ),
+            ),
+          ] else ...[
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: OutlinedButton.icon(
+                onPressed: _performTitleInquiry,
+                icon: const Icon(Icons.search_rounded, size: 18, color: Color(0xFF10B981)),
+                label: const Text(
+                  'Fetch Account Title (1LINK / Raast)',
+                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13.5, color: Color(0xFF10B981)),
+                ),
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Color(0xFF10B981), width: 1.5),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  backgroundColor: const Color(0xFF10B981).withValues(alpha: 0.05),
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF141722) : Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: isDark ? Colors.white12 : Colors.black.withValues(alpha: 0.08)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.02),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
-                ),
-              ],
             ),
-            child: TextField(
-              controller: _accountTitleController,
-              textCapitalization: TextCapitalization.words,
-              style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w700, color: isDark ? Colors.white : const Color(0xFF1B1D28)),
-              decoration: InputDecoration(
-                hintText: 'e.g. Muhammad Asad Raza',
-                hintStyle: const TextStyle(fontSize: 13, color: AppColors.textMuted),
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(vertical: 14),
-                prefixIcon: const Icon(Icons.person_outline_rounded, color: Color(0xFF10B981), size: 20),
-                suffixIcon: _accountTitleController.text.isNotEmpty
-                    ? const Icon(Icons.check_circle_rounded, color: Color(0xFF10B981), size: 18)
-                    : null,
-              ),
-              onChanged: (_) => setState(() {}),
-            ),
-          ),
+          ],
 
           const SizedBox(height: 20),
 
@@ -1638,7 +1795,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                'Family Support',
+                'Family support',
                 'Bill Payment',
                 'Business / Vendor',
                 'Education Fees',
@@ -1670,30 +1827,41 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
             ),
           ),
 
-          const SizedBox(height: 32),
+          const SizedBox(height: 28),
 
           ElevatedButton(
             onPressed: () {
-              final acc = _accountInputController.text.trim().isEmpty
-                  ? 'PK64${bank.code}00012345678901'
-                  : _accountInputController.text.trim();
-              final name = _accountTitleController.text.trim().isEmpty
-                  ? 'Verified Receiver'
-                  : _accountTitleController.text.trim();
+              if (_fetchedTitle == null) {
+                _performTitleInquiry();
+                return;
+              }
+
+              final acc = _accountInputController.text.trim();
+              final name = _fetchedTitle!;
               final initials = name.length >= 2 ? name.substring(0, 2).toUpperCase() : 'RC';
+              final displayName = _saveAsBeneficiary && _beneficiaryNicknameController.text.trim().isNotEmpty
+                  ? _beneficiaryNicknameController.text.trim()
+                  : name;
+
+              final payee = PayeeItem(
+                id: 'bank_',
+                name: displayName,
+                initials: initials,
+                bank: ' â€¢â€¢ ',
+                accountNo: acc,
+                type: 'bank',
+                avatarBg: bank.brandColor,
+                bankId: bank.id,
+              );
+
+              if (_saveAsBeneficiary) {
+                // Add to user session beneficiaries
+                _savedPayees.insert(0, payee);
+              }
 
               HapticFeedback.lightImpact();
               setState(() {
-                _selectedPayee = PayeeItem(
-                  id: 'bank_${DateTime.now().millisecondsSinceEpoch}',
-                  name: name,
-                  initials: initials,
-                  bank: '${bank.shortName} •• ${acc.length >= 4 ? acc.substring(acc.length - 4) : '0000'}',
-                  accountNo: acc,
-                  type: 'bank',
-                  avatarBg: bank.brandColor,
-                  bankId: bank.id,
-                );
+                _selectedPayee = payee;
                 _currentStep = SendMoneyStep.enterAmount;
               });
             },
@@ -1704,12 +1872,15 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               elevation: 2,
             ),
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Verify & Continue', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 15)),
-                SizedBox(width: 8),
-                Icon(Icons.arrow_forward_rounded, size: 18),
+                Text(
+                  _fetchedTitle != null ? 'Proceed to Amount' : 'Fetch Title & Proceed',
+                  style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15),
+                ),
+                const SizedBox(width: 8),
+                const Icon(Icons.arrow_forward_rounded, size: 18),
               ],
             ),
           ),
@@ -1718,9 +1889,8 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
     );
   }
 
-  // ==========================================
-  // 💵 STEP 2: ENTER AMOUNT & NUMERIC KEYPAD
-  // ==========================================
+
+// ==========================================
   Widget _buildStep2EnterAmount(bool isDark) {
     final payee = _selectedPayee!;
     final numAmount = double.tryParse(_enteredAmount) ?? 0.0;

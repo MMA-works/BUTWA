@@ -63,7 +63,7 @@ class _VaultsScreenContent extends StatelessWidget {
         return Icons.celebration_rounded;
       case 'savings':
       default:
-        return Icons.savings_rounded;
+        return Icons.account_balance_wallet_rounded;
     }
   }
 
@@ -280,7 +280,7 @@ class _VaultsScreenContent extends StatelessWidget {
                       color: AppColors.accent.withOpacity(0.2),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.savings_rounded, color: AppColors.accent, size: 18),
+                    child: const Icon(Icons.account_balance_wallet_rounded, color: AppColors.accent, size: 18),
                   ),
                   const SizedBox(width: 8),
                   Text(
@@ -368,7 +368,7 @@ class _VaultsScreenContent extends StatelessWidget {
               color: AppColors.accent.withOpacity(0.25),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.savings_outlined, color: AppColors.primary, size: 40),
+            child: const Icon(Icons.account_balance_wallet_outlined, color: AppColors.primary, size: 40),
           ),
           const SizedBox(height: 18),
           const Text(

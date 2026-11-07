@@ -318,7 +318,7 @@ class _DashboardServicesWidgetState extends State<DashboardServicesWidget> {
           ServiceItemData(
             id: 'savings_vaults',
             label: 'Savings Vaults',
-            icon: Icons.savings_outlined,
+            icon: Icons.account_balance_wallet_outlined,
             isPinned: _pinnedServiceIds.contains('savings_vaults'),
             onTap: () {
               Navigator.of(context).push(

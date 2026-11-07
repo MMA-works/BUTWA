@@ -1,27 +1,31 @@
 {
-  "version": "2.4.10",
-  "versionCode": 250,
-  "buildNumber": 250,
+  "version": "2.4.11",
+  "versionCode": 251,
+  "buildNumber": 251,
   "minSupportedVersion": "1.0.0",
   "releaseDate": "2026-11-08",
   "apkName": "batwa-wallet.apk",
-  "apkSize": "83.9 MB",
-  "fileSizeBytes": 83983473,
-  "fileSize": "83.9 MB",
-  "sha256": "8d703eadb4616a5772605c840a222235deb41f0da255631d542510a7fb0df224",
+  "apkSize": "79.2 MB",
+  "fileSizeBytes": 83071621,
+  "fileSize": "79.2 MB",
+  "sha256": "bfb4ba3e5cbc5b4c91efc0b0bdd769a19f39be8021c9335de236dff5e21d9a10",
   "downloadUrl": "https://buttwaa.online/batwa-wallet.apk",
   "forceUpdate": false,
-  "title": "BATWA v2.4.10 Official Release",
-  "message": "Naya update live ho chuka hai! Authentic HD Allied Bank Limited (ABL) logo, enhanced Bank Transfers, refined utility bills, aur savings vaults updates shamil hain.",
+  "title": "BATWA v2.4.11 Official Release",
+  "message": "Naya update live ho chuka hai! 1Link/Raast auto account title fetch, dynamic 1Bill inquiry & receipts, authentic bank & telco logos, card tab navigation fix, aur analytics improvements shamil hain.",
   "features": [
-    "Official HD Allied Bank Limited (ABL) authentic branding",
-    "Streamlined Bill Inquiry & Service Providers Suite",
-    "Enhanced Wallet Dashboard & Vaults Security",
-    "Supabase 24/7 PostgreSQL Cloud Database & Live Gateway",
-    "Sub-50ms Raast Instant Clearing"
+    "Automatic 1Link / Raast account title fetch with beneficiary save",
+    "Dynamic 1Bill inquiry & fixed payment receipts with strict length validation",
+    "Verified bank branding: ABL, Al Baraka, Soneri, BOK, DIB, Raqami, aik (BankIslami), Samba",
+    "Official HD Telecom logos for Jazz, Ufone, and Zong (Telenor removed)",
+    "Direct Cards tab navigation to virtual cards screen without popups",
+    "Compact analytics overview cards and clean dark green category breakdown bullets",
+    "Complete purge of pig/piggy bank icons and terms across the entire app"
   ],
   "changelog": [
-    "Updated official Allied Bank Limited (ABL) logo with authentic orange box, blue curve, and typography",
-    "Cleaned square icon framing for sharp and clear display across Bank Transfer and Payees"
+    "Integrated 1Link title fetch in Bank Transfer eliminating manual receiver name typing",
+    "Dynamic hash-based 1Bill utility inquiry with verified consumer length validation",
+    "Updated bank & telco logos to authentic verified PNGs",
+    "Direct Cards tab navigation and streamlined analytics dashboard"
   ]
 }

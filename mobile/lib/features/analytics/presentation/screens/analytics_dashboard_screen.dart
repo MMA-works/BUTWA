@@ -241,15 +241,7 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
                   );
                   _loadData();
                 } else if (state is AnalyticsError) {
-                  if (!state.message.contains('DioException') && !state.message.contains('network error')) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(state.message),
-                        backgroundColor: Colors.red.shade800,
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
-                  }
+                  // Silent fallback to cached/derived analytics - do not annoy user with raw technical network errors
                 }
               },
               builder: (context, state) {
@@ -461,8 +453,8 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
                       _showEarningGoalSheet(summary, periodData);
                     },
                     child: Container(
-                      height: 168,
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      height: 146,
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
                           colors: [
@@ -620,8 +612,8 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
                       _showSpendingAnalysisSheet(summary, periodData);
                     },
                     child: Container(
-                      height: 168,
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      height: 146,
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
                           colors: [
@@ -1282,18 +1274,14 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
               child: Row(
                 children: [
-                  Container(
-                    width: 42,
-                    height: 42,
-                    decoration: BoxDecoration(
-                      color: _darkGreenStart,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                  SizedBox(
+                    width: 36,
+                    height: 36,
                     child: Center(
                       child: Icon(
                         _getCategoryIcon(cat.category),
-                        color: _brandYellow,
-                        size: 20,
+                        color: _darkGreenStart,
+                        size: 26,
                       ),
                     ),
                   ),

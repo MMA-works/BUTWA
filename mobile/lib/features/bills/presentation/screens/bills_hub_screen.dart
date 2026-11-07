@@ -206,59 +206,6 @@ class _BillsHubContentState extends State<_BillsHubContent> {
       ],
     ),
     MobileNetwork(
-      id: 'telenor',
-      name: 'Telenor',
-      code: 'TELENOR',
-      brandColor: Color(0xFF0284C7),
-      prefix: '0345',
-      packages: [
-        MobilePackage(
-          id: 't1',
-          title: 'Monthly EasyCard 1000',
-          validity: '30 Days',
-          data: '20 GB',
-          onNetMins: '3000 Telenor',
-          offNetMins: '300 Other',
-          sms: '3000',
-          price: 950.0,
-          category: 'ALL_IN_ONE',
-        ),
-        MobilePackage(
-          id: 't2',
-          title: 'Weekly EasyCard',
-          validity: '7 Days',
-          data: '10 GB',
-          onNetMins: '1500 Telenor',
-          offNetMins: '80 Other',
-          sms: '1500',
-          price: 360.0,
-          category: 'ALL_IN_ONE',
-        ),
-        MobilePackage(
-          id: 't3',
-          title: 'Daily Social Pack',
-          validity: '1 Day',
-          data: '1 GB',
-          onNetMins: '—',
-          offNetMins: '—',
-          sms: '—',
-          price: 25.0,
-          category: 'SOCIAL',
-        ),
-        MobilePackage(
-          id: 't4',
-          title: 'Monthly 4G Prime',
-          validity: '30 Days',
-          data: '35 GB',
-          onNetMins: '—',
-          offNetMins: '—',
-          sms: '—',
-          price: 1100.0,
-          category: 'DATA',
-        ),
-      ],
-    ),
-    MobileNetwork(
       id: 'ufone',
       name: 'Ufone',
       code: 'UFONE',
@@ -440,7 +387,7 @@ class _BillsHubContentState extends State<_BillsHubContent> {
             ),
           ),
 
-          // 4 Telecom Action Pill Cards (Jazz, Zong, Telenor, Ufone)
+          // 3 Telecom Action Pill Cards (Jazz, Zong, Ufone)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             child: Row(
