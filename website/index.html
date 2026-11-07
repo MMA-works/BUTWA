@@ -165,7 +165,7 @@
       bottom: -9999px !important;
     }
   
-    /* OTA Precision Rotating Dial Keyframes */
+    /* OTA Precision Rotating Dial Keyframes (Theme Gold 300x300) */
     @keyframes ota-spin-fast {
       from { transform: rotate(0deg); }
       to { transform: rotate(1080deg); }
@@ -174,17 +174,17 @@
       from { transform: rotate(360deg); }
       to { transform: rotate(-720deg); }
     }
-    @keyframes ota-glow-pulse {
+    @keyframes ota-gold-glow-pulse {
       0%, 100% { filter: drop-shadow(0 0 8px rgba(243, 214, 2, 0.4)); }
-      50% { filter: drop-shadow(0 0 22px rgba(16, 185, 129, 0.8)); }
+      50% { filter: drop-shadow(0 0 24px rgba(243, 214, 2, 0.85)); }
     }
     .ota-spinning-main {
-      animation: ota-spin-fast 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite, ota-glow-pulse 1.4s ease-in-out infinite !important;
-      transform-origin: 120px 120px;
+      animation: ota-spin-fast 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite, ota-gold-glow-pulse 1.4s ease-in-out infinite !important;
+      transform-origin: 150px 150px;
     }
     .ota-spinning-outer {
       animation: ota-spin-reverse 2s linear infinite !important;
-      transform-origin: 120px 120px;
+      transform-origin: 150px 150px;
     }
 
   </style>
@@ -1124,7 +1124,7 @@
   </section>
 
   <!-- ================= IN-APP AUTO-UPDATE ENGINE ================= -->
-  <section id="update-engine" class="py-12 sm:py-14 px-4 sm:px-8 bg-batwa-canvas border-b border-batwa-border">
+  <section id="update-engine" class="py-12 sm:py-16 px-4 sm:px-8 bg-batwa-canvas border-b border-batwa-border">
     <div class="max-w-6xl mx-auto space-y-8">
       
       <!-- Section Header -->
@@ -1134,22 +1134,22 @@
         </h2>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         
         <!-- Left: 3 Interactive Architecture Nodes -->
-        <div class="lg:col-span-6 flex flex-col justify-between space-y-2.5">
+        <div class="lg:col-span-6 flex flex-col justify-between space-y-3">
           
           <!-- Node 1 -->
-          <div class="p-3.5 sm:p-4 rounded-2xl bg-white border border-batwa-border shadow-xs hover:border-batwa-gold/80 transition-all space-y-1.5 group">
-            <div class="flex items-start gap-3">
+          <div class="p-4 rounded-2xl bg-white border border-batwa-border shadow-xs hover:border-batwa-gold/80 transition-all space-y-1.5 group">
+            <div class="flex items-start gap-3.5">
               <div class="text-batwa-gold filter drop-shadow-[0_1px_4px_rgba(243,214,2,0.4)] group-hover:scale-105 transition-transform duration-300 shrink-0">
-                <svg class="w-5.5 h-5.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
                 </svg>
               </div>
               <div class="space-y-0.5">
-                <h4 class="text-[13px] font-bold text-batwa-navy leading-snug">01 / Cloud Release Manifest</h4>
-                <p class="text-[11.5px] text-batwa-text-muted leading-relaxed">
+                <h4 class="text-sm font-bold text-batwa-navy leading-snug">01 / Cloud Release Manifest</h4>
+                <p class="text-xs text-batwa-text-muted leading-relaxed">
                   Hosts build metadata, SHA-256 package checksum, and release notes deployed directly to high-availability HTTPS edge nodes.
                 </p>
               </div>
@@ -1157,17 +1157,17 @@
           </div>
 
           <!-- Node 2 -->
-          <div class="p-3.5 sm:p-4 rounded-2xl bg-white border border-batwa-border shadow-xs hover:border-batwa-gold/80 transition-all space-y-1.5 group">
-            <div class="flex items-start gap-3">
+          <div class="p-4 rounded-2xl bg-white border border-batwa-border shadow-xs hover:border-batwa-gold/80 transition-all space-y-1.5 group">
+            <div class="flex items-start gap-3.5">
               <div class="text-batwa-gold filter drop-shadow-[0_1px_4px_rgba(243,214,2,0.4)] group-hover:scale-105 transition-transform duration-300 shrink-0">
-                <svg class="w-5.5 h-5.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <rect width="14" height="20" x="5" y="2" rx="2" ry="2"/>
                   <path d="M12 18h.01"/>
                 </svg>
               </div>
               <div class="space-y-0.5">
-                <h4 class="text-[13px] font-bold text-batwa-navy leading-snug">02 / Startup Handshake in Mobile App</h4>
-                <p class="text-[11.5px] text-batwa-text-muted leading-relaxed">
+                <h4 class="text-sm font-bold text-batwa-navy leading-snug">02 / Startup Handshake in Mobile App</h4>
+                <p class="text-xs text-batwa-text-muted leading-relaxed">
                   The app polls the manifest on cold boot (&lt;10ms non-blocking). If a higher build code exists, a clean in-app modal prompts the user to upgrade instantly.
                 </p>
               </div>
@@ -1175,17 +1175,17 @@
           </div>
 
           <!-- Node 3 -->
-          <div class="p-3.5 sm:p-4 rounded-2xl bg-white border border-batwa-border shadow-xs hover:border-batwa-gold/80 transition-all space-y-1.5 group">
-            <div class="flex items-start gap-3">
+          <div class="p-4 rounded-2xl bg-white border border-batwa-border shadow-xs hover:border-batwa-gold/80 transition-all space-y-1.5 group">
+            <div class="flex items-start gap-3.5">
               <div class="text-batwa-gold filter drop-shadow-[0_1px_4px_rgba(243,214,2,0.4)] group-hover:scale-105 transition-transform duration-300 shrink-0">
-                <svg class="w-5.5 h-5.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                   <path d="m9 12 2 2 4-4"/>
                 </svg>
               </div>
               <div class="space-y-0.5">
-                <h4 class="text-[13px] font-bold text-batwa-navy leading-snug">03 / Seamless In-Place Hot Swap</h4>
-                <p class="text-[11.5px] text-batwa-text-muted leading-relaxed">
+                <h4 class="text-sm font-bold text-batwa-navy leading-snug">03 / Seamless In-Place Hot Swap</h4>
+                <p class="text-xs text-batwa-text-muted leading-relaxed">
                   Downloads the verified APK, validates cryptographic SHA-256 signatures, and patches the binary while preserving local biometric MPINs and active sessions.
                 </p>
               </div>
@@ -1193,109 +1193,71 @@
           </div>
 
           <!-- Interactive Action Buttons -->
-          <div class="pt-1.5 flex flex-wrap items-center gap-2.5">
+          <div class="pt-2 flex flex-wrap items-center gap-3">
             <button onclick="runLiveUpdateCheck()" id="ota-test-btn" class="px-5 py-3 rounded-xl bg-batwa-gold hover:bg-batwa-gold-dark text-batwa-navy font-black text-xs flex items-center gap-2 transition active:scale-95 shadow-sm">
               <svg class="w-4 h-4 text-batwa-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
               <span>Check for Updates</span>
             </button>
-            <a href="#download" class="px-4 py-3 rounded-xl bg-batwa-navy hover:bg-black text-white font-bold text-xs flex items-center gap-2 transition shadow-sm">
+            <a href="#download" class="px-5 py-3 rounded-xl bg-batwa-navy hover:bg-black text-white font-bold text-xs flex items-center gap-2 transition shadow-sm">
               <span>Download Build 54</span>
             </a>
           </div>
 
         </div>
 
-        <!-- Right: Futuristic Rotating OTA Dial Console -->
-        <div class="lg:col-span-6 flex flex-col justify-between">
-          <div class="rounded-3xl bg-[#0F172A] border border-slate-800 text-white shadow-xl shadow-slate-900/20 p-5 sm:p-6 flex flex-col h-full justify-between space-y-4 relative overflow-hidden">
+        <!-- Right: Standalone Enlarged Light-Theme Rotating Dial (Zero Background Card) -->
+        <div class="lg:col-span-6 flex items-center justify-center py-4 lg:py-0">
+          <div class="relative w-[290px] h-[290px] sm:w-[330px] sm:h-[330px] mx-auto flex items-center justify-center cursor-pointer group" onclick="runLiveUpdateCheck()" title="Click dial to scan for updates">
             
-            <!-- Ambient Background Glow -->
-            <div class="absolute -top-24 -right-24 w-64 h-64 bg-batwa-gold/10 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <!-- Subtle Ambient Light Gold Glow on Hover -->
+            <div class="absolute inset-4 rounded-full bg-batwa-gold/15 blur-2xl group-hover:scale-110 transition-transform duration-500 opacity-60 pointer-events-none"></div>
 
-            <!-- Header: Live Status & Edge Manifest -->
-            <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 relative z-10">
-              <div class="flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span class="text-xs font-mono font-bold text-white tracking-wide">Live Edge Dial</span>
-              </div>
-              <div class="flex items-center gap-2 font-mono text-[11px]">
-                <span class="text-slate-400 hidden sm:inline">GET /version.json</span>
-                <span id="terminal-http-badge" class="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20 text-[10px]">200 OK</span>
-              </div>
-            </div>
+            <!-- SVG Dial Rings (Enlarged Light Theme, 100% Theme Yellow Gold) -->
+            <svg class="w-full h-full -rotate-90 transform select-none" viewBox="0 0 300 300">
+              <defs>
+                <linearGradient id="ota-dial-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#F3D602" />
+                  <stop offset="60%" stop-color="#FBBF24" />
+                  <stop offset="100%" stop-color="#D8BE02" />
+                </linearGradient>
+                <linearGradient id="ota-dial-gold-orbit" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#F3D602" stop-opacity="1" />
+                  <stop offset="100%" stop-color="#D8BE02" stop-opacity="0.1" />
+                </linearGradient>
+              </defs>
 
-            <!-- Center: The Big Precision Dial (Interactive & Spinning) -->
-            <div class="py-2 flex items-center justify-center relative z-10">
-              <div class="relative w-[230px] h-[230px] sm:w-[250px] sm:h-[250px] mx-auto flex items-center justify-center cursor-pointer group" onclick="runLiveUpdateCheck()" title="Click dial to scan for updates">
-                
-                <!-- Glowing Backdrop on Hover -->
-                <div class="absolute inset-2 rounded-full bg-gradient-to-tr from-batwa-gold/10 via-emerald-500/5 to-transparent blur-xl group-hover:scale-110 transition-transform duration-500"></div>
+              <!-- Outer Ticked Radar Scale (Light Theme) -->
+              <circle cx="150" cy="150" r="140" stroke="#CBD5E1" stroke-width="1.8" stroke-dasharray="3 7" fill="none" opacity="0.75" />
+              
+              <!-- Outer Spinning Radar Orbit Notch (Theme Gold) -->
+              <circle id="ota-outer-orbit" cx="150" cy="150" r="140" stroke="url(#ota-dial-gold-orbit)" stroke-width="3" stroke-linecap="round" stroke-dasharray="60 400" fill="none" style="transform-origin: 150px 150px;" />
 
-                <!-- SVG Dial Rings -->
-                <svg class="w-full h-full -rotate-90 transform" viewBox="0 0 240 240">
-                  <defs>
-                    <linearGradient id="ota-dial-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#F3D602" />
-                      <stop offset="60%" stop-color="#EAB308" />
-                      <stop offset="100%" stop-color="#10B981" />
-                    </linearGradient>
-                    <linearGradient id="ota-dial-outer-glow" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stop-color="#F3D602" stop-opacity="0.9" />
-                      <stop offset="100%" stop-color="#10B981" stop-opacity="0.2" />
-                    </linearGradient>
-                  </defs>
+              <!-- Static Light Background Track -->
+              <circle cx="150" cy="150" r="120" stroke="#F1F5F9" stroke-width="11" fill="none" />
 
-                  <!-- Outer Ticked Radar Scale -->
-                  <circle cx="120" cy="120" r="112" stroke="#334155" stroke-width="1.5" stroke-dasharray="3 6" fill="none" opacity="0.6" />
-                  
-                  <!-- Outer Spinning Radar Orbit Notch -->
-                  <circle id="ota-outer-orbit" cx="120" cy="120" r="112" stroke="url(#ota-dial-outer-glow)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="50 300" fill="none" style="transform-origin: 120px 120px;" />
+              <!-- Main Spinning Theme Yellow Gold Dial Arc -->
+              <circle id="ota-main-dial" cx="150" cy="150" r="120" stroke="url(#ota-dial-gold)" stroke-width="11" stroke-linecap="round" stroke-dasharray="270 480" fill="none" style="transform-origin: 150px 150px;" class="drop-shadow-[0_0_12px_rgba(243,214,2,0.6)]" />
+              
+              <!-- Inner Concentric Precision Guide -->
+              <circle cx="150" cy="150" r="102" stroke="#E2E8F0" stroke-width="1.2" stroke-dasharray="2 5" fill="none" />
+            </svg>
 
-                  <!-- Static Background Track -->
-                  <circle cx="120" cy="120" r="95" stroke="#1E293B" stroke-width="8" fill="none" />
-
-                  <!-- Main Spinning Gradient Dial Arc -->
-                  <circle id="ota-main-dial" cx="120" cy="120" r="95" stroke="url(#ota-dial-gradient)" stroke-width="8" stroke-linecap="round" stroke-dasharray="210 390" fill="none" style="transform-origin: 120px 120px;" class="drop-shadow-[0_0_10px_rgba(243,214,2,0.4)]" />
-                  
-                  <!-- Inner Concentric Precision Guide -->
-                  <circle cx="120" cy="120" r="80" stroke="#1E293B" stroke-width="1" stroke-dasharray="2 4" fill="none" />
+            <!-- Center Core Content (Light Theme) -->
+            <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-6 select-none pointer-events-none">
+              <!-- Verified Shield in Theme Gold -->
+              <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-batwa-gold/20 border border-batwa-gold/50 flex items-center justify-center mb-1.5 text-batwa-navy group-hover:scale-110 transition-transform">
+                <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5 text-batwa-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <path d="m9 12 2 2 4-4"/>
                 </svg>
-
-                <!-- Center Core Content (Inside the Dial) -->
-                <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-4 select-none pointer-events-none">
-                  <div class="w-7 h-7 rounded-full bg-batwa-gold/15 border border-batwa-gold/30 flex items-center justify-center mb-1 text-batwa-gold group-hover:scale-110 transition-transform">
-                    <svg class="w-3.5 h-3.5 text-batwa-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                      <path d="m9 12 2 2 4-4"/>
-                    </svg>
-                  </div>
-                  
-                  <div id="dial-version-num" class="text-2xl sm:text-3xl font-black font-display text-white tracking-tight leading-tight">v2.3.0</div>
-                  <div id="dial-build-tag" class="text-[11px] font-mono text-slate-400 font-semibold pt-0.5">Build 54 • Stable</div>
-
-                  <div id="dial-status-pill" class="mt-2 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-[10px] font-mono font-bold text-emerald-400 transition-all">
-                    <span id="dial-status-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span id="dial-status-text">Up to Date</span>
-                  </div>
-                </div>
-
               </div>
-            </div>
+              
+              <div id="dial-version-num" class="text-3xl sm:text-4xl font-black font-display text-batwa-navy tracking-tight leading-tight">v2.3.0</div>
+              <div id="dial-build-tag" class="text-xs sm:text-[13px] font-mono text-batwa-text-muted font-semibold pt-0.5">Build 54 • Stable</div>
 
-            <!-- Footer: 3 Clean Telemetry Metrics -->
-            <div class="grid grid-cols-3 gap-2 pt-3 border-t border-slate-800/80 text-center font-mono relative z-10">
-              <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800/50">
-                <div class="text-[9.5px] uppercase text-slate-400 font-semibold tracking-wider">Edge Ping</div>
-                <div id="live-latency-val" class="text-xs sm:text-sm font-bold text-white pt-0.5">14ms</div>
-              </div>
-              <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800/50">
-                <div class="text-[9.5px] uppercase text-slate-400 font-semibold tracking-wider">Integrity</div>
-                <div class="text-xs sm:text-sm font-bold text-emerald-400 pt-0.5">SHA-256</div>
-              </div>
-              <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800/50">
-                <div class="text-[9.5px] uppercase text-slate-400 font-semibold tracking-wider">Binary Size</div>
-                <div class="text-xs sm:text-sm font-bold text-batwa-gold pt-0.5">77.4 MB</div>
+              <div id="dial-status-pill" class="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-gray-200 text-[11px] font-mono font-bold text-batwa-navy transition-all shadow-2xs">
+                <span id="dial-status-dot" class="w-2 h-2 rounded-full bg-batwa-gold animate-pulse"></span>
+                <span id="dial-status-text">Up to Date</span>
               </div>
             </div>
 
@@ -1928,7 +1890,7 @@
       }
     }
 
-    // 3. Live Rotating Dial OTA Verification Engine
+    // 3. Live Rotating Dial OTA Verification Engine (Light Theme Gold)
     let isCheckingUpdate = false;
     async function runLiveUpdateCheck() {
       if (isCheckingUpdate) return;
@@ -1940,8 +1902,6 @@
       const statusText = document.getElementById('dial-status-text');
       const statusDot = document.getElementById('dial-status-dot');
       const btn = document.getElementById('ota-test-btn');
-      const latencyVal = document.getElementById('live-latency-val');
-      const badge = document.getElementById('terminal-http-badge');
 
       // 1. Start spinning animation & update UI
       if (mainDial) mainDial.classList.add('ota-spinning-main');
@@ -1949,23 +1909,20 @@
 
       if (statusText) statusText.textContent = 'Scanning Edge...';
       if (statusDot) {
-        statusDot.className = 'w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping';
+        statusDot.className = 'w-2 h-2 rounded-full bg-batwa-gold animate-ping';
       }
       if (statusPill) {
-        statusPill.className = 'mt-2 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/40 text-[10px] font-mono font-bold text-amber-400';
+        statusPill.className = 'mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-[11px] font-mono font-bold text-amber-900 shadow-2xs';
       }
 
       if (btn) {
         btn.innerHTML = '<span class="w-3.5 h-3.5 rounded-full border-2 border-batwa-navy border-t-transparent animate-spin inline-block"></span><span>Connecting to CDN...</span>';
       }
-      if (latencyVal) latencyVal.textContent = '...';
 
       const t0 = performance.now();
-      let actualPing = 14;
 
       try {
         const res = await fetch('version.json?t=' + Date.now());
-        actualPing = Math.max(9, Math.round(performance.now() - t0));
         if (res.ok) {
           const data = await res.json();
           const versionNum = document.getElementById('dial-version-num');
@@ -1974,35 +1931,25 @@
           if (buildTag && data.versionCode) buildTag.textContent = 'Build ' + data.versionCode + ' • Stable';
         }
       } catch (err) {
-        actualPing = 14;
+        console.warn('Live fetch error:', err);
       }
 
-      // Guarantee minimum 1.2s spin for satisfying user experience
+      // Guarantee smooth spin duration
       const elapsed = performance.now() - t0;
-      const waitTime = Math.max(0, 1200 - elapsed);
+      const waitTime = Math.max(0, 1300 - elapsed);
 
       setTimeout(() => {
         // Stop spinning
         if (mainDial) mainDial.classList.remove('ota-spinning-main');
         if (outerOrbit) outerOrbit.classList.remove('ota-spinning-outer');
 
-        // Update metrics
-        if (latencyVal) latencyVal.textContent = actualPing + 'ms';
-        if (badge) {
-          badge.textContent = '200 OK';
-          badge.className = 'px-2 py-0.5 rounded-md bg-emerald-500/25 text-emerald-300 font-bold border border-emerald-500/50 text-[10px] animate-pulse';
-          setTimeout(() => {
-            badge.className = 'px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20 text-[10px]';
-          }, 1500);
-        }
-
-        // Green verified state
+        // Verified state
         if (statusText) statusText.textContent = 'Verified • v2.3.0';
         if (statusDot) {
-          statusDot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse';
+          statusDot.className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse';
         }
         if (statusPill) {
-          statusPill.className = 'mt-2 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-[10px] font-mono font-bold text-emerald-400';
+          statusPill.className = 'mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[11px] font-mono font-bold text-emerald-900 shadow-2xs';
         }
 
         if (btn) {
@@ -2014,6 +1961,8 @@
             btn.innerHTML = '<svg class="w-4 h-4 text-batwa-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg><span>Check for Updates</span>';
           }
           if (statusText) statusText.textContent = 'Up to Date';
+          if (statusDot) statusDot.className = 'w-2 h-2 rounded-full bg-batwa-gold animate-pulse';
+          if (statusPill) statusPill.className = 'mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-gray-200 text-[11px] font-mono font-bold text-batwa-navy shadow-2xs';
           isCheckingUpdate = false;
         }, 2500);
       }, waitTime);
