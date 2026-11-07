@@ -133,6 +133,67 @@
       transform: translateY(-6px) rotate(-45deg);
     }
   </style>
+  <!-- Batwa Theme Yellow Scrollbars -->
+  <style id="batwa-theme-scrollbars">
+    /* ==================================================== */
+    /* BATWA THEME YELLOW SCROLLBARS (#F3D602)              */
+    /* ==================================================== */
+    /* Firefox and W3C standard */
+    html, body, * {
+      scrollbar-width: thin;
+      scrollbar-color: #F3D602 #F8FAFC;
+    }
+
+    /* WebKit & Chromium browsers (Chrome, Edge, Safari, Brave, Opera) */
+    ::-webkit-scrollbar {
+      width: 9px;
+      height: 9px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #F8FAFC;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: #F3D602;
+      border-radius: 9999px;
+      border: 2px solid #F8FAFC;
+      background-clip: padding-box;
+      transition: background-color 0.2s ease;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: #D8BE02;
+    }
+
+    ::-webkit-scrollbar-thumb:active {
+      background-color: #BFA802;
+    }
+
+    ::-webkit-scrollbar-corner {
+      background: #F8FAFC;
+    }
+
+    /* Dark container scrollbar adaptation */
+    pre, .dark-scroll, [class*="bg-[#0F172A]"], [class*="bg-batwa-navy"], [class*="bg-black"] {
+      scrollbar-color: #F3D602 #0F172A;
+    }
+    pre::-webkit-scrollbar-track,
+    .dark-scroll::-webkit-scrollbar-track,
+    [class*="bg-[#0F172A]"]::-webkit-scrollbar-track,
+    [class*="bg-batwa-navy"]::-webkit-scrollbar-track,
+    [class*="bg-black"]::-webkit-scrollbar-track {
+      background: #0F172A;
+    }
+    pre::-webkit-scrollbar-thumb,
+    .dark-scroll::-webkit-scrollbar-thumb,
+    [class*="bg-[#0F172A]"]::-webkit-scrollbar-thumb,
+    [class*="bg-batwa-navy"]::-webkit-scrollbar-thumb,
+    [class*="bg-black"]::-webkit-scrollbar-thumb {
+      background-color: #F3D602;
+      border: 2px solid #0F172A;
+    }
+  </style>
 </head>
 <body class="selection:bg-batwa-gold selection:text-batwa-navy bg-batwa-canvas text-batwa-text-primary antialiased min-h-screen flex flex-col justify-between">
 
