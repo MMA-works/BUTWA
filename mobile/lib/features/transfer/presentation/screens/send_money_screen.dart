@@ -234,6 +234,14 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
       brandColor: Color(0xFF1E3A8A),
     ),
     BankItem(
+      id: 'sirat',
+      name: 'HabibMetro Sirat Islamic Banking',
+      code: 'SRAT',
+      shortName: 'Sirat Islamic',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFF4B2174),
+    ),
+    BankItem(
       id: 'js',
       name: 'JS Bank',
       code: 'JSBL',
