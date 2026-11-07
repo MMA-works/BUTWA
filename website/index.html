@@ -326,13 +326,11 @@
     .marquee-track {
       display: flex;
       width: max-content;
-      animation: continuousMarquee 32s linear infinite;
+      animation: continuousMarquee 45s linear infinite;
       will-change: transform;
     }
 
-    .marquee-track:hover {
-      animation-play-state: paused;
-    }
+    /* .marquee-track:hover { animation-play-state: paused; } -- unpaused for continuous infinite loop */
 
     /* ---------------------------------------------------- */
     /* 3D NFC TITANIUM CARD SYSTEM                         */
@@ -742,43 +740,97 @@
     <!-- 100% Seamless Infinite Track (Zero Break, Zero Pause, Enlarged Logos) -->
     <div class="marquee-wrapper w-full">
       <div class="marquee-track flex items-center">
-        
         <!-- Track Group 1 -->
-        <div class="flex items-center gap-12 sm:gap-16 pr-12 sm:pr-16 shrink-0">
-          <img src="assets/payment_networks/raast.png" alt="Raast" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
-          <img src="assets/payment_networks/1link.png" alt="1Link" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
-          <img src="assets/payment_networks/paypak.png" alt="PayPak" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
-          <img src="assets/payment_networks/visa.png" alt="Visa" class="h-8 sm:h-9 w-auto max-w-[110px] object-contain hover:scale-105 transition-transform" />
-          <img src="assets/payment_networks/mastercard.png" alt="MasterCard" class="h-10 sm:h-12 w-auto max-w-[120px] object-contain hover:scale-105 transition-transform" />
-          <img src="assets/banks/meezan.png" alt="Meezan Bank" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
-          <img src="assets/banks/hbl.png" alt="HBL" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
-          <img src="assets/banks/alfalah.png" alt="Bank Alfalah" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
-          <img src="assets/banks/easypaisa.png" alt="EasyPaisa" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
-          <img src="assets/banks/jazzcash.png" alt="JazzCash" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
-          <img src="assets/banks/nayapay.png" alt="NayaPay" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
-          <img src="assets/banks/sadapay.png" alt="SadaPay" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
-          <img src="assets/banks/ubl.png" alt="UBL" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
-          <img src="assets/banks/mcb.png" alt="MCB" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
+        <div class="flex items-center gap-10 sm:gap-14 pr-10 sm:pr-14 shrink-0">
+          <img src="assets/payment_networks/raast.png" alt="Raast P2P" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/payment_networks/1link.png" alt="1Link Switch" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/payment_networks/paypak.png" alt="PayPak" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/payment_networks/visa.png" alt="Visa" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/payment_networks/mastercard.png" alt="MasterCard" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/meezan.png" alt="Meezan Bank" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/hbl.png" alt="HBL" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/alfalah.png" alt="Bank Alfalah" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/allied.png" alt="Allied Bank" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/mcb.png" alt="MCB" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/ubl.png" alt="UBL" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/askari.png" alt="Askari Bank" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/alhabib.png" alt="Bank AL Habib" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/faysal.png" alt="Faysal Bank" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/bankislami.png" alt="BankIslami" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/scb.png" alt="Standard Chartered" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/nbp.png" alt="National Bank of Pakistan" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/bop.png" alt="Bank of Punjab" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/bok.png" alt="Bank of Khyber" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/habibmetro.png" alt="HabibMetro" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/js.png" alt="JS Bank" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/soneri.png" alt="Soneri Bank" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/sindh.png" alt="Sindh Bank" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/samba.png" alt="Samba Bank" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/silk.png" alt="Silkbank" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/albaraka.png" alt="Al Baraka" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/dib.png" alt="Dubai Islamic Bank" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/easypaisa.png" alt="EasyPaisa" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/jazzcash.png" alt="JazzCash" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/nayapay.png" alt="NayaPay" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/sadapay.png" alt="SadaPay" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/zindigi.png" alt="Zindigi JS" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/upaisa.png" alt="UPaisa" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/ke.png" alt="K-Electric" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/lesco.png" alt="LESCO" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/iesco.png" alt="IESCO" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/sngpl.png" alt="SNGPL" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/ssgc.png" alt="SSGC" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/ptcl.png" alt="PTCL" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/nayatel.png" alt="Nayatel" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/stormfiber.png" alt="StormFiber" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/wasa.png" alt="WASA" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
         </div>
 
         <!-- Track Group 2 (Identical Clone for Seamless Infinite Wrap) -->
-        <div class="flex items-center gap-12 sm:gap-16 pr-12 sm:pr-16 shrink-0" aria-hidden="true">
-          <img src="assets/payment_networks/raast.png" alt="Raast" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
-          <img src="assets/payment_networks/1link.png" alt="1Link" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
-          <img src="assets/payment_networks/paypak.png" alt="PayPak" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
-          <img src="assets/payment_networks/visa.png" alt="Visa" class="h-8 sm:h-9 w-auto max-w-[110px] object-contain hover:scale-105 transition-transform" />
-          <img src="assets/payment_networks/mastercard.png" alt="MasterCard" class="h-10 sm:h-12 w-auto max-w-[120px] object-contain hover:scale-105 transition-transform" />
-          <img src="assets/banks/meezan.png" alt="Meezan Bank" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
-          <img src="assets/banks/hbl.png" alt="HBL" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
-          <img src="assets/banks/alfalah.png" alt="Bank Alfalah" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
-          <img src="assets/banks/easypaisa.png" alt="EasyPaisa" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
-          <img src="assets/banks/jazzcash.png" alt="JazzCash" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
-          <img src="assets/banks/nayapay.png" alt="NayaPay" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
-          <img src="assets/banks/sadapay.png" alt="SadaPay" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
-          <img src="assets/banks/ubl.png" alt="UBL" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
-          <img src="assets/banks/mcb.png" alt="MCB" class="h-10 sm:h-12 w-auto max-w-[130px] object-contain hover:scale-105 transition-transform" />
+        <div class="flex items-center gap-10 sm:gap-14 pr-10 sm:pr-14 shrink-0" aria-hidden="true">
+          <img src="assets/payment_networks/raast.png" alt="Raast P2P" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/payment_networks/1link.png" alt="1Link Switch" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/payment_networks/paypak.png" alt="PayPak" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/payment_networks/visa.png" alt="Visa" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/payment_networks/mastercard.png" alt="MasterCard" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/meezan.png" alt="Meezan Bank" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/hbl.png" alt="HBL" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/alfalah.png" alt="Bank Alfalah" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/allied.png" alt="Allied Bank" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/mcb.png" alt="MCB" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/ubl.png" alt="UBL" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/askari.png" alt="Askari Bank" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/alhabib.png" alt="Bank AL Habib" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/faysal.png" alt="Faysal Bank" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/bankislami.png" alt="BankIslami" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/scb.png" alt="Standard Chartered" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/nbp.png" alt="National Bank of Pakistan" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/bop.png" alt="Bank of Punjab" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/bok.png" alt="Bank of Khyber" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/habibmetro.png" alt="HabibMetro" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/js.png" alt="JS Bank" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/soneri.png" alt="Soneri Bank" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/sindh.png" alt="Sindh Bank" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/samba.png" alt="Samba Bank" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/silk.png" alt="Silkbank" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/albaraka.png" alt="Al Baraka" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/dib.png" alt="Dubai Islamic Bank" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/easypaisa.png" alt="EasyPaisa" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/jazzcash.png" alt="JazzCash" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/nayapay.png" alt="NayaPay" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/sadapay.png" alt="SadaPay" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/zindigi.png" alt="Zindigi JS" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/upaisa.png" alt="UPaisa" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/ke.png" alt="K-Electric" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/lesco.png" alt="LESCO" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/iesco.png" alt="IESCO" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/sngpl.png" alt="SNGPL" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/ssgc.png" alt="SSGC" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/ptcl.png" alt="PTCL" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/nayatel.png" alt="Nayatel" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/stormfiber.png" alt="StormFiber" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
+          <img src="assets/banks/wasa.png" alt="WASA" class="h-9 sm:h-11 w-auto max-w-[120px] object-contain shrink-0" loading="lazy" />
         </div>
-
       </div>
     </div>
   </section>
