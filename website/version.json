@@ -1,20 +1,21 @@
 {
-  "version": "2.4.4",
-  "versionCode": 59,
-  "minSupportedVersion": "1.0.0",
-  "releaseDate": "2026-11-07",
-  "apkName": "batwa-wallet.apk",
-  "apkSize": "80.4 MB",
-  "sha256": "78759347b2197ab3785d5b065b50647ec832ce697cba785a37b2cf1a548083ac",
-  "downloadUrl": "https://buttwaa.online/batwa-wallet.apk",
-  "forceUpdate": false,
-  "title": "BATWA v2.4.4 Complete Bank & aik by BankIslami Wallet Release",
-  "message": "Naya update live ho chuka hai! aik by BankIslami Digital Wallet, BankIslami, Raqami, ABL, Al Baraka, BOK, DIB aur tamam verified Pakistani banks ke authentic logos shamil hain.",
-  "features": [
-    "aik by BankIslami (Digital Wallet) official branding integrated",
-    "BankIslami Pakistan Limited verified logo active",
-    "New Signature App Icon: Batwa Electric Gold (#F3D602) background with Black 'B'",
-    "Raqami Islamic Digital Bank, Allied Bank (ABL), Al Baraka, BOK, DIB, Samba, Soneri, FWBL, HabibMetro",
-    "24/7 Supabase Cloud Database & Live Cloudflare Gateway"
-  ]
+    "version": "2.4.5",
+    "versionCode": 245,
+    "minSupportedVersion": "1.0.0",
+    "releaseDate": "2026-11-07",
+    "apkName": "batwa-wallet.apk",
+    "apkSize": "80.4 MB",
+    "sha256": "bf213da5cc2b6148899f61806dff3a88117c9ffac0ff3152713a1776634e9796",
+    "downloadUrl": "https://buttwaa.online/batwa-wallet.apk",
+    "forceUpdate": false,
+    "title": "BATWA v2.4.5 Modern Boot Screen & Official App Branding",
+    "message": "Naya update live ho chuka hai! Batwa ka naya clean modern booting screen jis mein Batwa official gold logo, Sign In aur Register ke clear options mojood hain.",
+    "features": [
+        "New modern neo-banking Booting / Welcome screen with Sign In and Register options",
+        "Official Batwa App Icon (#F3D602 Gold background with Black 'B' emblem)",
+        "aik by BankIslami Digital Wallet & BankIslami Pakistan Limited verified logos",
+        "Raqami Islamic Digital Bank, Allied Bank (ABL), Al Baraka, BOK, DIB, Samba, Soneri, FWBL, HabibMetro",
+        "Removed unverified placeholder banks from transfer list",
+        "24/7 Supabase Cloud Database & Live Cloudflare Gateway"
+    ]
 }
