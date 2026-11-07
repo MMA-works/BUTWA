@@ -98,6 +98,38 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
   // 🇵🇰 Comprehensive List of Pakistani Banks & Microfinance / Wallets
   final List<BankItem> _allBanks = const [
     BankItem(
+      id: 'bml',
+      name: 'Bank Makramah Limited (BML)',
+      code: 'SMBL',
+      shortName: 'BML',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFF0A6535),
+    ),
+    BankItem(
+      id: 'mmbl',
+      name: 'Mobilink Microfinance Bank (MMBL)',
+      code: 'MMBL',
+      shortName: 'MMBL',
+      icon: Icons.account_balance_wallet_rounded,
+      brandColor: Color(0xFFEA580C),
+    ),
+    BankItem(
+      id: 'ztbl',
+      name: 'Zarai Taraqiati Bank Limited (ZTBL)',
+      code: 'ZTBL',
+      shortName: 'ZTBL',
+      icon: Icons.agriculture_rounded,
+      brandColor: Color(0xFF16A34A),
+    ),
+    BankItem(
+      id: 'advans',
+      name: 'Advans Pakistan Microfinance Bank',
+      code: 'ADVN',
+      shortName: 'Advans',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFF0D9488),
+    ),
+    BankItem(
       id: 'bankislami',
       name: 'BankIslami Pakistan Limited',
       code: 'BKIP',
@@ -144,14 +176,6 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
       shortName: 'ABL',
       icon: Icons.account_balance_rounded,
       brandColor: Color(0xFF2563EB),
-    ),
-    BankItem(
-      id: 'apna',
-      name: 'Apna Microfinance Bank',
-      code: 'APNA',
-      shortName: 'Apna Bank',
-      icon: Icons.hub_rounded,
-      brandColor: Color(0xFFCA8A04),
     ),
     BankItem(
       id: 'askari',
@@ -258,14 +282,6 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
       brandColor: Color(0xFFF97316),
     ),
     BankItem(
-      id: 'mcbib',
-      name: 'MCB Islamic Bank',
-      code: 'MCIB',
-      shortName: 'MCB Islamic',
-      icon: Icons.account_balance_rounded,
-      brandColor: Color(0xFF059669),
-    ),
-    BankItem(
       id: 'meezan',
       name: 'Meezan Bank',
       code: 'MEZN',
@@ -288,22 +304,6 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
       shortName: 'Samba',
       icon: Icons.account_balance_rounded,
       brandColor: Color(0xFF0369A1),
-    ),
-    BankItem(
-      id: 'silk',
-      name: 'Silkbank',
-      code: 'SILK',
-      shortName: 'Silkbank',
-      icon: Icons.account_balance_rounded,
-      brandColor: Color(0xFF991B1B),
-    ),
-    BankItem(
-      id: 'sindh',
-      name: 'Sindh Bank',
-      code: 'SNDH',
-      shortName: 'Sindh Bank',
-      icon: Icons.account_balance_rounded,
-      brandColor: Color(0xFF0E7490),
     ),
     BankItem(
       id: 'soneri',

@@ -1,20 +1,20 @@
 {
-  "version": "2.4.1",
-  "versionCode": 56,
+  "version": "2.4.2",
+  "versionCode": 57,
   "minSupportedVersion": "1.0.0",
   "releaseDate": "2026-11-07",
   "apkName": "batwa-wallet.apk",
-  "apkSize": "79.4 MB",
-  "sha256": "92c46cf4ce40121944f3d80e520230f99469540617ded6d59be23d72d2c433dd",
+  "apkSize": "80.1 MB",
+  "sha256": "5c72f83eb678b2197d75d4a4cff5a03cfc87005818524cb942fded09d5278004",
   "downloadUrl": "https://buttwaa.online/batwa-wallet.apk",
   "forceUpdate": false,
-  "title": "BATWA v2.4.1 Brand & Cloud Release",
-  "message": "Naya update live ho chuka hai! Mukammal Pakistani banks aur utility companies ke real logos, Supabase Cloud Database aur instant sandbox payments shamil hain.",
+  "title": "BATWA v2.4.2 Verified Bank Suite Release",
+  "message": "Naya update live ho chuka hai! Tamam verified Pakistani banks (Samba, Soneri, FWBL, HabibMetro, BankIslami, BML, MMBL, ZTBL) ke 100% authentic high-definition logos activate ho chukay hain.",
   "features": [
-    "Full Pakistani Brand Logos (Sirat Islamic, HabibMetro, KE, LESCO, IESCO, FESCO, MEPCO, GEPCO, PESCO, SNGPL, SSGC, PTCL, StormFiber, Nayatel, WASA, BankIslami, UPaisa)",
-    "Clean Emerald Mint Signature Services Hub Theme",
-    "Supabase 24/7 PostgreSQL Cloud Database & Cloudflare Tunnel",
-    "Smart Utility Inquiries & Title Fetch Simulator",
-    "Auto-recovery for fresh user sessions"
+    "100% Verified Bank Suite (Only real, authentic bank logos)",
+    "Cleaned unverified placeholders from Bank Transfer list",
+    "Samba Bank & Soneri Bank official logos wired",
+    "FWBL & HabibMetro official branding active",
+    "Supabase 24/7 PostgreSQL Cloud Database & Live Cloudflare Gateway"
   ]
 }
