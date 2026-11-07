@@ -241,13 +241,15 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
                   );
                   _loadData();
                 } else if (state is AnalyticsError) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(state.message),
-                      backgroundColor: Colors.red.shade800,
-                      behavior: SnackBarBehavior.floating,
-                    ),
-                  );
+                  if (!state.message.contains('DioException') && !state.message.contains('network error')) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(state.message),
+                        backgroundColor: Colors.red.shade800,
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                  }
                 }
               },
               builder: (context, state) {
@@ -459,8 +461,8 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
                       _showEarningGoalSheet(summary, periodData);
                     },
                     child: Container(
-                      height: 234,
-                      padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 14),
+                      height: 168,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
                           colors: [
@@ -534,10 +536,10 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
                           Text(
                             '+${periodData['earningPercentage']}%',
                             style: const TextStyle(
-                              fontSize: 32,
+                              fontSize: 24,
                               fontWeight: FontWeight.w900,
                               color: Color(0xFF031E14),
-                              letterSpacing: -1.2,
+                              letterSpacing: -1.0,
                               height: 1.0,
                             ),
                           ),
@@ -618,8 +620,8 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
                       _showSpendingAnalysisSheet(summary, periodData);
                     },
                     child: Container(
-                      height: 234,
-                      padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 14),
+                      height: 168,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
                           colors: [
@@ -710,10 +712,10 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
 
                           // Spider / Radar Polygon Chart in Brand Colors
                           SizedBox(
-                            height: 82,
+                            height: 50,
                             child: Center(
                               child: CustomPaint(
-                                size: const Size(116, 82),
+                                size: const Size(75, 50),
                                 painter: _MiniSpiderChartPainter(),
                               ),
                             ),
@@ -1230,12 +1232,7 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
           },
         ),
 
-        const SizedBox(height: 26),
-
-        // 🌟 Active Monthly Budgets Tracker
-        _buildActiveBudgetsSection(summary),
-
-        const SizedBox(height: 10),
+        const SizedBox(height: 18),
 
         // Category Breakdown Header
         Row(
@@ -1273,173 +1270,16 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
 
         const SizedBox(height: 12),
 
-        // 🌟 Interactive Category Breakdown Tiles (Tap to view details modal)
+        // 🌟 Clean Category Breakdown Rows (Clean icons without outer card boxes or borders)
         ...((periodData['categoryBreakdown'] as List<CategorySpendingEntity>?) ?? summary.categoryBreakdown).map((cat) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: InkWell(
-              onTap: () {
-                HapticFeedback.lightImpact();
-                _showCategoryDetailsSheet(cat);
-              },
-              borderRadius: BorderRadius.circular(18),
-              child: Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF8F9FA),
-                  borderRadius: BorderRadius.circular(18),
-                  border: Border.all(
-                    color: _cardBorder,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 38,
-                      height: 38,
-                      decoration: BoxDecoration(
-                        color: _darkGreenStart,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: _brandYellow.withValues(alpha: 0.3),
-                        ),
-                      ),
-                      child: Center(
-                        child: Icon(
-                          _getCategoryIcon(cat.category),
-                          color: _brandYellow,
-                          size: 18,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  cat.categoryName,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: 13,
-                                    color: _darkNavy,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              const SizedBox(width: 4),
-                              const Icon(
-                                Icons.chevron_right_rounded,
-                                size: 16,
-                                color: AppColors.textSecondary,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            '${cat.percentageOfTotal.toStringAsFixed(1)}% of total • ${cat.transactionCount} transactions',
-                            style: const TextStyle(
-                              fontSize: 10,
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Text(
-                      'Rs ${cat.totalAmount.toStringAsFixed(2)}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w900,
-                        fontSize: 13.5,
-                        color: _darkNavy,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        }),
-      ],
-    );
-  }
-
-  // 🌟 Active Monthly Budgets Section with Live Limits, Spend, and Alerts
-  Widget _buildActiveBudgetsSection(AnalyticsSummaryEntity summary) {
-    final budgets = summary.activeBudgets;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Section Header
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                const Text(
-                  'Monthly Budgets',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w800,
-                    color: _darkNavy,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: _brandYellow.withValues(alpha: 0.35),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    '${budgets.length}',
-                    style: const TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w900,
-                      color: _darkNavy,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            GestureDetector(
-              onTap: () {
-                HapticFeedback.lightImpact();
-                _openSetBudgetSheet();
-              },
-              behavior: HitTestBehavior.opaque,
-              child: const Text(
-                '+ Set Budget',
-                style: TextStyle(
-                  color: _brandYellowDark,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 12,
-                ),
-              ),
-            ),
-          ],
-        ),
-
-        const SizedBox(height: 12),
-
-        if (budgets.isEmpty)
-          InkWell(
+          return InkWell(
             onTap: () {
               HapticFeedback.lightImpact();
-              _openSetBudgetSheet();
+              _showCategoryDetailsSheet(cat);
             },
-            borderRadius: BorderRadius.circular(18),
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF8F9FA),
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: _cardBorder),
-              ),
+            borderRadius: BorderRadius.circular(12),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
               child: Row(
                 children: [
                   Container(
@@ -1447,156 +1287,67 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
                     height: 42,
                     decoration: BoxDecoration(
                       color: _darkGreenStart,
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(Icons.add_chart_rounded, color: _brandYellow, size: 20),
+                    child: Center(
+                      child: Icon(
+                        _getCategoryIcon(cat.category),
+                        color: _brandYellow,
+                        size: 20,
+                      ),
+                    ),
                   ),
                   const SizedBox(width: 14),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'No Active Budgets for this Month',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w800,
-                            color: _darkNavy,
-                          ),
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                cat.categoryName,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 14,
+                                  color: _darkNavy,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            const Icon(
+                              Icons.chevron_right_rounded,
+                              size: 16,
+                              color: AppColors.textSecondary,
+                            ),
+                          ],
                         ),
-                        SizedBox(height: 2),
+                        const SizedBox(height: 3),
                         Text(
-                          'Tap here to set category spending limits.',
-                          style: TextStyle(
+                          '${cat.percentageOfTotal.toStringAsFixed(1)}% of total • ${cat.transactionCount} transactions',
+                          style: const TextStyle(
                             fontSize: 11,
+                            fontWeight: FontWeight.w500,
                             color: AppColors.textSecondary,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: _brandYellowDark),
+                  Text(
+                    'Rs ${cat.totalAmount.toStringAsFixed(2)}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 14,
+                      color: _darkNavy,
+                    ),
+                  ),
                 ],
               ),
             ),
-          )
-        else
-          ...budgets.map((b) {
-            final double pct = (b.percentageUsed / 100.0).clamp(0.0, 1.0);
-            final bool isExceeded = b.isExceeded;
-            final bool isAlert = b.isAlertTriggered;
-
-            Color progressColor = _accentEmerald;
-            if (isExceeded) {
-              progressColor = const Color(0xFFEF4444);
-            } else if (isAlert) {
-              progressColor = const Color(0xFFF59E0B);
-            }
-
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: InkWell(
-                onTap: () {
-                  HapticFeedback.lightImpact();
-                  _openSetBudgetSheet(b, b.category);
-                },
-                borderRadius: BorderRadius.circular(18),
-                child: Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF8F9FA),
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(
-                      color: isExceeded
-                          ? Colors.red.shade300
-                          : (isAlert ? Colors.amber.shade300 : _cardBorder),
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            width: 38,
-                            height: 38,
-                            decoration: BoxDecoration(
-                              color: _darkGreenStart,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Icon(_getCategoryIcon(b.category), color: _brandYellow, size: 18),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      _formatCategoryLabel(b.category),
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 13,
-                                        color: _darkNavy,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Rs ${b.monthlyLimit.toStringAsFixed(0)}',
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w900,
-                                        fontSize: 13,
-                                        color: _darkNavy,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 3),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Spent Rs ${b.spentAmount.toStringAsFixed(0)} (${b.percentageUsed.toStringAsFixed(0)}%)',
-                                      style: TextStyle(
-                                        fontSize: 10.5,
-                                        fontWeight: FontWeight.w600,
-                                        color: isExceeded ? Colors.red.shade700 : AppColors.textSecondary,
-                                      ),
-                                    ),
-                                    Text(
-                                      isExceeded
-                                          ? 'Exceeded by Rs ${(b.spentAmount - b.monthlyLimit).toStringAsFixed(0)}'
-                                          : 'Rs ${b.remainingAmount.toStringAsFixed(0)} left',
-                                      style: TextStyle(
-                                        fontSize: 10.5,
-                                        fontWeight: FontWeight.w700,
-                                        color: isExceeded ? Colors.red.shade700 : _accentEmerald,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: LinearProgressIndicator(
-                          value: pct,
-                          backgroundColor: Colors.grey.shade200,
-                          valueColor: AlwaysStoppedAnimation<Color>(progressColor),
-                          minHeight: 6,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }),
-        const SizedBox(height: 12),
+          );
+        }),
       ],
     );
   }

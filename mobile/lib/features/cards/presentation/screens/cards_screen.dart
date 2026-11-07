@@ -879,7 +879,7 @@ class _CardsScreenContentState extends State<_CardsScreenContent> {
     );
   }
 
-  // 🌟 QUICK ACTION BUTTON ITEM
+  // 🌟 QUICK ACTION BUTTON ITEM (Clean Dark Green Icons without circles/borders)
   Widget _buildQuickActionItem({
     required IconData icon,
     required String label,
@@ -891,32 +891,24 @@ class _CardsScreenContentState extends State<_CardsScreenContent> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFFE2E8F0), width: 1.2),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
+          SizedBox(
+            width: 44,
+            height: 44,
             child: Center(
-              child: Icon(icon, color: const Color(0xFF07482D), size: 20),
+              child: Icon(
+                icon,
+                color: const Color(0xFF07482D),
+                size: 27,
+              ),
             ),
           ),
-          const SizedBox(height: 7),
+          const SizedBox(height: 6),
           Text(
             label,
             style: const TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF0F172A),
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF1E293B),
             ),
           ),
         ],
