@@ -1,18 +1,14 @@
 {
-    "buildNumber":  249,
+    "buildNumber":  250,
     "downloadUrl":  "https://mma-works.github.io/BUTWA/batwa-wallet.apk",
     "changelog":  [
-                      "Fixed all bank logos and mapped Allied Bank, Al Baraka, Soneri Bank, BOK, Dubai Islamic, Raqami, BankIslami, aik, Samba",
-                      "Removed unapproved banks from bank transfer and quick payees",
-                      "Restored clean bare dark green action icons on Cards screen without circular borders or backgrounds",
-                      "Compacted top Earning and Spending boxes on Statistics screen",
-                      "Removed No Active Budgets card and cleaned Category Breakdown without boxed borders",
-                      "Protected screen load from raw DioException red banners"
+                      "Updated official Allied Bank Limited (ABL) logo with authentic orange box, blue curve, and typography",
+                      "Cleaned square icon framing for sharp and clear display across Bank Transfer and Payees"
                   ],
-    "version":  "2.4.9",
+    "version":  "2.4.10",
     "minSupportedVersion":  "2.0.0",
-    "releaseDate":  "2026-11-07",
-    "sha256":  "3ab82d3efa1558f86a1985372b2bc65b3fa11dec441f2586af59bc99d4304c6f",
-    "fileSizeBytes":  83944401,
+    "releaseDate":  "2026-11-08",
+    "sha256":  "8d703eadb4616a5772605c840a222235deb41f0da255631d542510a7fb0df224",
+    "fileSizeBytes":  83983473,
     "fileSize":  "80.1 MB"
 }
