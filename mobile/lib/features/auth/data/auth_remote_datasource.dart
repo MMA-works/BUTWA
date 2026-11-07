@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:batwa_wallet/core/constants/api_constants.dart';
 import 'package:batwa_wallet/core/network/api_client.dart';
 import 'package:batwa_wallet/core/network/api_exception.dart';
@@ -22,6 +23,21 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   AuthRemoteDataSourceImpl({required this.apiClient});
 
+  ApiException _handleError(dynamic e) {
+    if (e is ApiException) return e;
+    if (e is DioException) {
+      if (e.error is ApiException) return e.error as ApiException;
+      final msg = e.response?.data is Map<String, dynamic>
+          ? e.response?.data['message']?.toString()
+          : null;
+      return ApiException(
+        message: msg ?? e.message ?? 'A network error occurred',
+        statusCode: e.response?.statusCode,
+      );
+    }
+    return ApiException(message: e.toString().replaceAll('Exception: ', ''));
+  }
+
   @override
   Future<AuthResponseModel> login(String identifier, String password) async {
     try {
@@ -33,10 +49,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         },
       );
       return AuthResponseModel.fromJson(response.data['data']);
-    } on ApiException {
-      rethrow;
     } catch (e) {
-      throw ApiException(message: e.toString());
+      throw _handleError(e);
     }
   }
 
@@ -60,10 +74,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         },
       );
       return AuthResponseModel.fromJson(response.data['data']);
-    } on ApiException {
-      rethrow;
     } catch (e) {
-      throw ApiException(message: e.toString());
+      throw _handleError(e);
     }
   }
 
@@ -77,10 +89,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'currentPassword': currentPassword,
         },
       );
-    } on ApiException {
-      rethrow;
     } catch (e) {
-      throw ApiException(message: e.toString());
+      throw _handleError(e);
     }
   }
 
@@ -89,10 +99,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final response = await apiClient.client.get(ApiConstants.currentUser);
       return UserModel.fromJson(response.data['data']);
-    } on ApiException {
-      rethrow;
     } catch (e) {
-      throw ApiException(message: e.toString());
+      throw _handleError(e);
     }
   }
 }

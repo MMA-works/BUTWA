@@ -80,7 +80,7 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
       case 0: // Today
         return {
           'periodName': 'Today',
-          'totalBalance': summary.netSavings > 0 ? summary.netSavings : 25453.00,
+          'totalBalance': summary.netSavings,
           'earningPercentage': 8,
           'earningSubtext': 'Your earning today increased by 8% compared to yesterday.',
           'goalCurrent': 850.0,
@@ -103,7 +103,7 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
       case 1: // Weekly
         return {
           'periodName': 'Weekly',
-          'totalBalance': summary.netSavings > 0 ? summary.netSavings : 25453.00,
+          'totalBalance': summary.netSavings,
           'earningPercentage': 18,
           'earningSubtext': 'Your weekly earning increased by 18% compared to last week.',
           'goalCurrent': 2400.0,
@@ -151,11 +151,11 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
       case 2: // Monthly (Default)
       default:
         final earningPct = summary.savingsRatePercentage.toInt() > 0 ? summary.savingsRatePercentage.toInt() : 24;
-        final currentInflow = summary.totalInflow > 0 ? summary.totalInflow : 2947.0;
-        final currentOutflow = summary.totalOutflow > 0 ? summary.totalOutflow : 3250.80;
+        final currentInflow = summary.totalInflow;
+        final currentOutflow = summary.totalOutflow;
         return {
           'periodName': 'Monthly',
-          'totalBalance': summary.netSavings > 0 ? summary.netSavings : 25453.00,
+          'totalBalance': summary.netSavings,
           'earningPercentage': earningPct,
           'earningSubtext': 'Your current month earning increased by $earningPct% compared to last month.',
           'goalCurrent': currentInflow,
@@ -264,9 +264,9 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
                   // Fallback preview data matching Batwa theme
                   summary = const AnalyticsSummaryEntity(
                     monthPeriod: '2026-10',
-                    totalInflow: 2947.0,
-                    totalOutflow: 3250.80,
-                    netSavings: 25453.00,
+                    totalInflow: 0.0,
+                    totalOutflow: 0.00,
+                    netSavings: 0.00,
                     savingsRatePercentage: 24.0,
                     totalTransactionsCount: 18,
                     categoryBreakdown: [

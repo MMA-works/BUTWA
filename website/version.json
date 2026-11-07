@@ -1,21 +1,20 @@
 {
-    "version": "2.4.5",
-    "versionCode": 245,
+    "version": "2.4.6",
+    "versionCode": 246,
     "minSupportedVersion": "1.0.0",
     "releaseDate": "2026-11-07",
     "apkName": "batwa-wallet.apk",
     "apkSize": "80.4 MB",
-    "sha256": "bf213da5cc2b6148899f61806dff3a88117c9ffac0ff3152713a1776634e9796",
+    "sha256": "08ad5ddb728806dfa226ff8ecc7856ec0a422d5d08e4459b37d3b3b6df432543",
     "downloadUrl": "https://buttwaa.online/batwa-wallet.apk",
     "forceUpdate": false,
-    "title": "BATWA v2.4.5 Modern Boot Screen & Official App Branding",
-    "message": "Naya update live ho chuka hai! Batwa ka naya clean modern booting screen jis mein Batwa official gold logo, Sign In aur Register ke clear options mojood hain.",
+    "title": "BATWA v2.4.6 Zero-Meter Account & Analytics Error Fix",
+    "message": "Naya update live ho chuka hai! Tamam dummy accounts aur mock data mukammal khatam kar diye gaye hain. Ab app true zero-meter account ke sath register aur operate karegi.",
     "features": [
-        "New modern neo-banking Booting / Welcome screen with Sign In and Register options",
-        "Official Batwa App Icon (#F3D602 Gold background with Black 'B' emblem)",
-        "aik by BankIslami Digital Wallet & BankIslami Pakistan Limited verified logos",
-        "Raqami Islamic Digital Bank, Allied Bank (ABL), Al Baraka, BOK, DIB, Samba, Soneri, FWBL, HabibMetro",
-        "Removed unverified placeholder banks from transfer list",
-        "24/7 Supabase Cloud Database & Live Cloudflare Gateway"
+        "Purged all mock / dummy accounts ('William Current') and fake fallback balances",
+        "Fixed DioException error on Statistics screen with clean friendly notifications",
+        "True zero-meter account: New accounts start with Rs 0.00 and zero transactions",
+        "Automatic token reset: Expired or invalid sessions cleanly route back to Welcome / Booting screen",
+        "New modern Batwa Booting screen with Sign In & Register buttons"
     ]
 }

@@ -169,7 +169,7 @@ class BalanceCardWidget extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  userName ?? (wallet.walletTag.isNotEmpty ? '@${wallet.walletTag}' : 'William Current'),
+                                  userName ?? (wallet.walletTag.isNotEmpty ? '@${wallet.walletTag}' : 'Batwa User'),
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 13,

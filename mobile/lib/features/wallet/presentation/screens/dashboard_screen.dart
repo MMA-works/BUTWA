@@ -339,7 +339,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       const SizedBox(width: 10),
                                       BlocBuilder<AuthBloc, AuthState>(
                                         builder: (context, authState) {
-                                          String name = 'William Current';
+                                          String name = 'Batwa User';
                                           if (authState is Authenticated && authState.user.fullName.isNotEmpty) {
                                             name = authState.user.fullName;
                                           }
@@ -388,7 +388,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                         final authState = context.read<AuthBloc>().state;
                                         final currentUserName = (authState is Authenticated && authState.user.fullName.isNotEmpty)
                                             ? authState.user.fullName
-                                            : 'William Current';
+                                            : 'Batwa User';
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -514,7 +514,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: BlocBuilder<AuthBloc, AuthState>(
                               builder: (context, authState) {
-                                String name = 'William Current';
+                                String name = 'Batwa User';
                                 if (authState is Authenticated && authState.user.fullName.isNotEmpty) {
                                   name = authState.user.fullName;
                                 }

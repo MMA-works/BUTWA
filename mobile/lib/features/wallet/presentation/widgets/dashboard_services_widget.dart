@@ -29,7 +29,7 @@ class DashboardServicesWidget extends StatefulWidget {
 
   const DashboardServicesWidget({
     super.key,
-    this.userBalance = 20600.0,
+    this.userBalance = 0.0,
   });
 
   @override

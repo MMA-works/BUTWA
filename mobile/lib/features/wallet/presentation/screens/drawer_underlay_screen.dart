@@ -49,7 +49,7 @@ class _DrawerUnderlayScreenState extends State<DrawerUnderlayScreen> {
   double _dailyTransferLimit = 500000;
   String _selectedCurrency = 'PKR (Rs)';
   String _selectedLanguage = 'English (US)';
-  String _userFullName = 'William Current';
+  String _userFullName = 'Batwa User';
   String _userEmail = 'william@batwa.com';
   String _userPhone = '+92 300 1234567';
   String _userAddress = 'Plot 42, Street 18, F-7/2, Islamabad, Pakistan';
@@ -129,7 +129,7 @@ class _DrawerUnderlayScreenState extends State<DrawerUnderlayScreen> {
   final List<Map<String, String>> _supportChatMessages = [
     {
       'sender': 'bot',
-      'text': '👋 Hello William! Welcome to BATWA Priority Support. How can we help you today with your digital wallet, virtual cards, or payments?',
+      'text': '👋 Welcome to BATWA Priority Support! How can we help you today with your digital wallet, virtual cards, or payments?',
       'time': 'Just now',
     },
   ];
@@ -2798,7 +2798,7 @@ class _DrawerUnderlayScreenState extends State<DrawerUnderlayScreen> {
                     onTap: () {
                       widget.onClose();
                       final walletState = context.read<WalletBloc>().state;
-                      final currentBalance = (walletState is WalletLoaded) ? walletState.wallet.balance : 20600.0;
+                      final currentBalance = (walletState is WalletLoaded) ? walletState.wallet.balance : 0.0;
                       final authState = context.read<AuthBloc>().state;
                       final currentName = (authState is Authenticated && authState.user.fullName.isNotEmpty)
                           ? authState.user.fullName
