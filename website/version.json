@@ -1,20 +1,20 @@
 {
-    "version": "2.4.6",
-    "versionCode": 246,
+    "version": "2.4.7",
+    "versionCode": 247,
     "minSupportedVersion": "1.0.0",
     "releaseDate": "2026-11-07",
     "apkName": "batwa-wallet.apk",
     "apkSize": "80.4 MB",
-    "sha256": "08ad5ddb728806dfa226ff8ecc7856ec0a422d5d08e4459b37d3b3b6df432543",
+    "sha256": "0a9a54e568829136aca4e0924bb6569d2fceab6e8c02ebbd1419d1b17939314a",
     "downloadUrl": "https://buttwaa.online/batwa-wallet.apk",
     "forceUpdate": false,
-    "title": "BATWA v2.4.6 Zero-Meter Account & Analytics Error Fix",
-    "message": "Naya update live ho chuka hai! Tamam dummy accounts aur mock data mukammal khatam kar diye gaye hain. Ab app true zero-meter account ke sath register aur operate karegi.",
+    "title": "BATWA v2.4.7 Direct Card View & Cleaned Services",
+    "message": "Naya update live ho chuka hai! Card option par click karte hi direct Card Screen khulti hai jis mein sirf card ki cheezein (Card Number, Expiry, CVV, Freeze Card, Online toggle) mojood hain.",
     "features": [
-        "Purged all mock / dummy accounts ('William Current') and fake fallback balances",
-        "Fixed DioException error on Statistics screen with clean friendly notifications",
-        "True zero-meter account: New accounts start with Rs 0.00 and zero transactions",
-        "Automatic token reset: Expired or invalid sessions cleanly route back to Welcome / Booting screen",
+        "Direct Card Navigation: Tapping Cards immediately opens Virtual Card screen without 4-5 dummy service blocks",
+        "Purged dummy card services ('Virtual Visa', 'Order Physical', 'Card Limits', 'Card Security')",
+        "Streamlined Card screen: Only authentic card controls (Hide/Show CVV, Copy Number, Add Card, Freeze Card, Online toggle)",
+        "True zero-meter fresh account support with Rs 0.00 initial state",
         "New modern Batwa Booting screen with Sign In & Register buttons"
     ]
 }

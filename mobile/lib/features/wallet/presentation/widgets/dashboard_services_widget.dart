@@ -290,41 +290,10 @@ class _DashboardServicesWidgetState extends State<DashboardServicesWidget> {
       case 2: // Cards
         return [
           ServiceItemData(
-            id: 'virtual_visa',
-            label: 'Virtual Visa',
+            id: 'virtual_card',
+            label: 'Virtual Card',
             icon: Icons.credit_card_rounded,
-            isPinned: _pinnedServiceIds.contains('virtual_visa'),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const CardsScreen()),
-              );
-            },
-          ),
-          ServiceItemData(
-            id: 'order_card',
-            label: 'Order Physical',
-            icon: Icons.local_shipping_outlined,
-            isPinned: _pinnedServiceIds.contains('order_card'),
-            onTap: () {
-              _showToast('Physical card delivery request submitted!', isSuccess: true);
-            },
-          ),
-          ServiceItemData(
-            id: 'card_limits',
-            label: 'Card Limits',
-            icon: Icons.speed_rounded,
-            isPinned: _pinnedServiceIds.contains('card_limits'),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const CardsScreen()),
-              );
-            },
-          ),
-          ServiceItemData(
-            id: 'card_security',
-            label: 'Card Security',
-            icon: Icons.security_rounded,
-            isPinned: _pinnedServiceIds.contains('card_security'),
+            isPinned: _pinnedServiceIds.contains('virtual_card'),
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const CardsScreen()),
@@ -464,6 +433,12 @@ class _DashboardServicesWidgetState extends State<DashboardServicesWidget> {
                           child: GestureDetector(
                             onTap: () {
                               HapticFeedback.selectionClick();
+                              if (_categories[idx] == 'Cards') {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(builder: (_) => const CardsScreen()),
+                                );
+                                return;
+                              }
                               setState(() {
                                 _selectedCategoryIndex = idx;
                                 _isSearchOpen = false;
