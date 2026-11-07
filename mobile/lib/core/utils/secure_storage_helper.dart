@@ -57,6 +57,12 @@ class SecureStorageHelper {
     return prefs.getString(_keyWalletTag);
   }
 
+  static Future<void> clearTokens() async {
+    final prefs = await _prefs;
+    await prefs.remove(_keyAccessToken);
+    await prefs.remove(_keyRefreshToken);
+  }
+
   static Future<void> clearAll() async {
     final prefs = await _prefs;
     await prefs.clear();

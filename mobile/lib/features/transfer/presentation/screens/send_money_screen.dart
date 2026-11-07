@@ -98,6 +98,22 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
   // 🇵🇰 Comprehensive List of Pakistani Banks & Microfinance / Wallets
   final List<BankItem> _allBanks = const [
     BankItem(
+      id: 'bankislami',
+      name: 'BankIslami Pakistan Limited',
+      code: 'BKIP',
+      shortName: 'BankIslami',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFF0265A8),
+    ),
+    BankItem(
+      id: 'upaisa',
+      name: 'UPaisa (U Microfinance Bank)',
+      code: 'UMBL',
+      shortName: 'UPaisa',
+      icon: Icons.account_balance_wallet_rounded,
+      brandColor: Color(0xFFEB690B),
+    ),
+    BankItem(
       id: 'raqami',
       name: 'Raqami Islamic Digital Bank',
       code: 'RQMI',

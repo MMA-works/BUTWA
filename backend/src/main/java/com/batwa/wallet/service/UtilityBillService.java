@@ -36,63 +36,42 @@ public class UtilityBillService {
     private final TransactionRepository transactionRepository;
     private final PasswordEncoder passwordEncoder;
 
+    private UtilityCompany seedCompanyIfMissing(String code, String name, BillCategory cat, int len, String icon) {
+        return companyRepository.findByCompanyCode(code).orElseGet(() ->
+            companyRepository.save(UtilityCompany.builder()
+                .companyCode(code)
+                .companyName(name)
+                .category(cat)
+                .consumerNoLength(len)
+                .iconCode(icon)
+                .isActive(true)
+                .build())
+        );
+    }
+
     @PostConstruct
     @Transactional
     public void seedInitialUtilityData() {
-        if (companyRepository.count() > 0) {
+        log.info("Ensuring all utility companies and mock bills are seeded...");
+
+        UtilityCompany ke = seedCompanyIfMissing("KE", "K-Electric (Karachi)", BillCategory.ELECTRICITY, 13, "bolt");
+        seedCompanyIfMissing("LESCO", "Lahore Electric Supply Company", BillCategory.ELECTRICITY, 14, "bolt");
+        seedCompanyIfMissing("IESCO", "Islamabad Electric Supply Company", BillCategory.ELECTRICITY, 14, "bolt");
+        seedCompanyIfMissing("FESCO", "Faisalabad Electric Supply Company", BillCategory.ELECTRICITY, 14, "bolt");
+        seedCompanyIfMissing("MEPCO", "Multan Electric Power Company", BillCategory.ELECTRICITY, 14, "bolt");
+        seedCompanyIfMissing("GEPCO", "Gujranwala Electric Power Company", BillCategory.ELECTRICITY, 14, "bolt");
+        seedCompanyIfMissing("PESCO", "Peshawar Electric Supply Company", BillCategory.ELECTRICITY, 14, "bolt");
+        UtilityCompany sngpl = seedCompanyIfMissing("SNGPL", "Sui Northern Gas Pipelines", BillCategory.GAS, 11, "local_fire_department");
+        seedCompanyIfMissing("SSGC", "Sui Southern Gas Company", BillCategory.GAS, 10, "local_fire_department");
+        seedCompanyIfMissing("PTCL", "PTCL Broadband & Landline", BillCategory.INTERNET, 10, "wifi");
+        seedCompanyIfMissing("STORMFIBER", "StormFiber Broadband", BillCategory.INTERNET, 10, "wifi");
+        UtilityCompany nayatel = seedCompanyIfMissing("NAYATEL", "Nayatel Fiber Internet", BillCategory.INTERNET, 10, "wifi");
+        seedCompanyIfMissing("WASA", "WASA Water & Sanitation", BillCategory.WATER, 8, "water_drop");
+        seedCompanyIfMissing("KWSB", "Karachi Water & Sewerage Board", BillCategory.WATER, 10, "water_drop");
+
+        if (billRepository.count() > 0) {
             return;
         }
-
-        log.info("Seeding initial mock utility companies and bills...");
-
-        // 1. Electricity
-        UtilityCompany ke = companyRepository.save(UtilityCompany.builder()
-                .companyCode("KE")
-                .companyName("K-Electric (Karachi)")
-                .category(BillCategory.ELECTRICITY)
-                .consumerNoLength(13)
-                .iconCode("bolt")
-                .isActive(true)
-                .build());
-
-        UtilityCompany lesco = companyRepository.save(UtilityCompany.builder()
-                .companyCode("LESCO")
-                .companyName("Lahore Electric Supply Company")
-                .category(BillCategory.ELECTRICITY)
-                .consumerNoLength(14)
-                .iconCode("bolt")
-                .isActive(true)
-                .build());
-
-        // 2. Gas
-        UtilityCompany sngpl = companyRepository.save(UtilityCompany.builder()
-                .companyCode("SNGPL")
-                .companyName("Sui Northern Gas Pipelines")
-                .category(BillCategory.GAS)
-                .consumerNoLength(11)
-                .iconCode("local_fire_department")
-                .isActive(true)
-                .build());
-
-        // 3. Internet
-        UtilityCompany nayatel = companyRepository.save(UtilityCompany.builder()
-                .companyCode("NAYATEL")
-                .companyName("Nayatel Fiber Internet")
-                .category(BillCategory.INTERNET)
-                .consumerNoLength(10)
-                .iconCode("wifi")
-                .isActive(true)
-                .build());
-
-        // 4. Water
-        UtilityCompany kwsb = companyRepository.save(UtilityCompany.builder()
-                .companyCode("KWSB")
-                .companyName("Karachi Water & Sewerage Board")
-                .category(BillCategory.WATER)
-                .consumerNoLength(10)
-                .iconCode("water_drop")
-                .isActive(true)
-                .build());
 
         // Pre-seed sample bills for testing
         billRepository.save(UtilityBill.builder()

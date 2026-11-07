@@ -119,15 +119,35 @@ class _BillInquiryViewState extends State<_BillInquiryView> {
                   child: Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(14),
+                        width: 56,
+                        height: 56,
+                        padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF2C2205) : const Color(0xFFFEF9C3),
-                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: Colors.black.withValues(alpha: 0.08)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.04),
+                              blurRadius: 4,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
                         ),
-                        child: Icon(
-                          _getCompanyIcon(widget.company.category),
-                          color: const Color(0xFFD97706),
-                          size: 28,
+                        child: Image.asset(
+                          'assets/images/banks/${widget.company.companyCode.toLowerCase()}.png',
+                          fit: BoxFit.contain,
+                          errorBuilder: (_, __, ___) => Container(
+                            decoration: BoxDecoration(
+                              color: isDark ? const Color(0xFF2C2205) : const Color(0xFFFEF9C3),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Icon(
+                              _getCompanyIcon(widget.company.category),
+                              color: const Color(0xFFD97706),
+                              size: 28,
+                            ),
+                          ),
                         ),
                       ),
                       const SizedBox(width: 16),

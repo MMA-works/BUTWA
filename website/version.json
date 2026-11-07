@@ -1,20 +1,20 @@
 {
-  "version": "2.3.0",
-  "versionCode": 54,
+  "version": "2.4.0",
+  "versionCode": 55,
   "minSupportedVersion": "1.0.0",
   "releaseDate": "2026-11-07",
   "apkName": "batwa-wallet.apk",
-  "apkSize": "77.4 MB",
-  "sha256": "ecc051f07429bef3d43ffb636df80f5cf2e249b37c070c085ed1d8b658fe6610",
+  "apkSize": "79.3 MB",
+  "sha256": "adf8435b8f9da4382fc793848c3ddbc93768ddca13db15388a0d3249314dbc59",
   "downloadUrl": "https://buttwaa.online/batwa-wallet.apk",
   "forceUpdate": false,
-  "title": "BATWA v2.3.0 Live Cloud Release",
-  "message": "Naya update live ho chuka hai! Naya Services Hub, Supabase 24/7 Cloud Database aur Live Cloudflare Gateway shamil hain.",
+  "title": "BATWA v2.4.0 Brand & Cloud Release",
+  "message": "Naya update live ho chuka hai! Mukammal Pakistani banks aur utility companies ke real logos, Supabase Cloud Database aur instant sandbox payments shamil hain.",
   "features": [
-    "Interactive Services Hub (Bills, Top-up, Electricity, Gas, Education)",
-    "Supabase 24/7 PostgreSQL Cloud Database Integration",
-    "Instant Raast P2P & Bank Transfer Simulator",
-    "Contactless NFC Virtual Cards with live controls",
-    "Automated Utility Inquiry & Smart Digital Receipts"
+    "Full Pakistani Brand Logos (KE, LESCO, IESCO, FESCO, MEPCO, GEPCO, PESCO, SNGPL, SSGC, PTCL, StormFiber, Nayatel, WASA, BankIslami, UPaisa)",
+    "Clean Emerald Mint Signature Services Hub Theme",
+    "Supabase 24/7 PostgreSQL Cloud Database & Cloudflare Tunnel",
+    "Smart Utility Inquiries & Title Fetch Simulator",
+    "Auto-recovery for fresh user sessions"
   ]
 }

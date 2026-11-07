@@ -618,6 +618,42 @@ class _BillsHubContentState extends State<_BillsHubContent> {
     );
   }
 
+  Widget _buildCompanyLogo(BillCompanyEntity company, dynamic catStyle) {
+    final code = company.companyCode.toLowerCase();
+    return Container(
+      width: 44,
+      height: 44,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.black.withValues(alpha: 0.08)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(7),
+      child: Image.asset(
+        'assets/images/banks/$code.png',
+        fit: BoxFit.contain,
+        errorBuilder: (_, __, ___) => Container(
+          decoration: BoxDecoration(
+            color: catStyle.bgColor,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            catStyle.icon,
+            color: catStyle.iconColor,
+            size: 20,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildVectorTelecomBadge(MobileNetwork net, double size) {
     return Container(
       width: size,
@@ -683,19 +719,7 @@ class _BillsHubContentState extends State<_BillsHubContent> {
         ),
         child: Row(
           children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: catStyle.bgColor,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                catStyle.icon,
-                color: catStyle.iconColor,
-                size: 22,
-              ),
-            ),
+            _buildCompanyLogo(company, catStyle),
             const SizedBox(width: 14),
             Expanded(
               child: Column(

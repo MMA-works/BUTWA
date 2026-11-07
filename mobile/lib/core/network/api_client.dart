@@ -25,11 +25,10 @@ class ApiClient {
   static Future<void> initializeServerUrl() async {
     final saved = await SecureStorageHelper.getServerUrl();
     final candidates = [
+      ApiConstants.defaultBaseUrl,
       if (saved != null && saved.isNotEmpty) saved,
       'http://127.0.0.1:8080/api/v1',
       'http://192.168.0.105:8080/api/v1',
-      'http://192.168.0.100:8080/api/v1',
-      'http://192.168.0.101:8080/api/v1',
       'http://10.0.2.2:8080/api/v1',
     ].toSet().toList();
 
@@ -118,6 +117,11 @@ class ApiClient {
           String errorMessage = 'An unexpected network error occurred';
           int? statusCode = e.response?.statusCode;
           dynamic details;
+
+          if (statusCode == 401) {
+            currentToken = null;
+            SecureStorageHelper.clearTokens();
+          }
 
           if (e.response != null && e.response?.data != null) {
             isServerOnline = true;
