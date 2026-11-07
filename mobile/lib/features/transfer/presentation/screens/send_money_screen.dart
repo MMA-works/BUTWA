@@ -146,6 +146,14 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
       brandColor: Color(0xFF0265A8),
     ),
     BankItem(
+      id: 'aik',
+      name: 'aik by BankIslami (Digital Wallet)',
+      code: 'AIKB',
+      shortName: 'aik',
+      icon: Icons.account_balance_wallet_rounded,
+      brandColor: Color(0xFF0F4C5C),
+    ),
+    BankItem(
       id: 'hbl',
       name: 'Habib Bank Limited (HBL)',
       code: 'HABB',

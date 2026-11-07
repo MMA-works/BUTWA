@@ -1,20 +1,20 @@
 {
-  "version": "2.4.3",
-  "versionCode": 58,
+  "version": "2.4.4",
+  "versionCode": 59,
   "minSupportedVersion": "1.0.0",
   "releaseDate": "2026-11-07",
   "apkName": "batwa-wallet.apk",
-  "apkSize": "80.3 MB",
-  "sha256": "7caea60cc16c6b285139a4a2c0c0ab2a1d56cdd7319c25dee3f8d25325f71043",
+  "apkSize": "80.4 MB",
+  "sha256": "78759347b2197ab3785d5b065b50647ec832ce697cba785a37b2cf1a548083ac",
   "downloadUrl": "https://buttwaa.online/batwa-wallet.apk",
   "forceUpdate": false,
-  "title": "BATWA v2.4.3 Official Brand Icon & Verified Bank Suite",
-  "message": "Naya update live ho chuka hai! Batwa Gold (#F3D602) Official Launcher Icon, Raqami Islamic Digital Bank, ABL, Al Baraka, BOK, DIB, BankIslami aur tamam verified Pakistani banks ke 100% authentic logos shamil hain.",
+  "title": "BATWA v2.4.4 Complete Bank & aik by BankIslami Wallet Release",
+  "message": "Naya update live ho chuka hai! aik by BankIslami Digital Wallet, BankIslami, Raqami, ABL, Al Baraka, BOK, DIB aur tamam verified Pakistani banks ke authentic logos shamil hain.",
   "features": [
-    "New Signature App Icon: Batwa Electric Gold (#F3D602) background with Black 'B' Emblem",
-    "Raqami Islamic Digital Bank verified logo integrated",
-    "Allied Bank (ABL), Al Baraka, Bank of Khyber (BOK), and Dubai Islamic Bank (DIB) exact logos mapped",
-    "Removed all unprovided banks from list",
+    "aik by BankIslami (Digital Wallet) official branding integrated",
+    "BankIslami Pakistan Limited verified logo active",
+    "New Signature App Icon: Batwa Electric Gold (#F3D602) background with Black 'B'",
+    "Raqami Islamic Digital Bank, Allied Bank (ABL), Al Baraka, BOK, DIB, Samba, Soneri, FWBL, HabibMetro",
     "24/7 Supabase Cloud Database & Live Cloudflare Gateway"
   ]
 }
