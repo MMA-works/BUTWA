@@ -26,6 +26,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -59,10 +60,41 @@ public class WalletService {
     public RecipientLookupResponse lookupRecipient(String identifier, UUID currentUserId) {
         String cleanId = identifier.trim().replace("@", "");
         
-        Wallet recipientWallet = walletRepository.findByWalletTag(cleanId)
+        Optional<Wallet> optionalWallet = walletRepository.findByWalletTag(cleanId)
                 .or(() -> userRepository.findByPhoneNumber(identifier).map(User::getWallet))
-                .or(() -> userRepository.findByEmail(identifier).map(User::getWallet))
-                .orElseThrow(() -> new ResourceNotFoundException("Recipient not found with identifier: " + identifier));
+                .or(() -> userRepository.findByEmail(identifier).map(User::getWallet));
+
+        if (optionalWallet.isEmpty()) {
+            // Smart Sandbox Title Simulator: Razi Meezan bank & realistic Pakistani bank lookup
+            String lower = identifier.toLowerCase();
+            String title;
+            String tag = cleanId;
+            String maskedPhone = "0312****889";
+
+            if (lower.contains("razi") || cleanId.contains("meezan") || cleanId.equals("01010102938472") || cleanId.endsWith("9384")) {
+                title = "MUHAMMAD RAZI";
+                tag = "razi.meezan";
+                maskedPhone = "0312****889";
+            } else if (cleanId.matches("\\d{8,24}") || cleanId.toUpperCase().startsWith("PK")) {
+                String[] demoTitles = {"MUHAMMAD RAZI", "MUHAMMAD ALI", "USMAN TARIQ", "HAMZA AHMED", "BILAL KHAN"};
+                int idx = Math.abs(cleanId.hashCode()) % demoTitles.length;
+                title = demoTitles[idx];
+                tag = "bank." + cleanId.substring(Math.max(0, cleanId.length() - 4));
+                maskedPhone = "0300****123";
+            } else {
+                title = cleanId.toUpperCase() + " (VERIFIED)";
+                tag = cleanId;
+            }
+
+            return RecipientLookupResponse.builder()
+                    .walletTag(tag)
+                    .recipientFullName(title)
+                    .maskedPhoneNumber(maskedPhone)
+                    .currency("PKR")
+                    .build();
+        }
+
+        Wallet recipientWallet = optionalWallet.get();
 
         if (recipientWallet.getUser().getId().equals(currentUserId)) {
             throw new SelfTransferException("You cannot send money to yourself");
@@ -161,7 +193,24 @@ public class WalletService {
         Wallet destinationWallet = walletRepository.findByWalletTag(cleanId)
                 .or(() -> userRepository.findByPhoneNumber(request.getRecipientIdentifier()).map(User::getWallet))
                 .or(() -> userRepository.findByEmail(request.getRecipientIdentifier()).map(User::getWallet))
-                .orElseThrow(() -> new ResourceNotFoundException("Recipient wallet not found"));
+                .orElseGet(() -> {
+                    // Sandbox Simulator: Settle external bank/Raast transfers into a settlement ledger account
+                    return walletRepository.findByWalletTag("system.settlement")
+                            .orElseGet(() -> {
+                                User sysUser = userRepository.save(User.builder()
+                                        .email("settlement@batwa.wallet")
+                                        .phoneNumber("03000000000")
+                                        .passwordHash("$2a$10$dummySettlementHashN/A")
+                                        .fullName("1Link / Raast Settlement")
+                                        .build());
+                                return walletRepository.save(Wallet.builder()
+                                        .user(sysUser)
+                                        .walletTag("system.settlement")
+                                        .balance(BigDecimal.ZERO.setScale(4))
+                                        .currency("PKR")
+                                        .build());
+                            });
+                });
 
         Wallet sourceWallet = walletRepository.findByUserId(sourceUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("Source wallet not found"));

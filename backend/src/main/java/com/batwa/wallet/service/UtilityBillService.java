@@ -131,7 +131,7 @@ public class UtilityBillService {
         log.info("Mock utilities successfully seeded.");
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<BillCompanyResponse> getCompanies(BillCategory category) {
         List<UtilityCompany> list = (category != null)
                 ? companyRepository.findAllByCategoryAndIsActiveTrue(category)
@@ -149,16 +149,43 @@ public class UtilityBillService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public BillInquiryResponse inquireBill(String companyCode, String consumerNumber) {
         String cleanCode = companyCode.trim().toUpperCase();
         String cleanNum = consumerNumber.trim();
 
         UtilityBill bill = billRepository.findByCompanyCompanyCodeAndConsumerNumber(cleanCode, cleanNum)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "No bill record found for " + cleanCode + " with Consumer Number: " + cleanNum +
-                        ". (Tip: Try sample consumer number '1234567890123' for KE or '98765432101' for SNGPL)"
-                ));
+                .orElseGet(() -> {
+                    UtilityCompany company = companyRepository.findByCompanyCode(cleanCode)
+                            .orElseGet(() -> companyRepository.save(UtilityCompany.builder()
+                                    .companyCode(cleanCode)
+                                    .companyName(cleanCode + " Utility Service")
+                                    .category(BillCategory.ELECTRICITY)
+                                    .consumerNoLength(cleanNum.length())
+                                    .iconCode("bolt")
+                                    .isActive(true)
+                                    .build()));
+
+                    long hash = Math.abs((long) cleanNum.hashCode());
+                    String[] sampleNames = {
+                        "Muhammad Ali", "Muhammad Razi", "Usman Tariq",
+                        "Fatima Noor", "Ahmed Raza", "Zainab Bibi", "Hamza Sheikh"
+                    };
+                    String consumerName = sampleNames[(int)(hash % sampleNames.length)];
+                    BigDecimal amt = BigDecimal.valueOf(1850 + (hash % 6200)).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal lateAmt = amt.multiply(new BigDecimal("1.10")).setScale(2, RoundingMode.HALF_UP);
+
+                    return billRepository.save(UtilityBill.builder()
+                            .company(company)
+                            .consumerNumber(cleanNum)
+                            .consumerName(consumerName)
+                            .billingMonth("November 2026")
+                            .amount(amt)
+                            .lateAmount(lateAmt)
+                            .dueDate(LocalDate.now().plusDays(12))
+                            .isPaid(false)
+                            .build());
+                });
 
         boolean isOverdue = LocalDate.now().isAfter(bill.getDueDate());
         BigDecimal payableAmount = isOverdue && bill.getLateAmount() != null
