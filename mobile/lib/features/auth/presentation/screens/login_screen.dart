@@ -281,7 +281,27 @@ class _LoginScreenState extends State<LoginScreen> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 28),
+                      const SizedBox(height: 8),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () => _showForgotPasswordModal(context),
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          child: const Text(
+                            'Forgot Password?',
+                            style: TextStyle(
+                              color: AppColors.primaryYellow,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
                       Row(
                         children: [
                           Expanded(
@@ -380,4 +400,288 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
+  void _showForgotPasswordModal(BuildContext context) {
+    final emailCtrl = TextEditingController(
+      text: _identifierController.text.contains('@') ? _identifierController.text.trim() : '',
+    );
+    final otpCtrl = TextEditingController();
+    final newPasswordCtrl = TextEditingController();
+
+    bool isOtpSent = false;
+    bool isSubmitting = false;
+    bool obscureNew = true;
+    String? testOtp;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => StatefulBuilder(
+        builder: (modalCtx, setModalState) {
+          final isDark = Theme.of(modalCtx).brightness == Brightness.dark;
+
+          return Container(
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF131722) : Colors.white,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+            ),
+            padding: EdgeInsets.only(
+              left: 24,
+              right: 24,
+              top: 20,
+              bottom: MediaQuery.of(modalCtx).viewInsets.bottom + 28,
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 44,
+                      height: 4.5,
+                      decoration: BoxDecoration(
+                        color: isDark ? Colors.white24 : Colors.black12,
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryYellow.withValues(alpha: 0.15),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.lock_reset_rounded, color: AppColors.primaryYellow, size: 24),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              isOtpSent ? 'Verify Code & Set Password' : 'Reset Password',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w900,
+                                color: isDark ? Colors.white : const Color(0xFF1B1D28),
+                              ),
+                            ),
+                            Text(
+                              isOtpSent
+                                  ? 'Enter 6-digit code sent to ${emailCtrl.text}'
+                                  : 'Enter your registered email address',
+                              style: TextStyle(fontSize: 12, color: isDark ? Colors.white60 : Colors.black54),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+
+                  if (!isOtpSent) ...[
+                    TextField(
+                      controller: emailCtrl,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(
+                        labelText: 'Registered Email',
+                        prefixIcon: const Icon(Icons.email_outlined, color: AppColors.primaryYellow),
+                        filled: true,
+                        fillColor: isDark ? const Color(0xFF1E2330) : const Color(0xFFF1F5F9),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: isSubmitting
+                            ? null
+                            : () async {
+                                final email = emailCtrl.text.trim();
+                                if (email.isEmpty || !email.contains('@')) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Please enter a valid email address.')),
+                                  );
+                                  return;
+                                }
+
+                                setModalState(() => isSubmitting = true);
+                                try {
+                                  final res = await ApiClient().client.post(
+                                    ApiConstants.forgotPassword,
+                                    data: {'email': email},
+                                  );
+                                  final data = res.data['data'] as Map<String, dynamic>?;
+                                  setModalState(() {
+                                    isSubmitting = false;
+                                    isOtpSent = true;
+                                    testOtp = data?['otp']?.toString();
+                                  });
+                                } catch (e) {
+                                  setModalState(() => isSubmitting = false);
+                                  String msg = 'Email not found or error occurred.';
+                                  if (e.toString().contains('No BATWA account')) {
+                                    msg = 'No BATWA account found with this email.';
+                                  }
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(msg), backgroundColor: AppColors.error),
+                                  );
+                                }
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryYellow,
+                          foregroundColor: const Color(0xFF07482D),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                          elevation: 0,
+                        ),
+                        child: isSubmitting
+                            ? const SpinKitThreeBounce(color: Color(0xFF07482D), size: 20)
+                            : const Text('Send Reset OTP Code', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 15)),
+                      ),
+                    ),
+                  ] else ...[
+                    if (testOtp != null) ...[
+                      GestureDetector(
+                        onTap: () {
+                          otpCtrl.text = testOtp!;
+                          setModalState(() {});
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.mark_email_read_rounded, size: 14, color: Color(0xFF10B981)),
+                              const SizedBox(width: 6),
+                              Text(
+                                'Sent Code: $testOtp (tap to auto-fill)',
+                                style: const TextStyle(fontSize: 11.5, color: Color(0xFF10B981), fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+
+                    TextField(
+                      controller: otpCtrl,
+                      keyboardType: TextInputType.number,
+                      maxLength: 6,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 22, letterSpacing: 6, fontWeight: FontWeight.bold),
+                      decoration: InputDecoration(
+                        labelText: '6-Digit Reset Code',
+                        counterText: '',
+                        filled: true,
+                        fillColor: isDark ? const Color(0xFF1E2330) : const Color(0xFFF1F5F9),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    TextField(
+                      controller: newPasswordCtrl,
+                      obscureText: obscureNew,
+                      decoration: InputDecoration(
+                        labelText: 'New Password',
+                        prefixIcon: const Icon(Icons.lock_outline, color: AppColors.primaryYellow),
+                        suffixIcon: IconButton(
+                          icon: Icon(obscureNew ? Icons.visibility_off : Icons.visibility),
+                          onPressed: () => setModalState(() => obscureNew = !obscureNew),
+                        ),
+                        filled: true,
+                        fillColor: isDark ? const Color(0xFF1E2330) : const Color(0xFFF1F5F9),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: isSubmitting
+                            ? null
+                            : () async {
+                                final code = otpCtrl.text.trim();
+                                final newPass = newPasswordCtrl.text;
+                                if (code.length != 6) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Please enter the 6-digit reset code.')),
+                                  );
+                                  return;
+                                }
+                                if (newPass.length < 8) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Password must be at least 8 characters long.')),
+                                  );
+                                  return;
+                                }
+
+                                setModalState(() => isSubmitting = true);
+                                try {
+                                  await ApiClient().client.post(
+                                    ApiConstants.resetPassword,
+                                    data: {
+                                      'email': emailCtrl.text.trim(),
+                                      'code': code,
+                                      'newPassword': newPass,
+                                    },
+                                  );
+                                  if (modalCtx.mounted) Navigator.pop(modalCtx);
+                                  _passwordController.text = newPass;
+                                  _identifierController.text = emailCtrl.text.trim();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Row(
+                                        children: [
+                                          Icon(Icons.check_circle_rounded, color: Color(0xFF10B981)),
+                                          SizedBox(width: 8),
+                                          Text('Password reset successfully! Please sign in.'),
+                                        ],
+                                      ),
+                                      backgroundColor: Color(0xFF07482D),
+                                      behavior: SnackBarBehavior.floating,
+                                    ),
+                                  );
+                                } catch (e) {
+                                  setModalState(() => isSubmitting = false);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(e.toString()), backgroundColor: AppColors.error),
+                                  );
+                                }
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF10B981),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                          elevation: 0,
+                        ),
+                        child: isSubmitting
+                            ? const SpinKitThreeBounce(color: Colors.white, size: 20)
+                            : const Text('Update & Reset Password', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 15)),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
 }

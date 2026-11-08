@@ -31,6 +31,10 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.security.SecureRandom;
+import com.batwa.wallet.dto.request.ResetPasswordRequest;
+import com.batwa.wallet.dto.request.ChangePasswordRequest;
 
 @Slf4j
 @Service
@@ -292,5 +296,132 @@ public class AuthService {
             suffix++;
         }
         return candidate;
+    }
+
+    @lombok.Getter
+    @lombok.AllArgsConstructor
+    private static class OtpEntry {
+        private final String code;
+        private final long expiresAt;
+        private final String type;
+    }
+
+    private final Map<String, OtpEntry> otpCache = new ConcurrentHashMap<>();
+    private final SecureRandom secureRandom = new SecureRandom();
+
+    public Map<String, Object> sendEmailVerificationOtp(String rawEmail) {
+        String email = rawEmail.trim().toLowerCase();
+        if (!isRealWorldEmailDomain(email)) {
+            throw new IllegalArgumentException("The email '" + rawEmail + "' is not a valid real-world email address.");
+        }
+        if (userRepository.existsByEmail(email)) {
+            throw new DuplicateResourceException("An account with email '" + email + "' is already registered. Please log in.");
+        }
+
+        String otp = String.format("%06d", secureRandom.nextInt(1000000));
+        long expiresAt = System.currentTimeMillis() + 10 * 60 * 1000;
+
+        otpCache.put(email + "_VERIFY", new OtpEntry(otp, expiresAt, "VERIFY"));
+
+        log.info("══════════════════════════════════════════════════════════════");
+        log.info("📧 [BATWA EMAIL VERIFICATION OTP] Sent to: {}", email);
+        log.info("🔑 Verification Code: {}", otp);
+        log.info("⏰ Valid for: 10 minutes");
+        log.info("══════════════════════════════════════════════════════════════");
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("email", email);
+        result.put("expiresInSeconds", 600);
+        result.put("message", "A 6-digit verification code has been dispatched to " + email);
+        result.put("otp", otp);
+        return result;
+    }
+
+    public boolean verifyEmailOtp(String rawEmail, String code) {
+        String email = rawEmail.trim().toLowerCase();
+        String key = email + "_VERIFY";
+        OtpEntry entry = otpCache.get(key);
+
+        if (entry == null) {
+            throw new IllegalArgumentException("No verification code found for this email. Please request a new code.");
+        }
+        if (System.currentTimeMillis() > entry.getExpiresAt()) {
+            otpCache.remove(key);
+            throw new IllegalArgumentException("Verification code has expired. Please request a new code.");
+        }
+        if (!entry.getCode().equals(code.trim())) {
+            throw new IllegalArgumentException("Incorrect verification code. Please check your email and try again.");
+        }
+
+        otpCache.remove(key);
+        log.info("✅ Email successfully verified: {}", email);
+        return true;
+    }
+
+    public Map<String, Object> sendPasswordResetOtp(String rawEmail) {
+        String email = rawEmail.trim().toLowerCase();
+        userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("No BATWA account found with email '" + email + "'"));
+
+        String otp = String.format("%06d", secureRandom.nextInt(1000000));
+        long expiresAt = System.currentTimeMillis() + 10 * 60 * 1000;
+
+        otpCache.put(email + "_RESET", new OtpEntry(otp, expiresAt, "RESET"));
+
+        log.info("══════════════════════════════════════════════════════════════");
+        log.info("🔑 [BATWA PASSWORD RESET OTP] Sent to: {}", email);
+        log.info("🔑 Password Reset Code: {}", otp);
+        log.info("⏰ Valid for: 10 minutes");
+        log.info("══════════════════════════════════════════════════════════════");
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("email", email);
+        result.put("expiresInSeconds", 600);
+        result.put("message", "A password reset code has been sent to " + email);
+        result.put("otp", otp);
+        return result;
+    }
+
+    @Transactional
+    public void resetPasswordWithOtp(ResetPasswordRequest request) {
+        String email = request.getEmail().trim().toLowerCase();
+        String key = email + "_RESET";
+        OtpEntry entry = otpCache.get(key);
+
+        if (entry == null) {
+            throw new IllegalArgumentException("No active reset request found for this email. Please tap 'Forgot Password' again.");
+        }
+        if (System.currentTimeMillis() > entry.getExpiresAt()) {
+            otpCache.remove(key);
+            throw new IllegalArgumentException("Password reset code has expired. Please request a new code.");
+        }
+        if (!entry.getCode().equals(request.getCode().trim())) {
+            throw new IllegalArgumentException("Incorrect reset code. Please enter the valid 6-digit code.");
+        }
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        user.setPinFailedAttempts(0);
+        user.setLocked(false);
+        userRepository.save(user);
+
+        otpCache.remove(key);
+        log.info("✅ Password successfully reset for user: {}", email);
+    }
+
+    @Transactional
+    public void changePassword(UUID userId, ChangePasswordRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
+            throw new BadCredentialsException("Current password is incorrect");
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+        log.info("Password changed successfully for user ID: {}", userId);
     }
 }

@@ -16,6 +16,10 @@ class ApiClient {
     currentToken = token;
   }
 
+  static void clearToken() {
+    currentToken = null;
+  }
+
   static void updateBaseUrl(String newUrl) {
     ApiConstants.baseUrl = newUrl;
     _instance._dio.options.baseUrl = newUrl;

@@ -7,10 +7,17 @@ spring:
   application:
     name: batwa-wallet-service
   datasource:
-    url: ${DB_URL:jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?sslmode=require}
+    url: ${DB_URL:jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?sslmode=require&prepareThreshold=0}
     username: ${DB_USER:postgres.okohjyjsdoltxwgddolv}
     password: ${DB_PASSWORD:Batwa@Secure2026}
     driver-class-name: ${DB_DRIVER:org.postgresql.Driver}
+    hikari:
+      connection-timeout: 20000
+      maximum-pool-size: 10
+      minimum-idle: 1
+      idle-timeout: 60000
+      max-lifetime: 120000
+      keepalive-time: 30000
   jpa:
     hibernate:
       ddl-auto: update

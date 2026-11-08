@@ -13,9 +13,15 @@ abstract class AuthRemoteDataSource {
     required String phoneNumber,
     required String password,
     String? customTag,
+    String? cnicNumber,
   });
   Future<void> setPin({required String pin, required String currentPassword});
   Future<UserModel> getCurrentUser();
+
+  Future<Map<String, dynamic>> sendEmailCode(String email);
+  Future<bool> verifyEmailCode(String email, String code);
+  Future<Map<String, dynamic>> forgotPassword(String email);
+  Future<void> resetPassword({required String email, required String code, required String newPassword});
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -61,6 +67,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String phoneNumber,
     required String password,
     String? customTag,
+    String? cnicNumber,
   }) async {
     try {
       final response = await apiClient.client.post(
@@ -71,6 +78,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'phoneNumber': phoneNumber,
           'password': password,
           if (customTag != null && customTag.isNotEmpty) 'customTag': customTag,
+          if (cnicNumber != null && cnicNumber.isNotEmpty) 'cnicNumber': cnicNumber,
         },
       );
       return AuthResponseModel.fromJson(response.data['data']);
@@ -99,6 +107,69 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final response = await apiClient.client.get(ApiConstants.currentUser);
       return UserModel.fromJson(response.data['data']);
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> sendEmailCode(String email) async {
+    try {
+      final response = await apiClient.client.post(
+        ApiConstants.sendEmailCode,
+        data: {'email': email.trim().toLowerCase()},
+      );
+      return response.data['data'] as Map<String, dynamic>? ?? {};
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  @override
+  Future<bool> verifyEmailCode(String email, String code) async {
+    try {
+      final response = await apiClient.client.post(
+        ApiConstants.verifyEmailCode,
+        data: {
+          'email': email.trim().toLowerCase(),
+          'code': code.trim(),
+        },
+      );
+      final data = response.data['data'] as Map<String, dynamic>?;
+      return data?['verified'] == true;
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> forgotPassword(String email) async {
+    try {
+      final response = await apiClient.client.post(
+        ApiConstants.forgotPassword,
+        data: {'email': email.trim().toLowerCase()},
+      );
+      return response.data['data'] as Map<String, dynamic>? ?? {};
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  @override
+  Future<void> resetPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+  }) async {
+    try {
+      await apiClient.client.post(
+        ApiConstants.resetPassword,
+        data: {
+          'email': email.trim().toLowerCase(),
+          'code': code.trim(),
+          'newPassword': newPassword,
+        },
+      );
     } catch (e) {
       throw _handleError(e);
     }

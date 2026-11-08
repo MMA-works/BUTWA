@@ -56,6 +56,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         phoneNumber: event.phoneNumber,
         password: event.password,
         customTag: event.customTag,
+        cnicNumber: event.cnicNumber,
       );
       emit(Authenticated(user: user));
     } catch (e) {

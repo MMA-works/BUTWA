@@ -31,6 +31,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String phoneNumber,
     required String password,
     String? customTag,
+    String? cnicNumber,
   }) async {
     final authData = await remoteDataSource.register(
       fullName: fullName,
@@ -38,6 +39,7 @@ class AuthRepositoryImpl implements AuthRepository {
       phoneNumber: phoneNumber,
       password: password,
       customTag: customTag,
+      cnicNumber: cnicNumber,
     );
     ApiClient.setToken(authData.accessToken);
     await SecureStorageHelper.saveTokens(
@@ -61,21 +63,10 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<UserEntity?> getCurrentUser() async {
-    final token = await SecureStorageHelper.getAccessToken();
-    if (token == null || token.isEmpty || token == 'demo_jwt_token_preview') {
-      await SecureStorageHelper.clearTokens();
-      ApiClient.setToken(null);
-      return null;
-    }
-    ApiClient.setToken(token);
     try {
-      final user = await remoteDataSource.getCurrentUser();
-      ApiClient.isServerOnline = true;
-      return user;
+      final userModel = await remoteDataSource.getCurrentUser();
+      return userModel;
     } catch (_) {
-      // Invalidate stale or bad token and return null to show Onboarding / Login
-      await SecureStorageHelper.clearTokens();
-      ApiClient.setToken(null);
       return null;
     }
   }
@@ -83,6 +74,30 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> logout() async {
     ApiClient.setToken(null);
-    await SecureStorageHelper.clearAll();
+    await SecureStorageHelper.clearTokens();
   }
+
+  @override
+  Future<Map<String, dynamic>> sendEmailCode(String email) =>
+      remoteDataSource.sendEmailCode(email);
+
+  @override
+  Future<bool> verifyEmailCode(String email, String code) =>
+      remoteDataSource.verifyEmailCode(email, code);
+
+  @override
+  Future<Map<String, dynamic>> forgotPassword(String email) =>
+      remoteDataSource.forgotPassword(email);
+
+  @override
+  Future<void> resetPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+  }) =>
+      remoteDataSource.resetPassword(
+        email: email,
+        code: code,
+        newPassword: newPassword,
+      );
 }

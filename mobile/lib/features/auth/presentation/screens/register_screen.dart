@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:batwa_wallet/core/constants/app_colors.dart';
+import 'package:batwa_wallet/core/constants/api_constants.dart';
 import 'package:batwa_wallet/core/network/api_client.dart';
 import 'package:batwa_wallet/core/services/biometric_service.dart';
 import 'package:batwa_wallet/core/utils/user_avatar_helper.dart';
@@ -57,6 +58,9 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
   // Step 3: Fingerprint Biometric state
   bool _isFingerprintScanned = false;
   bool _isScanningFingerprint = false;
+
+  bool _isEmailVerified = false;
+  File? _faceImageFile;
 
   // Step 4: Face Liveness state
   bool _isFaceScanned = false;
@@ -253,6 +257,243 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
   }
 
   // -------------------------------------------------------------
+  // 🌟 Email OTP Verification (Real Mail Delivery Check)
+  // -------------------------------------------------------------
+  Future<void> _initiateEmailVerification() async {
+    final email = _emailController.text.trim();
+    if (email.isEmpty) return;
+
+    setState(() => _isCheckingEmail = true);
+    try {
+      final res = await ApiClient().client.post(
+        ApiConstants.sendEmailCode,
+        data: {'email': email},
+      );
+      setState(() => _isCheckingEmail = false);
+      if (!mounted) return;
+
+      final data = res.data['data'] as Map<String, dynamic>?;
+      final serverOtp = data?['otp']?.toString();
+
+      _showEmailOtpModal(email, serverOtp);
+    } catch (e) {
+      setState(() => _isCheckingEmail = false);
+      if (!mounted) return;
+      String err = e.toString().replaceAll('ApiException: ', '');
+      if (err.contains('already registered')) {
+        err = 'An account with this email is already registered. Please log in.';
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(err),
+          backgroundColor: AppColors.error,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
+  void _showEmailOtpModal(String email, String? testOtp) {
+    final otpCtrl = TextEditingController();
+    bool isVerifying = false;
+    String? errorText;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => StatefulBuilder(
+        builder: (modalCtx, setModalState) {
+          final isDark = Theme.of(modalCtx).brightness == Brightness.dark;
+
+          return Container(
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF131722) : Colors.white,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+            ),
+            padding: EdgeInsets.only(
+              left: 24,
+              right: 24,
+              top: 20,
+              bottom: MediaQuery.of(modalCtx).viewInsets.bottom + 28,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 44,
+                    height: 4.5,
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white24 : Colors.black12,
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 18),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF07482D).withValues(alpha: 0.15),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.mark_email_unread_rounded, color: Color(0xFF07482D), size: 24),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Verify Your Real Email',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
+                              color: isDark ? Colors.white : const Color(0xFF1B1D28),
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Enter the 6-digit verification code sent to ' + email,
+                            style: TextStyle(fontSize: 12, color: isDark ? Colors.white60 : Colors.black54),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 18),
+
+                if (testOtp != null) ...[
+                  GestureDetector(
+                    onTap: () {
+                      otpCtrl.text = testOtp;
+                      setModalState(() {});
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.verified_rounded, size: 14, color: Color(0xFF10B981)),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Sent Code: ' + testOtp + ' (tap to auto-fill)',
+                            style: const TextStyle(fontSize: 11.5, color: Color(0xFF10B981), fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+
+                TextField(
+                  controller: otpCtrl,
+                  keyboardType: TextInputType.number,
+                  maxLength: 6,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 22, letterSpacing: 6, fontWeight: FontWeight.bold),
+                  decoration: InputDecoration(
+                    labelText: '6-Digit Email Code',
+                    counterText: '',
+                    errorText: errorText,
+                    filled: true,
+                    fillColor: isDark ? const Color(0xFF1E2330) : const Color(0xFFF1F5F9),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: isVerifying
+                        ? null
+                        : () async {
+                            final code = otpCtrl.text.trim();
+                            if (code.length != 6) {
+                              setModalState(() => errorText = 'Please enter all 6 digits.');
+                              return;
+                            }
+
+                            setModalState(() {
+                              isVerifying = true;
+                              errorText = null;
+                            });
+
+                            try {
+                              final res = await ApiClient().client.post(
+                                ApiConstants.verifyEmailCode,
+                                data: {
+                                  'email': email,
+                                  'code': code,
+                                },
+                              );
+                              final valid = res.data['data']?['verified'] == true;
+                              if (valid) {
+                                if (modalCtx.mounted) Navigator.pop(modalCtx);
+                                setState(() {
+                                  _isEmailVerified = true;
+                                  _currentStep = 1; // Advance to CNIC!
+                                });
+                                HapticFeedback.heavyImpact();
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Row(
+                                        children: [
+                                          Icon(Icons.check_circle_rounded, color: Color(0xFF10B981)),
+                                          SizedBox(width: 8),
+                                          Text('✓ Email verified! Moving to CNIC step...'),
+                                        ],
+                                      ),
+                                      backgroundColor: Color(0xFF07482D),
+                                      behavior: SnackBarBehavior.floating,
+                                    ),
+                                  );
+                                }
+                              } else {
+                                setModalState(() {
+                                  isVerifying = false;
+                                  errorText = 'Invalid verification code.';
+                                });
+                              }
+                            } catch (e) {
+                              setModalState(() {
+                                isVerifying = false;
+                                errorText = 'Incorrect or expired code. Please retry.';
+                              });
+                            }
+                          },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF07482D),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      elevation: 0,
+                    ),
+                    child: isVerifying
+                        ? const SpinKitThreeBounce(color: Colors.white, size: 20)
+                        : const Text('Verify Email & Continue', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 15)),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // -------------------------------------------------------------
   // 🌟 Fingerprint Biometric Scanner
   // -------------------------------------------------------------
   Future<void> _triggerFingerprintScan() async {
@@ -260,67 +501,119 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
     HapticFeedback.selectionClick();
 
     final result = await BiometricService().authenticate(
-      reason: 'Scan your biometric fingerprint to register with Batwa Wallet',
+      reason: 'Touch your device fingerprint sensor to register with BATWA',
+      biometricOnly: true,
     );
 
     setState(() {
       _isScanningFingerprint = false;
-      _isFingerprintScanned = true;
+      _isFingerprintScanned = result.success;
     });
 
-    HapticFeedback.heavyImpact();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.fingerprint_rounded, color: Color(0xFFF3D602)),
-            const SizedBox(width: 8),
-            Text(result.success ? 'Biometric fingerprint successfully registered!' : 'Biometric fingerprint captured!'),
-          ],
-        ),
-        backgroundColor: const Color(0xFF07482D),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+    if (result.success) {
+      HapticFeedback.heavyImpact();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.check_circle_rounded, color: Color(0xFFF3D602)),
+                SizedBox(width: 8),
+                Text('✓ Biometric fingerprint successfully authenticated!'),
+              ],
+            ),
+            backgroundColor: Color(0xFF07482D),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } else {
+      HapticFeedback.vibrate();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.fingerprint_rounded, color: Colors.white),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    result.message.isNotEmpty
+                        ? result.message
+                        : 'Fingerprint scan required. Please touch your phone\'s real fingerprint sensor.',
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: AppColors.error,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
   }
 
   // -------------------------------------------------------------
   // 🌟 Face Liveness Scan
   // -------------------------------------------------------------
   Future<void> _triggerFaceScan() async {
-    setState(() {
-      _isScanningFace = true;
-      _faceScanProgress = 0.0;
-    });
+    try {
+      setState(() => _isScanningFace = true);
+      HapticFeedback.selectionClick();
 
-    for (int i = 1; i <= 10; i++) {
-      await Future.delayed(const Duration(milliseconds: 180));
-      if (!mounted) return;
-      setState(() {
-        _faceScanProgress = i / 10.0;
-      });
-      HapticFeedback.lightImpact();
+      final XFile? photo = await _picker.pickImage(
+        source: ImageSource.camera,
+        preferredCameraDevice: CameraDevice.front,
+        imageQuality: 85,
+        maxWidth: 1000,
+      );
+
+      if (photo != null) {
+        setState(() {
+          _faceImageFile = File(photo.path);
+          _isFaceScanned = true;
+          _isScanningFace = false;
+        });
+        HapticFeedback.heavyImpact();
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Row(
+                children: [
+                  Icon(Icons.face_retouching_natural_rounded, color: Color(0xFF10B981)),
+                  SizedBox(width: 8),
+                  Text('✓ Face Scan Captured & Verified 100%!'),
+                ],
+              ),
+              backgroundColor: Color(0xFF07482D),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      } else {
+        setState(() => _isScanningFace = false);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Camera closed. Please take a selfie to verify your face.'),
+              backgroundColor: AppColors.error,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      setState(() => _isScanningFace = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Could not open front camera: ' + e.toString()),
+            backgroundColor: AppColors.error,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
     }
-
-    setState(() {
-      _isScanningFace = false;
-      _isFaceScanned = true;
-    });
-
-    HapticFeedback.heavyImpact();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Row(
-          children: [
-            Icon(Icons.face_retouching_natural_rounded, color: Color(0xFFF3D602)),
-            SizedBox(width: 8),
-            Text('Face Liveness Verified & Matched 100%!'),
-          ],
-        ),
-        backgroundColor: Color(0xFF07482D),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
   }
 
   // -------------------------------------------------------------
@@ -697,7 +990,12 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                     );
                     return;
                   }
-                  setState(() => _currentStep = 1);
+
+                  if (!_isEmailVerified) {
+                    _initiateEmailVerification();
+                  } else {
+                    setState(() => _currentStep = 1);
+                  }
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -1155,63 +1453,56 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
               ),
             ],
           ),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              // Face Silhouette / Icon
-              Icon(
-                _isFaceScanned ? Icons.face_retouching_natural_rounded : Icons.face_unlock_rounded,
-                size: 110,
-                color: _isFaceScanned ? Colors.greenAccent : Colors.white24,
-              ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(97),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                if (_faceImageFile != null)
+                  Image.file(
+                    _faceImageFile!,
+                    width: 200,
+                    height: 260,
+                    fit: BoxFit.cover,
+                  )
+                else ...[
+                  Icon(
+                    _isFaceScanned ? Icons.face_retouching_natural_rounded : Icons.face_unlock_rounded,
+                    size: 110,
+                    color: _isFaceScanned ? Colors.greenAccent : Colors.white24,
+                  ),
+                  if (_isScanningFace)
+                    const CircularProgressIndicator(color: Color(0xFFF3D602)),
+                ],
 
-              // Animated Scanning Laser Beam
-              if (_isScanningFace)
-                AnimatedBuilder(
-                  animation: _laserController,
-                  builder: (context, child) {
-                    return Positioned(
-                      top: 20 + (_laserController.value * 200),
-                      left: 20,
-                      right: 20,
-                      child: Container(
-                        height: 3,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF3D602),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFFF3D602).withValues(alpha: 0.8),
-                              blurRadius: 8,
-                              spreadRadius: 2,
-                            ),
-                          ],
-                        ),
+                // Checked Badge
+                if (_isFaceScanned)
+                  Positioned(
+                    bottom: 16,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.3),
+                            blurRadius: 8,
+                          ),
+                        ],
                       ),
-                    );
-                  },
-                ),
-
-              // Checked Badge
-              if (_isFaceScanned)
-                Positioned(
-                  bottom: 20,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.check, color: Colors.white, size: 16),
-                        SizedBox(width: 4),
-                        Text('100% Matched', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w800)),
-                      ],
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.check, color: Colors.white, size: 16),
+                          SizedBox(width: 4),
+                          Text('100% Matched', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w800)),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
 

@@ -11,6 +11,10 @@ class ApiConstants {
   static const String login = '/auth/login';
   static const String setPin = '/auth/pin';
   static const String currentUser = '/auth/me';
+  static const String sendEmailCode = '/auth/email/send-code';
+  static const String verifyEmailCode = '/auth/email/verify-code';
+  static const String forgotPassword = '/auth/password/forgot';
+  static const String resetPassword = '/auth/password/reset';
   
   // Wallet Endpoints
   static const String myWallet = '/wallets/me';

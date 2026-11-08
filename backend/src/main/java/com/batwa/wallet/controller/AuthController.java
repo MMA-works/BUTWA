@@ -3,6 +3,10 @@ package com.batwa.wallet.controller;
 import com.batwa.wallet.dto.request.AuthRequest;
 import com.batwa.wallet.dto.request.RegisterRequest;
 import com.batwa.wallet.dto.request.SetPinRequest;
+import com.batwa.wallet.dto.request.SendEmailCodeRequest;
+import com.batwa.wallet.dto.request.VerifyEmailCodeRequest;
+import com.batwa.wallet.dto.request.ResetPasswordRequest;
+import com.batwa.wallet.dto.request.ChangePasswordRequest;
 import com.batwa.wallet.dto.response.ApiResponse;
 import com.batwa.wallet.dto.response.AuthResponse;
 import com.batwa.wallet.dto.response.UserResponse;
@@ -152,5 +156,44 @@ public class AuthController {
             return xf.split(",")[0].trim();
         }
         return request.getRemoteAddr();
+    }
+
+    @PostMapping("/email/send-code")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> sendEmailCode(
+            @Valid @RequestBody SendEmailCodeRequest request) {
+        Map<String, Object> data = authService.sendEmailVerificationOtp(request.getEmail());
+        return ResponseEntity.ok(ApiResponse.ok(data, "Verification code sent to email"));
+    }
+
+    @PostMapping("/email/verify-code")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> verifyEmailCode(
+            @Valid @RequestBody VerifyEmailCodeRequest request) {
+        boolean valid = authService.verifyEmailOtp(request.getEmail(), request.getCode());
+        Map<String, Object> data = new HashMap<>();
+        data.put("email", request.getEmail());
+        data.put("verified", valid);
+        return ResponseEntity.ok(ApiResponse.ok(data, "Email verified successfully"));
+    }
+
+    @PostMapping("/password/forgot")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> forgotPassword(
+            @Valid @RequestBody SendEmailCodeRequest request) {
+        Map<String, Object> data = authService.sendPasswordResetOtp(request.getEmail());
+        return ResponseEntity.ok(ApiResponse.ok(data, "Password reset OTP sent to email"));
+    }
+
+    @PostMapping("/password/reset")
+    public ResponseEntity<ApiResponse<Void>> resetPassword(
+            @Valid @RequestBody ResetPasswordRequest request) {
+        authService.resetPasswordWithOtp(request);
+        return ResponseEntity.ok(ApiResponse.ok(null, "Password reset successfully. You can now log in with your new password."));
+    }
+
+    @PostMapping("/password/change")
+    public ResponseEntity<ApiResponse<Void>> changePassword(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid @RequestBody ChangePasswordRequest request) {
+        authService.changePassword(userDetails.getId(), request);
+        return ResponseEntity.ok(ApiResponse.ok(null, "Password changed successfully"));
     }
 }
