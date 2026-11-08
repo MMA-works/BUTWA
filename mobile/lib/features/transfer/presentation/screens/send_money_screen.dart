@@ -173,10 +173,28 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
       icon: Icons.account_balance_rounded,
       brandColor: Color(0xFF0369A1),
     ),
+    BankItem(
+      id: 'abhi',
+      name: 'ABHI Microfinance Bank',
+      code: 'ABHI',
+      shortName: 'ABHI',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFF0F2B48),
+    ),
   ];
 
   // Preset Payees with Direct Bank Logos
   late final List<PayeeItem> _savedPayees = [
+    PayeeItem(
+      id: 'p0',
+      name: 'Kashif Mehmood',
+      initials: 'KM',
+      bank: 'ABHI •• 7120',
+      accountNo: 'PK92ABHI00019283746501',
+      type: 'bank',
+      avatarBg: Color(0xFF0F2B48),
+      bankId: 'abhi',
+    ),
     PayeeItem(
       id: 'p1',
       name: 'Bilal Ahmed',
@@ -300,6 +318,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
     if (clean.contains('FAYS')) return 'Faysal Bank';
     if (clean.contains('NBPA')) return 'National Bank of Pakistan';
     if (clean.contains('ABPA')) return 'Allied Bank';
+    if (clean.contains('ABHI')) return 'ABHI Microfinance Bank';
     return '1LINK Member Bank';
   }
 
@@ -810,6 +829,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
     if (payee.bankId != null && payee.bankId!.isNotEmpty) return payee.bankId!;
     final b = payee.bank.toLowerCase();
     if (b.contains('allied') || b.contains('abl')) return 'allied';
+    if (b.contains('abhi')) return 'abhi';
     if (b.contains('al baraka') || b.contains('albaraka')) return 'albaraka';
     if (b.contains('soneri')) return 'soneri';
     if (b.contains('khyber') || b.contains('bok')) return 'bok';
