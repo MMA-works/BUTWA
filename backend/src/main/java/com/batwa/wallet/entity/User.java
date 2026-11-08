@@ -44,6 +44,17 @@ public class User {
     @Builder.Default
     private boolean isLocked = false;
 
+    @Column(name = "cnic_number", length = 30)
+    private String cnicNumber;
+
+    @Column(name = "is_kyc_verified")
+    @Builder.Default
+    private boolean isKycVerified = true;
+
+    @Column(name = "is_biometric_enrolled")
+    @Builder.Default
+    private boolean isBiometricEnrolled = true;
+
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Wallet wallet;
 

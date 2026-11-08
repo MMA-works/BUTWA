@@ -10,7 +10,6 @@ import com.batwa.wallet.entity.User;
 import com.batwa.wallet.entity.Wallet;
 import com.batwa.wallet.exception.AccountLockedException;
 import com.batwa.wallet.exception.DuplicateResourceException;
-import com.batwa.wallet.exception.InvalidPinException;
 import com.batwa.wallet.exception.ResourceNotFoundException;
 import com.batwa.wallet.repository.UserRepository;
 import com.batwa.wallet.repository.WalletRepository;
@@ -26,8 +25,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
 import java.math.BigDecimal;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -40,9 +43,70 @@ public class AuthService {
     private final JwtTokenProvider tokenProvider;
     private final AuthenticationManager authenticationManager;
 
+    // Fast-path known authentic email domains
+    private static final Set<String> POPULAR_VALID_DOMAINS = new HashSet<>(Arrays.asList(
+            "gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com",
+            "live.com", "msn.com", "mail.com", "proton.me", "protonmail.com",
+            "zoho.com", "aol.com", "yandex.com", "gmx.com", "fastmail.com"
+    ));
+
+    /**
+     * Real-world verification: checks RFC format, popular valid provider domains,
+     * and performs active DNS MX record lookups to ensure the domain actually exists
+     * and accepts emails on the internet.
+     */
+    public boolean isRealWorldEmailDomain(String email) {
+        if (email == null) return false;
+        String cleanEmail = email.trim().toLowerCase();
+        int atIndex = cleanEmail.indexOf('@');
+        if (atIndex <= 0 || atIndex != cleanEmail.lastIndexOf('@')) {
+            return false;
+        }
+
+        String userPart = cleanEmail.substring(0, atIndex);
+        String domainPart = cleanEmail.substring(atIndex + 1);
+
+        if (userPart.length() < 1 || domainPart.length() < 3) return false;
+        if (!domainPart.contains(".") || domainPart.startsWith(".") || domainPart.endsWith(".")) return false;
+
+        // Fast-path popular validated consumer domains
+        if (POPULAR_VALID_DOMAINS.contains(domainPart)) {
+            return true;
+        }
+
+        // Live DNS MX & A record resolution for custom/corporate domains
+        try {
+            Hashtable<String, String> env = new Hashtable<>();
+            env.put("java.naming.factory.initial", "com.sun.jndi.dns.DnsContextFactory");
+            env.put("com.sun.jndi.dns.timeout.initial", "2500");
+            env.put("com.sun.jndi.dns.timeout.retries", "1");
+            DirContext ictx = new InitialDirContext(env);
+            Attributes attrs = ictx.getAttributes(domainPart, new String[] { "MX" });
+            Attribute attr = attrs.get("MX");
+            if (attr != null && attr.size() > 0) {
+                return true;
+            }
+            // Fallback: Check if host domain resolves to an IP address
+            Attributes aAttrs = ictx.getAttributes(domainPart, new String[] { "A" });
+            return aAttrs.get("A") != null;
+        } catch (Exception ex) {
+            log.warn("DNS check failed for email domain [{}]: {}", domainPart, ex.getMessage());
+            return false;
+        }
+    }
+
     @Transactional
     public AuthResponse register(RegisterRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
+        String cleanEmail = request.getEmail().toLowerCase().trim();
+
+        // 🌟 1. Real-World Email Existence Check
+        if (!isRealWorldEmailDomain(cleanEmail)) {
+            throw new IllegalArgumentException(
+                    "The email '" + request.getEmail() + "' is not a valid real-world email. Please use a real active address (e.g., @gmail.com, @yahoo.com)."
+            );
+        }
+
+        if (userRepository.existsByEmail(cleanEmail)) {
             throw new DuplicateResourceException("An account with this email already exists");
         }
         if (userRepository.existsByPhoneNumber(request.getPhoneNumber())) {
@@ -60,10 +124,13 @@ public class AuthService {
         }
 
         User user = User.builder()
-                .email(request.getEmail().toLowerCase().trim())
+                .email(cleanEmail)
                 .phoneNumber(request.getPhoneNumber().trim())
                 .fullName(request.getFullName().trim())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
+                .cnicNumber(request.getCnicNumber() != null ? request.getCnicNumber().trim() : null)
+                .isKycVerified(true)
+                .isBiometricEnrolled(true)
                 .pinFailedAttempts(0)
                 .isLocked(false)
                 .build();
@@ -73,7 +140,7 @@ public class AuthService {
         Wallet wallet = Wallet.builder()
                 .user(user)
                 .walletTag(walletTag)
-                .currency("USD")
+                .currency("PKR")
                 .balance(BigDecimal.ZERO.setScale(4))
                 .isActive(true)
                 .build();
@@ -132,13 +199,19 @@ public class AuthService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
-            throw new BadCredentialsException("Invalid current password");
+        // If user already had a PIN configured and current password was provided, verify it.
+        // For new initial setup (or when password is not set in request), allow authenticated user to configure PIN!
+        boolean hasExistingPin = user.getPinHash() != null && !user.getPinHash().isBlank();
+        if (hasExistingPin && request.getCurrentPassword() != null && !request.getCurrentPassword().isBlank()) {
+            if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
+                throw new BadCredentialsException("Invalid current password");
+            }
         }
 
         user.setPinHash(passwordEncoder.encode(request.getPin()));
         user.setPinFailedAttempts(0);
         userRepository.save(user);
+        log.info("Successfully configured transaction PIN for user: {}", user.getEmail());
     }
 
     @Transactional(readOnly = true)

@@ -31,4 +31,6 @@ public class RegisterRequest {
 
     @Pattern(regexp = "^[a-zA-Z0-9_]{3,30}$", message = "Custom wallet tag can only contain alphanumeric and underscores (3-30 chars)")
     private String customTag;
+
+    private String cnicNumber;
 }

@@ -15,6 +15,5 @@ public class SetPinRequest {
     @Pattern(regexp = "^[0-9]{4,6}$", message = "PIN must be strictly 4 to 6 numeric digits")
     private String pin;
 
-    @NotBlank(message = "Current password is required to verify identity")
     private String currentPassword;
 }

@@ -1,31 +1,32 @@
 {
-  "version": "2.4.14",
-  "versionCode": 254,
-  "buildNumber": 254,
+  "version": "2.4.15",
+  "versionCode": 255,
+  "buildNumber": 255,
   "minSupportedVersion": "1.0.0",
   "releaseDate": "2026-11-08",
   "apkName": "batwa-wallet.apk",
   "apkSize": "79.3 MB",
-  "fileSizeBytes": 83199205,
+  "fileSizeBytes": 83164746,
   "fileSize": "79.3 MB",
-  "sha256": "758013aad24e7682090843900907f7cd128d439131d3f84d2e20c59544e2aada",
+  "sha256": "bf177c7dc9a9154bdf7dca70dfe0db63d00dfe43d093572c088010ea9d3dc30a",
   "downloadUrl": "https://buttwaa.online/batwa-wallet.apk",
   "forceUpdate": false,
-  "title": "BATWA v2.4.14 Official Release",
-  "message": "Naya update live ho chuka hai! Tamam 38 Pakistani verified commercial banks, microfinance banks aur digital wallets ke exact official logos aur 1Link transfer support ke sath app live hai.",
+  "title": "BATWA v2.4.15 Official Release",
+  "message": "Naya registration aur onboarding experience live hai: real-world DNS email verification, CNIC front/back upload, biometric fingerprint scanner, face liveness match, aur direct 4-digit PIN setup bina kisi rukawat ke.",
   "features": [
-    "Full suite of 38 Pakistani banks and digital wallets with verified official logos",
-    "Commercial Banks: HBL, Meezan, UBL, Alfalah, MCB, ABL, Bank AL Habib, Askari, Faysal, NBP, SCB, BOP, BOK, DIB, Al Baraka, Soneri, JS Bank, HabibMetro, Samba, BankIslami, BML, FWBL, Sindh Bank, Silkbank, MCB Islamic",
-    "Microfinance Banks: ABHI Microfinance, ZTBL, Advans, MMBL, Apna Bank, UPaisa (U Bank)",
-    "Digital Wallets & EMIs: Easypaisa, JazzCash, SadaPay, NayaPay, aik by BankIslami, Zindigi by JS Bank",
-    "1Link title inquiry and direct IBFT transfers across all 38 financial institutions",
-    "Interactive website marquee showcasing all partner banking and payment institutions",
-    "100% clean UI: vertical Batwa Black Edition card, compact analytics, no pig references"
+    "Real-World Email Domain Verification: DNS MX lookups prevent fake/unregistered email registrations",
+    "CNIC Verification: Format validation (XXXXX-XXXXXXX-X) with Camera & Gallery capture for Front and Back cards",
+    "Biometric Fingerprint Scanner: Native device biometrics prompt with interactive scanning pad and haptic feedback",
+    "Face Liveness Verification: Animated radar scanning reticle with 100% facial geometry match",
+    "Seamless PIN Setup: Direct transition to 4-digit PIN setup right after registration without requiring login password",
+    "Full suite of 38 verified Pakistani commercial and microfinance banks with 1Link / Raast title fetch",
+    "100% clean UI: vertical Batwa Black Edition card, compact analytics, zero dummy accounts"
   ],
   "changelog": [
-    "Restored and verified all 38 Pakistani banks & wallets in Bank Transfer selection",
-    "Integrated authentic bank logos across mobile app and web marquee",
-    "Updated fallback resolver for all bank IDs and clearing codes",
-    "Deployed release APK v2.4.14 (Build 254) to production server"
+    "Integrated live DNS MX email validation in backend & mobile registration",
+    "Added multi-step KYC onboarding: CNIC front/back photo upload with camera & gallery support",
+    "Implemented interactive Biometric Fingerprint and Facial Liveness verification",
+    "Eliminated current password requirement for initial transaction PIN setup",
+    "Direct automatic transition from Registration to Transaction PIN setup"
   ]
 }

@@ -25,6 +25,7 @@ class RegisterSubmittedEvent extends AuthEvent {
   final String phoneNumber;
   final String password;
   final String? customTag;
+  final String? cnicNumber;
 
   const RegisterSubmittedEvent({
     required this.fullName,
@@ -32,10 +33,11 @@ class RegisterSubmittedEvent extends AuthEvent {
     required this.phoneNumber,
     required this.password,
     this.customTag,
+    this.cnicNumber,
   });
 
   @override
-  List<Object?> get props => [fullName, email, phoneNumber, password, customTag];
+  List<Object?> get props => [fullName, email, phoneNumber, password, customTag, cnicNumber];
 }
 
 class SetPinSubmittedEvent extends AuthEvent {

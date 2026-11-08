@@ -19,6 +19,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -31,6 +34,28 @@ public class AuthController {
     @GetMapping("/ping")
     public ResponseEntity<ApiResponse<String>> ping() {
         return ResponseEntity.ok(ApiResponse.ok("PONG", "BATTWAA Backend Active"));
+    }
+
+    @GetMapping("/verify-email")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> verifyEmail(@RequestParam String email) {
+        boolean valid = authService.isRealWorldEmailDomain(email);
+        boolean exists = userRepository.existsByEmail(email.toLowerCase().trim());
+        Map<String, Object> data = new HashMap<>();
+        data.put("email", email);
+        data.put("isRealDomain", valid);
+        data.put("isAlreadyRegistered", exists);
+        data.put("canRegister", valid && !exists);
+
+        String message;
+        if (!valid) {
+            message = "This email domain does not exist in the real world.";
+        } else if (exists) {
+            message = "An account with this email already exists.";
+        } else {
+            message = "Email is authentic and ready for registration.";
+        }
+
+        return ResponseEntity.ok(ApiResponse.ok(data, message));
     }
 
     @PostMapping("/register")
