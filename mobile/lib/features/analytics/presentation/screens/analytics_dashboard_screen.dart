@@ -702,12 +702,12 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
                             overflow: TextOverflow.ellipsis,
                           ),
 
-                          // Spider / Radar Polygon Chart in Brand Colors
+                          // Spider / Radar Polygon Chart in Brand Colors (Enlarged inside box)
                           SizedBox(
-                            height: 50,
+                            height: 62,
                             child: Center(
                               child: CustomPaint(
-                                size: const Size(75, 50),
+                                size: const Size(120, 62),
                                 painter: _MiniSpiderChartPainter(),
                               ),
                             ),
@@ -2539,7 +2539,7 @@ class _MiniSpiderChartPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.height * 0.46;
+    final radius = size.height * 0.52;
 
     final webPaint = Paint()
       ..color = Colors.white.withValues(alpha: 0.16)

@@ -44,7 +44,7 @@ public class User {
     @Builder.Default
     private boolean isLocked = false;
 
-    @Column(name = "cnic_number", length = 30)
+    @Column(name = "cnic_number", unique = true, length = 30)
     private String cnicNumber;
 
     @Column(name = "is_kyc_verified")

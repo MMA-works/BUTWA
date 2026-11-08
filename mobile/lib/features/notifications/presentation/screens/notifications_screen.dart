@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:batwa_wallet/core/constants/app_colors.dart';
+import 'package:batwa_wallet/core/network/api_client.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -17,178 +19,181 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   static const Color _brandYellow = Color(0xFFF3D602);
   static const Color _darkGreenStart = Color(0xFF042B1D);
   static const Color _darkGreenMid = Color(0xFF063C28);
-  static const Color _darkGreenEnd = Color(0xFF084E35);
   static const Color _accentEmerald = Color(0xFF10B981);
   static const Color _darkNavy = Color(0xFF1B1D28);
 
-  final List<Map<String, dynamic>> _notifications = [
-    // --- TODAY ---
+  List<Map<String, dynamic>> _notifications = [
     {
-      'id': 'notif_1',
-      'actor': 'Zainab Khan',
-      'action': 'sent you PKR 5,000.00 via Raast Instant Direct',
-      'tag': 'RAAST',
-      'amount': '+PKR 5,000.00',
-      'isCredit': true,
-      'time': '1h ago',
-      'dateGroup': 'TODAY',
-      'isDirect': true,
-      'isRead': false,
-      'avatarInitials': 'ZK',
-      'avatarColor': const Color(0xFF042B1D),
-      'badgeIcon': Icons.alternate_email_rounded,
-      'badgeColor': _brandYellow,
-      'badgeIconColor': _darkNavy,
-    },
-    {
-      'id': 'notif_2',
-      'actor': 'Careem Rewards',
-      'action': 'unlocked a new 30% Cashback Goal on your Virtual Card',
-      'tag': 'GOAL',
-      'amount': '30% CASHBACK',
+      'id': 'system_welcome',
+      'actor': 'Batwa Security Center',
+      'action': 'Protected by SBP licensed 256-bit AES encryption & Biometric Vault.',
+      'tag': 'VERIFIED',
+      'amount': 'SBP EMI',
       'isCredit': null,
-      'time': '4h ago',
-      'dateGroup': 'TODAY',
-      'isDirect': false,
-      'isRead': false,
-      'avatarInitials': 'CR',
-      'avatarColor': const Color(0xFF063C28),
-      'badgeIcon': Icons.auto_awesome_rounded,
-      'badgeColor': _brandYellow,
-      'badgeIconColor': _darkNavy,
-    },
-    {
-      'id': 'notif_3',
-      'actor': 'Daniel Mayers',
-      'action': 'settled a split request for Dinner Bill #1302',
-      'tag': 'SPLIT PO#1302',
-      'amount': '+PKR 1,250.00',
-      'isCredit': true,
-      'time': '08:42',
+      'time': 'Just now',
       'dateGroup': 'TODAY',
       'isDirect': true,
       'isRead': true,
-      'avatarInitials': 'DM',
-      'avatarColor': const Color(0xFF084E35),
-      'badgeIcon': Icons.check_rounded,
-      'badgeColor': _accentEmerald,
-      'badgeIconColor': Colors.white,
-    },
-
-    // --- YESTERDAY ---
-    {
-      'id': 'notif_4',
-      'actor': 'Spotify Premium',
-      'action': 'debited PKR 15.00 for auto-renewal subscription rule',
-      'tag': 'AUTO-DEBIT',
-      'amount': '-PKR 15.00',
-      'isCredit': false,
-      'time': 'Yesterday • 18:21',
-      'dateGroup': 'YESTERDAY',
-      'isDirect': true,
-      'isRead': true,
-      'avatarInitials': 'SP',
+      'avatarInitials': 'BW',
       'avatarColor': const Color(0xFF042B1D),
-      'badgeIcon': Icons.arrow_upward_rounded,
-      'badgeColor': _brandYellow,
-      'badgeIconColor': _darkNavy,
-    },
-    {
-      'id': 'notif_5',
-      'actor': 'Security Guard',
-      'action': 'verified new Web Portal sign-in from Islamabad (Windows 11)',
-      'tag': 'SECURITY',
-      'amount': 'TRUSTED',
-      'isCredit': null,
-      'time': 'Yesterday • 12:00',
-      'dateGroup': 'YESTERDAY',
-      'isDirect': true,
-      'isRead': true,
-      'avatarInitials': 'SG',
-      'avatarColor': const Color(0xFF063C28),
-      'badgeIcon': Icons.shield_rounded,
+      'badgeIcon': Icons.verified_user_rounded,
       'badgeColor': _accentEmerald,
       'badgeIconColor': Colors.white,
-    },
-    {
-      'id': 'notif_6',
-      'actor': 'K-Electric Bill Hub',
-      'action': 'Zero Fee electricity bill campaign is live this week',
-      'tag': 'BILL HUB',
-      'amount': '0% FEE',
-      'isCredit': null,
-      'time': 'Yesterday • 09:15',
-      'dateGroup': 'YESTERDAY',
-      'isDirect': false,
-      'isRead': true,
-      'avatarInitials': 'KE',
-      'avatarColor': const Color(0xFF084E35),
-      'badgeIcon': Icons.bolt_rounded,
-      'badgeColor': _brandYellow,
-      'badgeIconColor': _darkNavy,
-    },
-
-    // --- EARLIER ---
-    {
-      'id': 'notif_7',
-      'actor': 'Meezan Bank Top-Up',
-      'action': 'loaded PKR 20,000.00 into primary wallet account',
-      'tag': '1LINK LOAD',
-      'amount': '+PKR 20,000.00',
-      'isCredit': true,
-      'time': '3 days ago',
-      'dateGroup': 'EARLIER',
-      'isDirect': true,
-      'isRead': true,
-      'avatarInitials': 'MB',
-      'avatarColor': const Color(0xFF042B1D),
-      'badgeIcon': Icons.arrow_downward_rounded,
-      'badgeColor': _accentEmerald,
-      'badgeIconColor': Colors.white,
-    },
-    {
-      'id': 'notif_8',
-      'actor': 'Hamza Qureshi',
-      'action': 'invited you to Split Vault "Murree Trip 2026"',
-      'tag': 'FINANCE TEAM',
-      'amount': 'INVITE',
-      'isCredit': null,
-      'time': '4 days ago',
-      'dateGroup': 'EARLIER',
-      'isDirect': true,
-      'isRead': true,
-      'avatarInitials': 'HQ',
-      'avatarColor': const Color(0xFF063C28),
-      'badgeIcon': Icons.add_rounded,
-      'badgeColor': _brandYellow,
-      'badgeIconColor': _darkNavy,
     },
   ];
 
-  void _markAllAsRead() {
+  @override
+  void initState() {
+    super.initState();
+    _fetchBackendNotifications();
+  }
+
+  Future<void> _fetchBackendNotifications() async {
+    try {
+      final res = await ApiClient().client.get('/notifications');
+      if (res.statusCode == 200 && res.data != null) {
+        final rawList = res.data is Map ? (res.data['data'] as List? ?? []) : (res.data as List? ?? []);
+        final List<Map<String, dynamic>> mapped = [];
+
+        for (final item in rawList) {
+          final id = item['id']?.toString() ?? UniqueKey().toString();
+          final type = item['type']?.toString() ?? 'SYSTEM';
+          final title = item['title']?.toString() ?? 'Activity Alert';
+          final message = item['message']?.toString() ?? '';
+          final amountNum = double.tryParse(item['amount']?.toString() ?? '');
+          final isRead = item['read'] == true || item['isRead'] == true;
+          final createdAtStr = item['createdAt']?.toString();
+          DateTime dt = DateTime.now();
+          if (createdAtStr != null) {
+            dt = DateTime.tryParse(createdAtStr) ?? DateTime.now();
+          }
+
+          final now = DateTime.now();
+          final diff = now.difference(dt);
+          String timeStr;
+          String dateGroup;
+
+          if (diff.inMinutes < 1) {
+            timeStr = 'Just now';
+          } else if (diff.inMinutes < 60) {
+            timeStr = '${diff.inMinutes}m ago';
+          } else if (diff.inHours < 24 && dt.day == now.day) {
+            timeStr = '${diff.inHours}h ago';
+          } else {
+            timeStr = DateFormat('MMM d • HH:mm').format(dt);
+          }
+
+          if (dt.year == now.year && dt.month == now.month && dt.day == now.day) {
+            dateGroup = 'TODAY';
+          } else if (now.difference(DateTime(dt.year, dt.month, dt.day)).inDays == 1) {
+            dateGroup = 'YESTERDAY';
+          } else {
+            dateGroup = 'EARLIER';
+          }
+
+          final isReceived = type == 'TRANSFER_RECEIVED' || type == 'CREDIT';
+          final isSent = type == 'TRANSFER_SENT' || type == 'DEBIT';
+          final isTopup = type == 'TOPUP';
+          final isBill = type == 'BILL_PAYMENT';
+          final bool isCredit = isReceived || isTopup;
+
+          String amountFormatted = '';
+          if (amountNum != null && amountNum > 0) {
+            amountFormatted = '${isCredit ? '+' : '-'}PKR ${amountNum.toStringAsFixed(2)}';
+          } else {
+            amountFormatted = type;
+          }
+
+          String actor = title;
+          if (title.contains('!')) {
+            actor = title.replaceAll('!', '').replaceAll('🎉', '').replaceAll('💰', '').replaceAll('💸', '').replaceAll('⚡', '').trim();
+          }
+
+          IconData badgeIcon = Icons.notifications_active_rounded;
+          if (isReceived) {
+            badgeIcon = Icons.arrow_downward_rounded;
+          } else if (isSent) {
+            badgeIcon = Icons.arrow_upward_rounded;
+          } else if (isTopup) {
+            badgeIcon = Icons.account_balance_wallet_rounded;
+          } else if (isBill) {
+            badgeIcon = Icons.receipt_long_rounded;
+          }
+
+          Color badgeColor = isCredit ? _accentEmerald : _brandYellow;
+          Color badgeIconColor = isCredit ? Colors.white : _darkNavy;
+
+          String initials = 'BW';
+          if (actor.isNotEmpty) {
+            final parts = actor.split(' ');
+            if (parts.length >= 2) {
+              initials = '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+            } else {
+              initials = actor.substring(0, actor.length >= 2 ? 2 : 1).toUpperCase();
+            }
+          }
+
+          mapped.add({
+            'id': id,
+            'actor': actor,
+            'action': message,
+            'tag': isReceived ? 'RAAST' : (isTopup ? 'TOP-UP' : (isBill ? 'BILL' : 'TRANSFER')),
+            'amount': amountFormatted,
+            'isCredit': isCredit,
+            'time': timeStr,
+            'dateGroup': dateGroup,
+            'isDirect': true,
+            'isRead': isRead,
+            'avatarInitials': initials,
+            'avatarColor': const Color(0xFF042B1D),
+            'badgeIcon': badgeIcon,
+            'badgeColor': badgeColor,
+            'badgeIconColor': badgeIconColor,
+          });
+        }
+
+        if (mounted && mapped.isNotEmpty) {
+          setState(() {
+            _notifications = mapped;
+          });
+        }
+
+        try {
+          await ApiClient().client.post('/notifications/read-all');
+        } catch (_) {}
+      }
+    } catch (_) {}
+  }
+
+  void _markAllAsRead() async {
     HapticFeedback.lightImpact();
     setState(() {
       for (var n in _notifications) {
         n['isRead'] = true;
       }
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Row(
-          children: [
-            Icon(Icons.check_circle_rounded, color: _brandYellow, size: 20),
-            SizedBox(width: 10),
-            Text('All notifications marked as read!', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-          ],
+    try {
+      await ApiClient().client.post('/notifications/read-all');
+    } catch (_) {}
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Row(
+            children: [
+              Icon(Icons.check_circle_rounded, color: _brandYellow, size: 20),
+              SizedBox(width: 10),
+              Text('All notifications marked as read!', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+            ],
+          ),
+          backgroundColor: _darkGreenStart,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+            side: const BorderSide(color: _brandYellow, width: 1),
+          ),
         ),
-        backgroundColor: _darkGreenStart,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-          side: const BorderSide(color: _brandYellow, width: 1),
-        ),
-      ),
-    );
+      );
+    }
   }
 
   @override
@@ -251,7 +256,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           // =========================================================
           SafeArea(
             bottom: false,
-            child: ListView(
+            child: RefreshIndicator(
+              onRefresh: _fetchBackendNotifications,
+              color: _brandYellow,
+              backgroundColor: _darkGreenStart,
+              child: ListView(
               padding: const EdgeInsets.only(bottom: 40),
               physics: const BouncingScrollPhysics(),
               children: [
@@ -416,148 +425,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
                 const SizedBox(height: 16),
 
-                // =========================================================
-                // 🟢 TIER 2: SIGNATURE DARK GREEN BOX HERO CARD
-                // =========================================================
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Container(
-                    padding: const EdgeInsets.all(18),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [
-                          _darkGreenStart,
-                          _darkGreenMid,
-                          _darkGreenEnd,
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(
-                        color: _accentEmerald.withValues(alpha: 0.35),
-                        width: 1.2,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: _darkGreenStart.withValues(alpha: 0.4),
-                          blurRadius: 18,
-                          offset: const Offset(0, 6),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        // 3D Illustrated Bell with subtle halo
-                        Container(
-                          width: 58,
-                          height: 58,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white.withValues(alpha: 0.08),
-                            border: Border.all(
-                              color: _brandYellow.withValues(alpha: 0.4),
-                              width: 1.5,
-                            ),
-                          ),
-                          child: Center(
-                            child: Image.asset(
-                              'assets/images/notification_3d_bell.png',
-                              width: 44,
-                              height: 44,
-                              fit: BoxFit.contain,
-                              errorBuilder: (_, __, ___) => const Icon(
-                                Icons.notifications_active_rounded,
-                                color: _brandYellow,
-                                size: 30,
-                              ),
-                            ),
-                          ),
-                        ),
 
-                        const SizedBox(width: 14),
-
-                        // Center Status Details
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    width: 7,
-                                    height: 7,
-                                    decoration: const BoxDecoration(
-                                      color: _brandYellow,
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  const Text(
-                                    'REAL-TIME ACTIVITY HUB',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w900,
-                                      color: _brandYellow,
-                                      letterSpacing: 0.8,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 3),
-                              Text(
-                                unreadCount > 0
-                                    ? '$unreadCount New Pending Alerts'
-                                    : 'All Caught Up & Verified',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w900,
-                                  color: Colors.white,
-                                  letterSpacing: -0.3,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              const Text(
-                                'Raast instant direct & biometric audit stream',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.white70,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        // Mini Verified Pill
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
-                          decoration: BoxDecoration(
-                            color: _brandYellow,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: _brandYellow.withValues(alpha: 0.35),
-                                blurRadius: 6,
-                              ),
-                            ],
-                          ),
-                          child: const Text(
-                            'LIVE',
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w900,
-                              color: _darkNavy,
-                              letterSpacing: 0.6,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 20),
 
                 // =========================================================
                 // ⚪ TIER 3: CRISP WHITE CARD CONTAINER FOR NOTIFICATIONS
@@ -644,7 +512,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               ],
             ),
           ),
-        ],
+        ),
+      ],
       ),
     );
   }

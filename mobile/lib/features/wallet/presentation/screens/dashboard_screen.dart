@@ -1,4 +1,8 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:batwa_wallet/core/network/api_client.dart';
+import 'package:batwa_wallet/core/services/in_app_notification_service.dart';
+import 'package:batwa_wallet/core/services/app_update_service.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -42,6 +46,69 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedTabIndex = 0;
   String _currentAvatarUrl = UserAvatarHelper.defaultMaleAvatar;
   String _currentGender = "MALE";
+  Timer? _notificationTimer;
+  int _unreadNotificationCount = 0;
+  String? _latestKnownNotificationId;
+  bool _isFirstCheck = true;
+
+  Future<void> _checkIncomingNotifications() async {
+    try {
+      final res = await ApiClient().client.get('/notifications');
+      if (res.statusCode == 200 && res.data != null) {
+        final rawList = res.data is Map ? (res.data['data'] as List? ?? []) : (res.data as List? ?? []);
+        int unread = 0;
+        String? newestId;
+
+        for (final item in rawList) {
+          final isRead = item['read'] == true || item['isRead'] == true;
+          if (!isRead) unread++;
+        }
+
+        if (rawList.isNotEmpty) {
+          final first = rawList.first;
+          newestId = first['id']?.toString();
+
+          if (!_isFirstCheck && newestId != null && newestId != _latestKnownNotificationId) {
+            final isRead = first['read'] == true || first['isRead'] == true;
+            if (!isRead) {
+              final type = first['type']?.toString() ?? 'ALERT';
+              final title = first['title']?.toString() ?? 'Notification';
+              final message = first['message']?.toString() ?? '';
+              final amount = double.tryParse(first['amount']?.toString() ?? '');
+
+              if (mounted) {
+                InAppNotificationService.showNotification(
+                  context,
+                  title: title,
+                  message: message,
+                  type: type,
+                  amount: amount,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+                    ).then((_) => _checkIncomingNotifications());
+                  },
+                );
+
+                if (type == 'TRANSFER_RECEIVED' || type == 'TOPUP') {
+                  context.read<WalletBloc>().add(LoadWalletDataEvent());
+                }
+              }
+            }
+          }
+          _latestKnownNotificationId = newestId;
+        }
+
+        _isFirstCheck = false;
+        if (mounted) {
+          setState(() {
+            _unreadNotificationCount = unread;
+          });
+        }
+      }
+    } catch (_) {}
+  }
 
   Future<void> _loadUserAvatar() async {
     final avatar = await UserAvatarHelper.getAvatarUrl();
@@ -59,6 +126,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
     super.initState();
     _loadUserAvatar();
     context.read<WalletBloc>().add(LoadWalletDataEvent());
+    _checkIncomingNotifications();
+    _notificationTimer = Timer.periodic(const Duration(seconds: 6), (_) {
+      _checkIncomingNotifications();
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        AppUpdateService.promptIfUpdateAvailable(context);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _notificationTimer?.cancel();
+    super.dispose();
   }
 
   void _showSetBudgetModal(BuildContext context) {
@@ -309,6 +391,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     backgroundColor: AppColors.surface,
                     onRefresh: () async {
                       context.read<WalletBloc>().add(LoadWalletDataEvent());
+                      await _checkIncomingNotifications();
                     },
                     child: SingleChildScrollView(
                       physics: const AlwaysScrollableScrollPhysics(),
@@ -416,13 +499,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     ),
                                     const SizedBox(width: 8),
 
-                                    // 🔔 3D Golden Bell with green badge (3)
+                                    // 🔔 3D Golden Bell with dynamic unread count badge
                                     GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
+                                      onTap: () async {
+                                        await Navigator.push(
                                           context,
                                           MaterialPageRoute(builder: (_) => const NotificationsScreen()),
                                         );
+                                        if (mounted) _checkIncomingNotifications();
                                       },
                                       behavior: HitTestBehavior.opaque,
                                       child: SizedBox(
@@ -439,29 +523,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                 fit: BoxFit.contain,
                                               ),
                                             ),
-                                            Positioned(
-                                              top: 0,
-                                              right: 0,
-                                              child: Container(
-                                                width: 15,
-                                                height: 15,
-                                                decoration: BoxDecoration(
-                                                  color: const Color(0xFF10B981),
-                                                  shape: BoxShape.circle,
-                                                  border: Border.all(color: Colors.white, width: 1.2),
-                                                ),
-                                                child: const Center(
-                                                  child: Text(
-                                                    '3',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 8.5,
-                                                      fontWeight: FontWeight.w900,
+                                            if (_unreadNotificationCount > 0)
+                                              Positioned(
+                                                top: 0,
+                                                right: 0,
+                                                child: Container(
+                                                  width: 16,
+                                                  height: 16,
+                                                  decoration: BoxDecoration(
+                                                    color: const Color(0xFF10B981),
+                                                    shape: BoxShape.circle,
+                                                    border: Border.all(color: Colors.white, width: 1.2),
+                                                  ),
+                                                  child: Center(
+                                                    child: Text(
+                                                      _unreadNotificationCount > 9 ? '9+' : '$_unreadNotificationCount',
+                                                      style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 8.5,
+                                                        fontWeight: FontWeight.w900,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
                                           ],
                                         ),
                                       ),
@@ -515,13 +600,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             child: BlocBuilder<AuthBloc, AuthState>(
                               builder: (context, authState) {
                                 String name = 'Batwa User';
-                                if (authState is Authenticated && authState.user.fullName.isNotEmpty) {
-                                  name = authState.user.fullName;
+                                String? phone;
+                                if (authState is Authenticated) {
+                                  if (authState.user.fullName.isNotEmpty) {
+                                    name = authState.user.fullName;
+                                  }
+                                  phone = authState.user.phoneNumber;
                                 }
                                 return BalanceCardWidget(
                                   wallet: state.wallet,
                                   isBalanceHidden: state.isBalanceHidden,
                                   userName: name,
+                                  userPhone: phone,
                                   onToggleVisibility: () {
                                     context.read<WalletBloc>().add(ToggleBalanceVisibilityEvent());
                                   },

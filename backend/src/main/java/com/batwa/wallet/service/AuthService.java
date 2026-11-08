@@ -95,6 +95,27 @@ public class AuthService {
         }
     }
 
+    /**
+     * Check if a 13-digit Pakistani CNIC is already registered in the system.
+     */
+    public boolean isCnicAvailable(String cnic) {
+        if (cnic == null) return false;
+        String digits = cnic.replaceAll("[^0-9]", "");
+        if (digits.length() != 13) return false;
+        String formatted = digits.substring(0, 5) + "-" + digits.substring(5, 12) + "-" + digits.substring(12, 13);
+        return !userRepository.existsByCnicNumber(formatted) && !userRepository.existsByCnicNumber(digits);
+    }
+
+    /**
+     * Check if a unique username / walletTag is available.
+     */
+    public boolean isUsernameAvailable(String username) {
+        if (username == null) return false;
+        String tag = username.replace("@", "").toLowerCase().trim();
+        if (tag.length() < 3 || tag.length() > 30) return false;
+        return !walletRepository.existsByWalletTagIgnoreCase(tag);
+    }
+
     @Transactional
     public AuthResponse register(RegisterRequest request) {
         String cleanEmail = request.getEmail().toLowerCase().trim();
@@ -113,13 +134,27 @@ public class AuthService {
             throw new DuplicateResourceException("An account with this phone number already exists");
         }
 
+        // 🌟 2. Strict CNIC Uniqueness & 13-Digit Format Verification
+        String formattedCnic = null;
+        if (request.getCnicNumber() != null && !request.getCnicNumber().isBlank()) {
+            String digits = request.getCnicNumber().replaceAll("[^0-9]", "");
+            if (digits.length() != 13) {
+                throw new IllegalArgumentException("CNIC must be strictly 13 digits (format: XXXXX-XXXXXXX-X)");
+            }
+            formattedCnic = digits.substring(0, 5) + "-" + digits.substring(5, 12) + "-" + digits.substring(12, 13);
+            if (userRepository.existsByCnicNumber(formattedCnic) || userRepository.existsByCnicNumber(digits)) {
+                throw new DuplicateResourceException("An account with this CNIC (" + formattedCnic + ") is already registered. Each CNIC can only be registered once.");
+            }
+        }
+
+        // 🌟 3. Strict Global Username / Wallet Tag Uniqueness
         String walletTag = request.getCustomTag();
         if (walletTag == null || walletTag.isBlank()) {
             walletTag = generateDefaultWalletTag(request.getFullName());
         } else {
-            walletTag = walletTag.toLowerCase().trim();
-            if (walletRepository.existsByWalletTag(walletTag)) {
-                throw new DuplicateResourceException("Wallet tag '@" + walletTag + "' is already taken");
+            walletTag = walletTag.replace("@", "").toLowerCase().trim();
+            if (walletRepository.existsByWalletTagIgnoreCase(walletTag)) {
+                throw new DuplicateResourceException("Username '@" + walletTag + "' is already taken. Please choose another username.");
             }
         }
 
@@ -128,7 +163,7 @@ public class AuthService {
                 .phoneNumber(request.getPhoneNumber().trim())
                 .fullName(request.getFullName().trim())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
-                .cnicNumber(request.getCnicNumber() != null ? request.getCnicNumber().trim() : null)
+                .cnicNumber(formattedCnic)
                 .isKycVerified(true)
                 .isBiometricEnrolled(true)
                 .pinFailedAttempts(0)
@@ -252,7 +287,7 @@ public class AuthService {
         }
         String candidate = base;
         int suffix = 1;
-        while (walletRepository.existsByWalletTag(candidate)) {
+        while (walletRepository.existsByWalletTagIgnoreCase(candidate)) {
             candidate = base + suffix;
             suffix++;
         }

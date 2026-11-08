@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:batwa_wallet/core/constants/app_colors.dart';
 import 'package:batwa_wallet/core/utils/currency_formatters.dart';
 import 'package:batwa_wallet/features/wallet/domain/entities/wallet_entity.dart';
+import 'package:batwa_wallet/features/wallet/presentation/widgets/account_details_modal.dart';
+import 'package:flutter/services.dart';
 
 class BalanceCardWidget extends StatelessWidget {
   final WalletEntity wallet;
@@ -9,6 +11,8 @@ class BalanceCardWidget extends StatelessWidget {
   final VoidCallback onToggleVisibility;
   final VoidCallback? onSetBudget;
   final String? userName;
+  final String? userPhone;
+  final VoidCallback? onViewInfo;
 
   const BalanceCardWidget({
     super.key,
@@ -17,6 +21,8 @@ class BalanceCardWidget extends StatelessWidget {
     required this.onToggleVisibility,
     this.onSetBudget,
     this.userName,
+    this.userPhone,
+    this.onViewInfo,
   });
 
   @override
@@ -190,36 +196,7 @@ class BalanceCardWidget extends StatelessWidget {
                         ),
                       ),
 
-                      // 🌟 3. Right Vertical Contactless Pod (Rounded Mustard Capsule)
-                      Positioned(
-                        right: 8,
-                        top: stepDownY + 8,
-                        bottom: 8,
-                        width: 54,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryMustard, // Solid #F5A623
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.primaryMustard.withValues(alpha: 0.3),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: const Center(
-                            child: RotatedBox(
-                              quarterTurns: 1,
-                              child: Icon(
-                                Icons.contactless_rounded,
-                                size: 30,
-                                color: AppColors.darkNavy,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
+                      
                     ],
                   ),
                 ),
@@ -272,6 +249,79 @@ class BalanceCardWidget extends StatelessWidget {
                           fontWeight: FontWeight.w800,
                           color: AppColors.darkNavy,
                           letterSpacing: -0.2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // 🌟 3. Right Vertical Interactive Pod (View Info & Copy Account/IBAN/Title/Bank)
+          Positioned(
+            right: 8,
+            top: stepDownY + 8,
+            bottom: 8,
+            width: 54,
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  if (onViewInfo != null) {
+                    onViewInfo!();
+                  } else {
+                    AccountDetailsModal.show(
+                      context,
+                      fullName: userName ?? (wallet.walletTag.isNotEmpty ? wallet.walletTag : 'Batwa User'),
+                      walletTag: wallet.walletTag,
+                      phoneNumber: userPhone ?? '03219876543',
+                      currency: wallet.currency,
+                    );
+                  }
+                },
+                borderRadius: BorderRadius.circular(20),
+                splashColor: Colors.black12,
+                highlightColor: Colors.black.withValues(alpha: 0.05),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryMustard, // Solid #F5A623
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primaryMustard.withValues(alpha: 0.35),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const RotatedBox(
+                        quarterTurns: 1,
+                        child: Icon(
+                          Icons.contactless_rounded,
+                          size: 26,
+                          color: AppColors.darkNavy,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: AppColors.darkNavy.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Text(
+                          'INFO',
+                          style: TextStyle(
+                            color: AppColors.darkNavy,
+                            fontSize: 9,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 0.8,
+                          ),
                         ),
                       ),
                     ],

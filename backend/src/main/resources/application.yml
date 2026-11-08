@@ -28,7 +28,7 @@ app:
     expiration-ms: 86400000
     refresh-expiration-ms: 604800000
   wallet:
-    default-currency: USD
-    transfer-fee-percentage: 0.005
-    max-daily-transfer: 50000.00
-    max-pin-attempts: 3
+    default-currency: PKR
+    transfer-fee-percentage: 0.0
+    max-daily-transfer: 5000000.00
+    max-pin-attempts: 5

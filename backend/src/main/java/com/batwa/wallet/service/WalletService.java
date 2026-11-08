@@ -40,13 +40,14 @@ public class WalletService {
     private final UserSecuritySettingsRepository settingsRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthService authService;
+    private final NotificationService notificationService;
 
     private final SecureRandom secureRandom = new SecureRandom();
 
-    @Value("${app.wallet.transfer-fee-percentage:0.005}")
+    @Value("${app.wallet.transfer-fee-percentage:0.0}")
     private BigDecimal transferFeePercentage;
 
-    @Value("${app.wallet.max-pin-attempts:3}")
+    @Value("${app.wallet.max-pin-attempts:5}")
     private int maxPinAttempts;
 
     @Transactional(readOnly = true)
@@ -56,35 +57,96 @@ public class WalletService {
         return authService.mapToWalletResponse(wallet);
     }
 
+    public Optional<User> findUserByIdentifier(String identifier) {
+        if (identifier == null || identifier.isBlank()) return Optional.empty();
+
+        String trimmed = identifier.trim();
+        String lower = trimmed.toLowerCase();
+        String cleanTag = trimmed.replace("@", "").toLowerCase();
+
+        // 1. Check wallet tag case-insensitively
+        Optional<Wallet> byTag = walletRepository.findByWalletTagIgnoreCase(cleanTag);
+        if (byTag.isPresent() && byTag.get().getUser() != null) {
+            return Optional.of(byTag.get().getUser());
+        }
+
+        // 2. Check email
+        Optional<User> byEmail = userRepository.findByEmail(lower);
+        if (byEmail.isPresent()) {
+            return byEmail;
+        }
+
+        // 3. Check phone number (exact, +92 variant, 0 variant)
+        Optional<User> byPhone = userRepository.findByPhoneNumber(trimmed);
+        if (byPhone.isPresent()) {
+            return byPhone;
+        }
+        String digitsOnly = trimmed.replaceAll("[^0-9]", "");
+        if (digitsOnly.length() >= 10) {
+            String suffix10 = digitsOnly.substring(digitsOnly.length() - 10);
+            String variant1 = "0" + suffix10;
+            String variant2 = "+92" + suffix10;
+            Optional<User> byPhoneVar = userRepository.findByPhoneNumber(variant1)
+                    .or(() -> userRepository.findByPhoneNumber(variant2));
+            if (byPhoneVar.isPresent()) {
+                return byPhoneVar;
+            }
+        }
+
+        // 4. Check CNIC number (exact and 13 digits)
+        Optional<User> byCnic = userRepository.findByCnicNumber(trimmed);
+        if (byCnic.isPresent()) {
+            return byCnic;
+        }
+        if (digitsOnly.length() == 13) {
+            String formattedCnic = digitsOnly.substring(0, 5) + "-" + digitsOnly.substring(5, 12) + "-" + digitsOnly.substring(12, 13);
+            Optional<User> byFormattedCnic = userRepository.findByCnicNumber(formattedCnic);
+            if (byFormattedCnic.isPresent()) {
+                return byFormattedCnic;
+            }
+        }
+
+        return Optional.empty();
+    }
+
     @Transactional(readOnly = true)
     public RecipientLookupResponse lookupRecipient(String identifier, UUID currentUserId) {
         String cleanId = identifier.trim().replace("@", "");
         
-        Optional<Wallet> optionalWallet = walletRepository.findByWalletTag(cleanId)
-                .or(() -> userRepository.findByPhoneNumber(identifier).map(User::getWallet))
-                .or(() -> userRepository.findByEmail(identifier).map(User::getWallet));
+        Optional<User> optionalUser = findUserByIdentifier(identifier);
 
-        if (optionalWallet.isEmpty()) {
-            // Smart Sandbox Title Simulator: Razi Meezan bank & realistic Pakistani bank lookup
-            String lower = identifier.toLowerCase();
-            String title;
-            String tag = cleanId;
-            String maskedPhone = "0312****889";
-
-            if (lower.contains("razi") || cleanId.contains("meezan") || cleanId.equals("01010102938472") || cleanId.endsWith("9384")) {
-                title = "MUHAMMAD RAZI";
-                tag = "razi.meezan";
-                maskedPhone = "0312****889";
-            } else if (cleanId.matches("\\d{8,24}") || cleanId.toUpperCase().startsWith("PK")) {
-                String[] demoTitles = {"MUHAMMAD RAZI", "MUHAMMAD ALI", "USMAN TARIQ", "HAMZA AHMED", "BILAL KHAN"};
-                int idx = Math.abs(cleanId.hashCode()) % demoTitles.length;
-                title = demoTitles[idx];
-                tag = "bank." + cleanId.substring(Math.max(0, cleanId.length() - 4));
-                maskedPhone = "0300****123";
-            } else {
-                title = cleanId.toUpperCase() + " (VERIFIED)";
-                tag = cleanId;
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if (currentUserId != null && user.getId().equals(currentUserId)) {
+                throw new SelfTransferException("You cannot send money to yourself");
             }
+            Wallet recipientWallet = user.getWallet();
+            if (recipientWallet == null) {
+                recipientWallet = walletRepository.findByUserId(user.getId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Wallet not found for recipient"));
+            }
+
+            String rawPhone = user.getPhoneNumber();
+            String maskedPhone = rawPhone != null && rawPhone.length() > 4
+                    ? rawPhone.substring(0, rawPhone.length() - 4).replaceAll(".", "*") + rawPhone.substring(rawPhone.length() - 4)
+                    : rawPhone;
+
+            return RecipientLookupResponse.builder()
+                    .walletTag(recipientWallet.getWalletTag())
+                    .recipientFullName(user.getFullName())
+                    .maskedPhoneNumber(maskedPhone)
+                    .currency(recipientWallet.getCurrency())
+                    .build();
+        }
+
+        // Check if identifier looks like a Bank Account / IBAN
+        String lower = identifier.toLowerCase();
+        if (cleanId.matches("\\d{8,24}") || cleanId.toUpperCase().startsWith("PK") || lower.contains("razi") || cleanId.contains("meezan") || cleanId.contains("bank")) {
+            String[] demoTitles = {"MUHAMMAD RAZI", "MUHAMMAD USMAN TARIQ", "SYED HAMZA ALI", "FATIMA BATOOL", "BILAL KHAN", "AYESHA SIDDIQUI"};
+            int idx = Math.abs(cleanId.hashCode()) % demoTitles.length;
+            String title = demoTitles[idx];
+            String tag = "bank." + cleanId.substring(Math.max(0, cleanId.length() - 4));
+            String maskedPhone = "0300****123";
 
             return RecipientLookupResponse.builder()
                     .walletTag(tag)
@@ -94,23 +156,8 @@ public class WalletService {
                     .build();
         }
 
-        Wallet recipientWallet = optionalWallet.get();
-
-        if (recipientWallet.getUser().getId().equals(currentUserId)) {
-            throw new SelfTransferException("You cannot send money to yourself");
-        }
-
-        String rawPhone = recipientWallet.getUser().getPhoneNumber();
-        String maskedPhone = rawPhone != null && rawPhone.length() > 4
-                ? rawPhone.substring(0, rawPhone.length() - 4).replaceAll(".", "*") + rawPhone.substring(rawPhone.length() - 4)
-                : rawPhone;
-
-        return RecipientLookupResponse.builder()
-                .walletTag(recipientWallet.getWalletTag())
-                .recipientFullName(recipientWallet.getUser().getFullName())
-                .maskedPhoneNumber(maskedPhone)
-                .currency(recipientWallet.getCurrency())
-                .build();
+        // If it was a Batwa tag, username or phone that doesn't exist:
+        throw new ResourceNotFoundException("No Batwa wallet account found for '" + identifier + "'. Please check the tag or mobile number.");
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -147,6 +194,21 @@ public class WalletService {
                 .build();
 
         ledger = transactionRepository.save(ledger);
+
+        try {
+            notificationService.createNotification(
+                    wallet.getUser(),
+                    "Wallet Topped Up 💰",
+                    String.format("Rs. %s loaded successfully into your Batwa Wallet via %s",
+                            amount.setScale(2, RoundingMode.HALF_UP),
+                            request.getPaymentMethod()),
+                    "TOPUP",
+                    amount,
+                    refNum
+            );
+        } catch (Exception e) {
+            log.warn("Failed to create topup notification: {}", e.getMessage());
+        }
 
         log.info("Top-Up successful. Wallet: {}, Amount: {}, Ref: {}", wallet.getWalletTag(), amount, refNum);
         return mapToTransactionResponse(ledger);
@@ -189,28 +251,34 @@ public class WalletService {
         }
 
         // 2. Identify destination wallet
-        String cleanId = request.getRecipientIdentifier().trim().replace("@", "");
-        Wallet destinationWallet = walletRepository.findByWalletTag(cleanId)
-                .or(() -> userRepository.findByPhoneNumber(request.getRecipientIdentifier()).map(User::getWallet))
-                .or(() -> userRepository.findByEmail(request.getRecipientIdentifier()).map(User::getWallet))
-                .orElseGet(() -> {
-                    // Sandbox Simulator: Settle external bank/Raast transfers into a settlement ledger account
-                    return walletRepository.findByWalletTag("system.settlement")
-                            .orElseGet(() -> {
-                                User sysUser = userRepository.save(User.builder()
-                                        .email("settlement@batwa.wallet")
-                                        .phoneNumber("03000000000")
-                                        .passwordHash("$2a$10$dummySettlementHashN/A")
-                                        .fullName("1Link / Raast Settlement")
-                                        .build());
-                                return walletRepository.save(Wallet.builder()
-                                        .user(sysUser)
-                                        .walletTag("system.settlement")
-                                        .balance(BigDecimal.ZERO.setScale(4))
-                                        .currency("PKR")
-                                        .build());
-                            });
-                });
+        Optional<User> optionalDestUser = findUserByIdentifier(request.getRecipientIdentifier());
+        Wallet destinationWallet;
+
+        if (optionalDestUser.isPresent()) {
+            User destUser = optionalDestUser.get();
+            destinationWallet = destUser.getWallet();
+            if (destinationWallet == null) {
+                destinationWallet = walletRepository.findByUserId(destUser.getId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Destination wallet not found for user: " + destUser.getFullName()));
+            }
+        } else {
+            // Settle external bank/Raast transfers into a settlement ledger account
+            destinationWallet = walletRepository.findByWalletTag("system.settlement")
+                    .orElseGet(() -> {
+                        User sysUser = userRepository.save(User.builder()
+                                .email("settlement@batwa.wallet")
+                                .phoneNumber("03000000000")
+                                .passwordHash("$2a$10$dummySettlementHashN/A")
+                                .fullName("1Link / Raast Settlement")
+                                .build());
+                        return walletRepository.save(Wallet.builder()
+                                .user(sysUser)
+                                .walletTag("system.settlement")
+                                .balance(BigDecimal.ZERO.setScale(4))
+                                .currency("PKR")
+                                .build());
+                    });
+        }
 
         Wallet sourceWallet = walletRepository.findByUserId(sourceUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("Source wallet not found"));
@@ -226,17 +294,15 @@ public class WalletService {
 
         // 4. Daily Spending Limit Check
         settingsRepository.findByUserId(sourceUserId).ifPresent(settings -> {
-            ZonedDateTime startOfDay = LocalDate.now().atStartOfDay(ZoneId.systemDefault());
-            List<TransactionLedger> todayTxns = transactionRepository.findAllBySourceWalletIdOrderByCreatedAtDesc(sourceWallet.getId());
-            BigDecimal todaySpent = todayTxns.stream()
-                    .filter(t -> t.getStatus() == TransactionStatus.SUCCESS && t.getCreatedAt().isAfter(startOfDay))
-                    .map(TransactionLedger::getAmount)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            if (settings.getDailySpendingLimit() != null && settings.getDailySpendingLimit().compareTo(BigDecimal.ZERO) > 0) {
+                ZonedDateTime startOfDay = LocalDate.now().atStartOfDay(ZoneId.systemDefault());
+                BigDecimal todaySpent = transactionRepository.sumSpentSince(sourceWallet.getId(), startOfDay);
 
-            if (todaySpent.add(transferAmount).compareTo(settings.getDailySpendingLimit()) > 0) {
-                throw new IllegalArgumentException(String.format("Daily spending limit exceeded. Daily limit: $%s, Already spent today: $%s",
-                        settings.getDailySpendingLimit().setScale(2, RoundingMode.HALF_UP),
-                        todaySpent.setScale(2, RoundingMode.HALF_UP)));
+                if (todaySpent.add(transferAmount).compareTo(settings.getDailySpendingLimit()) > 0) {
+                    throw new IllegalArgumentException(String.format("Daily spending limit of Rs. %s exceeded. Already spent today: Rs. %s",
+                            settings.getDailySpendingLimit().setScale(2, RoundingMode.HALF_UP),
+                            todaySpent.setScale(2, RoundingMode.HALF_UP)));
+                }
             }
         });
 
@@ -295,6 +361,36 @@ public class WalletService {
                 .build();
 
         ledger = transactionRepository.save(ledger);
+
+        try {
+            // Notification for Sender (Debit)
+            notificationService.createNotification(
+                    lockedSourceWallet.getUser(),
+                    "Money Sent 💸",
+                    String.format("Rs. %s sent to %s (@%s)",
+                            transferAmount.setScale(2, RoundingMode.HALF_UP),
+                            lockedDestinationWallet.getUser().getFullName(),
+                            lockedDestinationWallet.getWalletTag()),
+                    "TRANSFER_SENT",
+                    transferAmount,
+                    refNum
+            );
+
+            // Notification for Recipient (Credit / Payment Received)
+            notificationService.createNotification(
+                    lockedDestinationWallet.getUser(),
+                    "Payment Received! 🎉",
+                    String.format("Rs. %s received from %s (@%s) in your Batwa Wallet",
+                            transferAmount.setScale(2, RoundingMode.HALF_UP),
+                            lockedSourceWallet.getUser().getFullName(),
+                            lockedSourceWallet.getWalletTag()),
+                    "TRANSFER_RECEIVED",
+                    transferAmount,
+                    refNum
+            );
+        } catch (Exception e) {
+            log.warn("Failed to create in-app notification: {}", e.getMessage());
+        }
 
         log.info("P2P Transfer successful. From: {} to {}, Amount: {}, Fee: {}, Ref: {}",
                 lockedSourceWallet.getWalletTag(), lockedDestinationWallet.getWalletTag(), transferAmount, fee, refNum);

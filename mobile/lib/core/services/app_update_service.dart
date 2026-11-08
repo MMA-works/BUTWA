@@ -1,6 +1,6 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:batwa_wallet/core/constants/app_colors.dart';
 import 'package:batwa_wallet/core/constants/api_constants.dart';
 
@@ -27,12 +27,12 @@ class AppUpdateInfo {
 
   factory AppUpdateInfo.fromJson(Map<String, dynamic> json) {
     return AppUpdateInfo(
-      version: json['version'] ?? '2.2.0',
-      versionCode: json['versionCode'] ?? 53,
+      version: json['version'] ?? '2.4.16',
+      versionCode: json['versionCode'] ?? 256,
       title: json['title'] ?? 'New Update Available',
       message: json['message'] ?? 'A new version of BATWA is available.',
-      apkUrl: json['apkUrl'] ?? 'https://battwaa.online/batwa-wallet.apk',
-      downloadUrl: json['downloadUrl'] ?? 'https://battwaa.online/#download',
+      apkUrl: json['apkUrl'] ?? json['downloadUrl'] ?? 'https://buttwaa.online/batwa-wallet.apk',
+      downloadUrl: json['downloadUrl'] ?? json['apkUrl'] ?? 'https://buttwaa.online/#download',
       forceUpdate: json['forceUpdate'] ?? false,
       features: (json['features'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
     );
@@ -40,8 +40,8 @@ class AppUpdateInfo {
 }
 
 class AppUpdateService {
-  static const int currentVersionCode = 53;
-  static const String currentVersionName = "2.2.0";
+  static const int currentVersionCode = 263;
+  static const String currentVersionName = "2.4.23";
 
   /// Server URLs where version.json might be hosted
   static List<String> get updateUrls => [
@@ -217,9 +217,15 @@ class AppUpdateService {
                       Expanded(
                         flex: update.forceUpdate ? 1 : 2,
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             Navigator.pop(ctx);
-                            // Direct download / URL trigger
+                            final target = update.apkUrl.isNotEmpty ? update.apkUrl : update.downloadUrl;
+                            final uri = Uri.tryParse(target);
+                            if (uri != null) {
+                              try {
+                                await launchUrl(uri, mode: LaunchMode.externalApplication);
+                              } catch (_) {}
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primaryYellow,

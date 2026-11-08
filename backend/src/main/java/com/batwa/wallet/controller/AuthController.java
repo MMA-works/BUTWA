@@ -58,6 +58,42 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.ok(data, message));
     }
 
+    @GetMapping("/check-cnic")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> checkCnic(@RequestParam String cnic) {
+        String digits = cnic.replaceAll("[^0-9]", "");
+        boolean validFormat = digits.length() == 13;
+        boolean available = validFormat && authService.isCnicAvailable(cnic);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("cnic", cnic);
+        data.put("isValidFormat", validFormat);
+        data.put("isAvailable", available);
+
+        String message = !validFormat
+                ? "CNIC must be 13 digits (XXXXX-XXXXXXX-X)"
+                : (available ? "CNIC is authentic and available." : "This CNIC is already registered to an existing account.");
+
+        return ResponseEntity.ok(ApiResponse.ok(data, message));
+    }
+
+    @GetMapping("/check-username")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> checkUsername(@RequestParam String username) {
+        String tag = username.replace("@", "").toLowerCase().trim();
+        boolean validFormat = tag.matches("^[a-z0-9_]{3,30}$");
+        boolean available = validFormat && authService.isUsernameAvailable(tag);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("username", tag);
+        data.put("isValidFormat", validFormat);
+        data.put("isAvailable", available);
+
+        String message = !validFormat
+                ? "Username must be 3-30 alphanumeric characters or underscores"
+                : (available ? "Username @" + tag + " is available!" : "Username @" + tag + " is already taken. Please choose another.");
+
+        return ResponseEntity.ok(ApiResponse.ok(data, message));
+    }
+
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<AuthResponse>> register(
             @Valid @RequestBody RegisterRequest request,

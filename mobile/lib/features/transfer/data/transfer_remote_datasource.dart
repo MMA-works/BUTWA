@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:batwa_wallet/core/constants/api_constants.dart';
 import 'package:batwa_wallet/core/network/api_client.dart';
 import 'package:batwa_wallet/core/network/api_exception.dart';
@@ -30,6 +31,15 @@ class TransferRemoteDataSourceImpl implements TransferRemoteDataSource {
     } on ApiException {
       rethrow;
     } catch (e) {
+      if (e is DioException) {
+        final resData = e.response?.data;
+        if (resData is Map) {
+          final msg = resData['message'] ?? resData['error'];
+          if (msg != null && msg.toString().isNotEmpty) {
+            throw ApiException(message: msg.toString());
+          }
+        }
+      }
       throw ApiException(message: e.toString());
     }
   }
@@ -55,6 +65,15 @@ class TransferRemoteDataSourceImpl implements TransferRemoteDataSource {
     } on ApiException {
       rethrow;
     } catch (e) {
+      if (e is DioException) {
+        final resData = e.response?.data;
+        if (resData is Map) {
+          final msg = resData['message'] ?? resData['error'];
+          if (msg != null && msg.toString().isNotEmpty) {
+            throw ApiException(message: msg.toString());
+          }
+        }
+      }
       throw ApiException(message: e.toString());
     }
   }

@@ -26,6 +26,7 @@ public interface WalletRepository extends JpaRepository<Wallet, UUID> {
     Optional<Wallet> findByWalletTagIgnoreCase(String walletTag);
 
     boolean existsByWalletTag(String walletTag);
+    boolean existsByWalletTagIgnoreCase(String walletTag);
 
     /**
      * Pessimistic write lock on single wallet by ID to prevent race conditions during updates.

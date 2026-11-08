@@ -32,4 +32,7 @@ public interface TransactionRepository extends JpaRepository<TransactionLedger, 
             @Param("walletId") UUID walletId,
             @Param("startDate") java.time.ZonedDateTime startDate,
             @Param("endDate") java.time.ZonedDateTime endDate);
+    @Query("SELECT COALESCE(SUM(t.amount), 0) FROM TransactionLedger t " +
+           "WHERE t.sourceWallet.id = :walletId AND t.status = com.batwa.wallet.entity.TransactionStatus.SUCCESS AND t.createdAt >= :since")
+    java.math.BigDecimal sumSpentSince(@Param("walletId") UUID walletId, @Param("since") java.time.ZonedDateTime since);
 }

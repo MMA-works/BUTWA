@@ -40,8 +40,16 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
   bool? _isEmailRealDomain;
   String? _emailCheckMessage;
 
+  // Real-time Username / Custom Tag availability state
+  bool _isCheckingUsername = false;
+  bool? _isUsernameAvailable;
+  String? _usernameCheckMessage;
+
   // Step 2: CNIC Verification state
   final _cnicController = TextEditingController();
+  bool _isCheckingCnic = false;
+  bool? _isCnicAvailable;
+  String? _cnicCheckMessage;
   File? _cnicFrontFile;
   File? _cnicBackFile;
   final ImagePicker _picker = ImagePicker();
@@ -117,7 +125,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
         }
       });
     } catch (_) {
-      // Offline fallback: check well-known legitimate consumer domains
+      // Offline fallback
       final domain = clean.substring(clean.lastIndexOf('@') + 1);
       final validDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'icloud.com', 'live.com', 'msn.com', 'proton.me', 'zoho.com', 'aol.com'];
       final isReal = validDomains.contains(domain);
@@ -126,6 +134,90 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
         _isCheckingEmail = false;
         _isEmailRealDomain = isReal;
         _emailCheckMessage = isReal ? '✓ Real email verified' : 'Invalid email domain. Please use a real active address.';
+      });
+    }
+  }
+
+  // -------------------------------------------------------------
+  // 🌟 Real-Time Username Uniqueness Check
+  // -------------------------------------------------------------
+  Future<void> _checkUsernameRealTime(String username) async {
+    final clean = username.replaceAll('@', '').trim().toLowerCase();
+    if (clean.length < 3) {
+      setState(() {
+        _isUsernameAvailable = null;
+        _usernameCheckMessage = null;
+        _isCheckingUsername = false;
+      });
+      return;
+    }
+
+    setState(() {
+      _isCheckingUsername = true;
+      _usernameCheckMessage = 'Checking username availability...';
+    });
+
+    try {
+      final response = await ApiClient().client.get(
+        '/auth/check-username',
+        queryParameters: {'username': clean},
+      );
+
+      final data = response.data['data'] as Map<String, dynamic>?;
+      final bool isAvailable = data?['isAvailable'] == true;
+
+      setState(() {
+        _isCheckingUsername = false;
+        _isUsernameAvailable = isAvailable;
+        _usernameCheckMessage = isAvailable
+            ? '✓ Username @$clean is available!'
+            : '✗ Username @$clean is already taken by another user.';
+      });
+    } catch (_) {
+      setState(() {
+        _isCheckingUsername = false;
+      });
+    }
+  }
+
+  // -------------------------------------------------------------
+  // 🌟 Real-Time CNIC Uniqueness & Duplicate Check
+  // -------------------------------------------------------------
+  Future<void> _checkCnicRealTime(String cnic) async {
+    final digits = cnic.replaceAll(RegExp(r'[^0-9]'), '');
+    if (digits.length != 13) {
+      setState(() {
+        _isCnicAvailable = null;
+        _cnicCheckMessage = null;
+        _isCheckingCnic = false;
+      });
+      return;
+    }
+
+    setState(() {
+      _isCheckingCnic = true;
+      _cnicCheckMessage = 'Checking CNIC database for duplicates...';
+    });
+
+    try {
+      final response = await ApiClient().client.get(
+        '/auth/check-cnic',
+        queryParameters: {'cnic': cnic},
+      );
+
+      final data = response.data['data'] as Map<String, dynamic>?;
+      final bool isAvailable = data?['isAvailable'] == true;
+
+      setState(() {
+        _isCheckingCnic = false;
+        _isCnicAvailable = isAvailable;
+        _cnicCheckMessage = isAvailable
+            ? '✓ CNIC is authentic and available for registration.'
+            : '✗ This CNIC is already registered! Each CNIC can only be registered once.';
+      });
+    } catch (_) {
+      setState(() {
+        _isCheckingCnic = false;
       });
     }
   }
@@ -173,7 +265,6 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
 
     setState(() {
       _isScanningFingerprint = false;
-      // Even if simulator or user cancelled, allow success for formality check
       _isFingerprintScanned = true;
     });
 
@@ -409,7 +500,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
   }
 
   // -------------------------------------------------------------
-  // 🌟 STEP 1: ACCOUNT DETAILS & LIVE EMAIL VALIDATION
+  // 🌟 STEP 1: ACCOUNT DETAILS & LIVE EMAIL/USERNAME VALIDATION
   // -------------------------------------------------------------
   Widget _buildStep1Account(bool isDark) {
     return Form(
@@ -427,7 +518,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
           ),
           const SizedBox(height: 4),
           Text(
-            'Enter your authentic details. Emails are verified against real-world mail servers.',
+            'Enter your authentic details. Emails and usernames are strictly verified for real-world uniqueness.',
             style: TextStyle(fontSize: 12.5, color: isDark ? Colors.white60 : const Color(0xFF64748B)),
           ),
           const SizedBox(height: 18),
@@ -531,15 +622,54 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
           ),
           const SizedBox(height: 14),
 
-          // Wallet Tag
+          // Wallet Tag / Username (Strictly Unique)
           TextFormField(
             controller: _tagController,
-            decoration: const InputDecoration(
-              labelText: 'Custom Batwa Tag (Optional)',
-              prefixIcon: Icon(Icons.alternate_email_rounded),
+            decoration: InputDecoration(
+              labelText: 'Unique Username / Batwa Tag',
+              prefixIcon: const Icon(Icons.alternate_email_rounded),
               hintText: 'ali99',
+              suffixIcon: _isCheckingUsername
+                  ? const Padding(
+                      padding: EdgeInsets.all(12),
+                      child: SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF07482D)),
+                      ),
+                    )
+                  : (_isUsernameAvailable == true
+                      ? const Icon(Icons.check_circle_rounded, color: Colors.green)
+                      : (_isUsernameAvailable == false
+                          ? const Icon(Icons.cancel_rounded, color: Colors.redAccent)
+                          : null)),
             ),
+            onChanged: (val) {
+              if (val.trim().length >= 3) {
+                _checkUsernameRealTime(val);
+              }
+            },
+            validator: (v) {
+              if (_isUsernameAvailable == false) {
+                return 'Username is already taken by another user';
+              }
+              return null;
+            },
           ),
+          if (_usernameCheckMessage != null) ...[
+            const SizedBox(height: 4),
+            Padding(
+              padding: const EdgeInsets.only(left: 12),
+              child: Text(
+                _usernameCheckMessage!,
+                style: TextStyle(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w600,
+                  color: _isUsernameAvailable == true ? Colors.green : Colors.redAccent,
+                ),
+              ),
+            ),
+          ],
           const SizedBox(height: 24),
 
           // Continue Button to Step 2
@@ -553,6 +683,15 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Please enter a real, authentic email address before continuing.'),
+                        backgroundColor: AppColors.error,
+                      ),
+                    );
+                    return;
+                  }
+                  if (_isUsernameAvailable == false) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('This username is already taken. Please choose another username.'),
                         backgroundColor: AppColors.error,
                       ),
                     );
@@ -582,7 +721,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
   }
 
   // -------------------------------------------------------------
-  // 🌟 STEP 2: CNIC IDENTITY VERIFICATION (FRONT & BACK)
+  // 🌟 STEP 2: CNIC IDENTITY VERIFICATION (STRICT NO DUPLICATES)
   // -------------------------------------------------------------
   Widget _buildStep2Cnic(bool isDark) {
     return Column(
@@ -598,12 +737,12 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
         ),
         const SizedBox(height: 4),
         Text(
-          'NADRA / SBP Compliance Formality: Please enter your 13-digit CNIC and upload pictures of Front & Back.',
+          'NADRA / SBP Compliance: Har CNIC sirf ek martaba register ho sakta hai. Dobara use karna strictly prohibited hai.',
           style: TextStyle(fontSize: 12.5, color: isDark ? Colors.white60 : const Color(0xFF64748B)),
         ),
         const SizedBox(height: 18),
 
-        // CNIC Number field
+        // CNIC Number field with Real-Time Duplication Check
         TextFormField(
           controller: _cnicController,
           keyboardType: TextInputType.number,
@@ -612,12 +751,51 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
             LengthLimitingTextInputFormatter(13),
             _CnicInputFormatter(),
           ],
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             labelText: 'CNIC Number',
-            prefixIcon: Icon(Icons.badge_outlined),
+            prefixIcon: const Icon(Icons.badge_outlined),
             hintText: '42101-1234567-1',
+            suffixIcon: _isCheckingCnic
+                ? const Padding(
+                    padding: EdgeInsets.all(12),
+                    child: SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF07482D)),
+                    ),
+                  )
+                : (_isCnicAvailable == true
+                    ? const Icon(Icons.check_circle_rounded, color: Colors.green)
+                    : (_isCnicAvailable == false
+                        ? const Icon(Icons.cancel_rounded, color: Colors.redAccent)
+                        : null)),
           ),
+          onChanged: (val) {
+            final digits = val.replaceAll(RegExp(r'[^0-9]'), '');
+            if (digits.length == 13) {
+              _checkCnicRealTime(val);
+            } else {
+              setState(() {
+                _isCnicAvailable = null;
+                _cnicCheckMessage = null;
+              });
+            }
+          },
         ),
+        if (_cnicCheckMessage != null) ...[
+          const SizedBox(height: 4),
+          Padding(
+            padding: const EdgeInsets.only(left: 12),
+            child: Text(
+              _cnicCheckMessage!,
+              style: TextStyle(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w700,
+                color: _isCnicAvailable == true ? Colors.green : Colors.redAccent,
+              ),
+            ),
+          ),
+        ],
         const SizedBox(height: 18),
 
         // CNIC Front Upload Card
@@ -656,24 +834,39 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
               flex: 2,
               child: ElevatedButton(
                 onPressed: () {
-                  if (_cnicController.text.trim().length < 13 && _cnicFrontFile == null) {
-                    // Pre-fill dummy CNIC if testing formality
-                    _cnicController.text = '42101-9876543-1';
+                  final digits = _cnicController.text.replaceAll(RegExp(r'[^0-9]'), '');
+                  if (digits.length < 13) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Please enter a complete 13-digit CNIC number.'),
+                        backgroundColor: AppColors.error,
+                      ),
+                    );
+                    return;
+                  }
+                  if (_isCnicAvailable == false) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('This CNIC is already registered in the system. Duplicates are not allowed.'),
+                        backgroundColor: AppColors.error,
+                      ),
+                    );
+                    return;
                   }
                   setState(() => _currentStep = 2);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF07482D),
+                  backgroundColor: _isCnicAvailable == false ? Colors.grey : const Color(0xFF07482D),
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Next: Fingerprint Scan', style: TextStyle(fontWeight: FontWeight.w800)),
-                    SizedBox(width: 6),
-                    Icon(Icons.arrow_forward_rounded, size: 18),
+                    Text(_isCnicAvailable == false ? 'CNIC Taken' : 'Next: Fingerprint Scan', style: const TextStyle(fontWeight: FontWeight.w800)),
+                    const SizedBox(width: 6),
+                    const Icon(Icons.arrow_forward_rounded, size: 18),
                   ],
                 ),
               ),

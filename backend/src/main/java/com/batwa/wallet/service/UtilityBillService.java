@@ -35,6 +35,7 @@ public class UtilityBillService {
     private final WalletRepository walletRepository;
     private final TransactionRepository transactionRepository;
     private final PasswordEncoder passwordEncoder;
+    private final NotificationService notificationService;
 
     private UtilityCompany seedCompanyIfMissing(String code, String name, BillCategory cat, int len, String icon) {
         return companyRepository.findByCompanyCode(code).orElseGet(() ->
@@ -248,6 +249,22 @@ public class UtilityBillService {
                 .build();
 
         transactionRepository.save(ledger);
+
+        try {
+            notificationService.createNotification(
+                    wallet.getUser(),
+                    "Bill Paid Successfully ?",
+                    String.format("Rs. %s paid for %s (Consumer: %s)",
+                            amountToDebit.setScale(2, RoundingMode.HALF_UP),
+                            bill.getCompany().getCompanyName(),
+                            bill.getConsumerNumber()),
+                    "BILL_PAYMENT",
+                    amountToDebit,
+                    refNum
+            );
+        } catch (Exception e) {
+            log.warn("Failed to create bill payment notification: {}", e.getMessage());
+        }
 
         log.info("Bill payment completed. Ref: {}, Amount: {}, Company: {}", refNum, amountToDebit, bill.getCompany().getCompanyCode());
 

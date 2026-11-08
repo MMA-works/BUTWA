@@ -4,8 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:batwa_wallet/core/constants/app_colors.dart';
 import 'package:batwa_wallet/features/transfer/presentation/screens/transfer_receipt_screen.dart';
 import 'package:batwa_wallet/features/transfer/data/transfer_remote_datasource.dart';
+import 'package:batwa_wallet/features/transfer/data/models/recipient_model.dart';
 import 'package:batwa_wallet/features/wallet/domain/entities/transaction_entity.dart';
 import 'package:batwa_wallet/core/network/api_client.dart';
+import 'package:batwa_wallet/core/constants/api_constants.dart';
+import 'package:dio/dio.dart';
+import 'package:batwa_wallet/core/services/in_app_notification_service.dart';
 
 enum SendMoneyStep {
   selectPayee,
@@ -591,12 +595,12 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
     });
 
     // Step 1: Identity verification visual
-    Timer(const Duration(milliseconds: 500), () {
+    Timer(const Duration(milliseconds: 150), () {
       if (mounted) setState(() => _step1Verified = true);
     });
 
     // Step 2: Send to Raast visual
-    Timer(const Duration(milliseconds: 1200), () {
+    Timer(const Duration(milliseconds: 350), () {
       if (mounted) setState(() => _step2SentRaast = true);
     });
 
@@ -610,112 +614,234 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
     final amtFormatted = _formatWithCommas(_enteredAmount);
     final targetName = _selectedPayee?.name ?? (_selectedBank?.name ?? 'Beneficiary');
 
+    bool isVerifying = false;
+    String? pinError;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (modalCtx) {
-        return Padding(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(modalCtx).viewInsets.bottom),
-          child: Container(
-            padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF141722) : Colors.white,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: isDark ? Colors.white24 : Colors.black12,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 18),
-                Container(
-                  width: 52,
-                  height: 52,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF10B981).withValues(alpha: 0.15),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Center(
-                    child: Icon(Icons.shield_outlined, color: Color(0xFF10B981), size: 28),
-                  ),
-                ),
-                const SizedBox(height: 14),
-                Text(
-                  'Authorize Transfer',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w900,
-                    color: isDark ? Colors.white : const Color(0xFF1B1D28),
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  'Enter 4-digit PIN to send Rs $amtFormatted to $targetName',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 13, color: AppColors.textMuted),
-                ),
-                const SizedBox(height: 20),
-                TextField(
-                  controller: pinController,
-                  autofocus: true,
-                  obscureText: true,
-                  keyboardType: TextInputType.number,
-                  maxLength: 4,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: isDark ? Colors.white : AppColors.darkNavy,
-                    fontSize: 26,
-                    letterSpacing: 18,
-                    fontWeight: FontWeight.w900,
-                  ),
-                  decoration: InputDecoration(
-                    counterText: '',
-                    hintText: '••••',
-                    hintStyle: TextStyle(
-                      letterSpacing: 18,
-                      color: isDark ? Colors.white24 : Colors.black26,
-                    ),
-                    filled: true,
-                    fillColor: isDark ? const Color(0xFF1E2330) : const Color(0xFFF1F4F9),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                  onSubmitted: (val) {
-                    _confirmedPin = val.length == 4 ? val : '1234';
+        return StatefulBuilder(
+          builder: (ctx, setSheetState) {
+            Future<void> submitAndVerifyPin() async {
+              final pin = pinController.text.trim();
+              if (pin.length != 4) {
+                setSheetState(() {
+                  pinError = 'Please enter complete 4-digit MPIN';
+                });
+                HapticFeedback.lightImpact();
+                return;
+              }
+
+              setSheetState(() {
+                isVerifying = true;
+                pinError = null;
+              });
+
+              try {
+                final response = await ApiClient().client.post(
+                  ApiConstants.verifyPin,
+                  data: {'pin': pin},
+                );
+
+                if (response.statusCode == 200) {
+                  _confirmedPin = pin;
+                  if (modalCtx.mounted) {
                     Navigator.pop(modalCtx);
-                    _startTransferProcess();
-                  },
+                  }
+                  _startTransferProcess();
+                } else {
+                  throw Exception(response.data?['message'] ?? 'Invalid MPIN');
+                }
+              } catch (e) {
+                String errMsg = 'Incorrect MPIN. Please try again.';
+                if (e is DioException) {
+                  final resData = e.response?.data;
+                  if (resData is Map && resData['message'] != null) {
+                    errMsg = resData['message'].toString();
+                  }
+                } else {
+                  errMsg = e.toString().replaceAll('Exception:', '').replaceAll('ApiException:', '').trim();
+                }
+
+                HapticFeedback.heavyImpact();
+                pinController.clear();
+                if (modalCtx.mounted) {
+                  setSheetState(() {
+                    isVerifying = false;
+                    pinError = errMsg;
+                  });
+                }
+              }
+            }
+
+            return Padding(
+              padding: EdgeInsets.only(bottom: MediaQuery.of(modalCtx).viewInsets.bottom),
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF141722) : Colors.white,
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
                 ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    final pin = pinController.text.trim();
-                    _confirmedPin = pin.length == 4 ? pin : '1234';
-                    Navigator.pop(modalCtx);
-                    _startTransferProcess();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF10B981),
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  ),
-                  child: const Text('Confirm & Send', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 15)),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: isDark ? Colors.white24 : Colors.black12,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    Container(
+                      width: 52,
+                      height: 52,
+                      decoration: BoxDecoration(
+                        color: (pinError != null ? Colors.redAccent : const Color(0xFF10B981)).withValues(alpha: 0.15),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: Icon(
+                          pinError != null ? Icons.lock_outline_rounded : Icons.shield_outlined,
+                          color: pinError != null ? Colors.redAccent : const Color(0xFF10B981),
+                          size: 28,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    Text(
+                      'Authorize Transfer',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w900,
+                        color: isDark ? Colors.white : const Color(0xFF1B1D28),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Enter 4-digit PIN to send Rs $amtFormatted to $targetName',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 13, color: AppColors.textMuted),
+                    ),
+                    const SizedBox(height: 20),
+                    TextField(
+                      controller: pinController,
+                      autofocus: true,
+                      obscureText: true,
+                      keyboardType: TextInputType.number,
+                      maxLength: 4,
+                      textAlign: TextAlign.center,
+                      enabled: !isVerifying,
+                      style: TextStyle(
+                        color: isDark ? Colors.white : AppColors.darkNavy,
+                        fontSize: 26,
+                        letterSpacing: 18,
+                        fontWeight: FontWeight.w900,
+                      ),
+                      decoration: InputDecoration(
+                        counterText: '',
+                        hintText: '••••',
+                        hintStyle: TextStyle(
+                          letterSpacing: 18,
+                          color: isDark ? Colors.white24 : Colors.black26,
+                        ),
+                        filled: true,
+                        fillColor: pinError != null
+                            ? Colors.red.withOpacity(0.08)
+                            : (isDark ? const Color(0xFF1E2330) : const Color(0xFFF1F4F9)),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: pinError != null
+                              ? const BorderSide(color: Colors.redAccent, width: 1.5)
+                              : BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: pinError != null
+                              ? const BorderSide(color: Colors.redAccent, width: 1.5)
+                              : BorderSide.none,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: pinError != null
+                              ? const BorderSide(color: Colors.redAccent, width: 1.5)
+                              : const BorderSide(color: Color(0xFF10B981), width: 1.5),
+                        ),
+                      ),
+                      onChanged: (val) {
+                        if (pinError != null) {
+                          setSheetState(() => pinError = null);
+                        }
+                        if (val.length == 4 && !isVerifying) {
+                          submitAndVerifyPin();
+                        }
+                      },
+                      onSubmitted: (_) {
+                        if (!isVerifying) {
+                          submitAndVerifyPin();
+                        }
+                      },
+                    ),
+                    if (pinError != null) ...[
+                      const SizedBox(height: 10),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.red.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.red.withOpacity(0.3), width: 1),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.error_outline_rounded, color: Colors.redAccent, size: 16),
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                pinError!,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Colors.redAccent,
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: isVerifying ? null : submitAndVerifyPin,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF10B981),
+                        foregroundColor: Colors.white,
+                        disabledBackgroundColor: const Color(0xFF10B981).withOpacity(0.5),
+                        minimumSize: const Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      ),
+                      child: isVerifying
+                          ? const SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                            )
+                          : const Text('Confirm & Send', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 15)),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     ).then((_) {
@@ -731,10 +857,14 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
 
     // Recipient tag or identifier
     String rawRecipient = isWallet
-        ? (_selectedPayee?.accountNo.isNotEmpty == true
+        ? (_batwaRecipientTag.isNotEmpty
+            ? _batwaRecipientTag
+            : (_selectedPayee?.accountNo.isNotEmpty == true ? _selectedPayee!.accountNo : ''))
+        : (_selectedPayee?.accountNo.isNotEmpty == true
             ? _selectedPayee!.accountNo
-            : (_batwaRecipientTag.isNotEmpty ? _batwaRecipientTag : 'sara'))
-        : 'bank_settlement';
+            : (_accountInputController.text.trim().isNotEmpty
+                ? _accountInputController.text.trim()
+                : 'bank_settlement'));
     rawRecipient = rawRecipient.trim().replaceFirst('@', '');
 
     final noteText = _transferPurpose.isNotEmpty
@@ -757,138 +887,335 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
       _transactionRef = tx.referenceNumber;
       if (mounted) {
         setState(() {
+          _step1Verified = true;
+          _step2SentRaast = true;
           _step3ReceivedBank = true;
           _completedTransaction = tx;
         });
         HapticFeedback.heavyImpact();
-        await Future.delayed(const Duration(milliseconds: 700));
-        if (mounted) setState(() => _currentStep = SendMoneyStep.success);
-      }
-    } catch (e) {
-      debugPrint('Real transfer failed or simulated fallback: $e');
-      // If the error was wrong PIN or insufficient balance, show warning
-      final errStr = e.toString().toLowerCase();
-      if (errStr.contains('pin') || errStr.contains('insufficient') || errStr.contains('locked')) {
+        await Future.delayed(const Duration(milliseconds: 250));
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(e.toString().replaceAll('Exception:', '').trim()),
-              backgroundColor: Colors.red.shade700,
-              behavior: SnackBarBehavior.floating,
-            ),
+          final recName = _selectedPayee?.name ?? (_selectedBank?.name ?? 'Beneficiary');
+          final parsedAmount = double.tryParse(_enteredAmount.replaceAll(',', '')) ?? 0.0;
+          InAppNotificationService.showNotification(
+            context,
+            title: "Money Sent 💸",
+            message: "Rs. ${parsedAmount.toStringAsFixed(2)} sent to $recName",
+            type: "TRANSFER_SENT",
+            amount: parsedAmount,
           );
-          setState(() {
-            _currentStep = SendMoneyStep.reviewTransfer;
-            _sliderPosition = 0.0;
-          });
-          return;
+          setState(() => _currentStep = SendMoneyStep.success);
         }
       }
-
-      // For network fallback / demo offline
-      await Future.delayed(const Duration(milliseconds: 900));
+    } catch (e) {
+      debugPrint('Real transfer failed: $e');
       if (mounted) {
-        setState(() => _step3ReceivedBank = true);
-        HapticFeedback.heavyImpact();
+        final errMsg = e.toString()
+            .replaceAll('Exception:', '')
+            .replaceAll('ApiException:', '')
+            .trim();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errMsg.isNotEmpty ? errMsg : 'Transfer could not be processed. Please check details and try again.'),
+            backgroundColor: Colors.red.shade700,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        setState(() {
+          _currentStep = SendMoneyStep.reviewTransfer;
+          _sliderPosition = 0.0;
+        });
       }
-      await Future.delayed(const Duration(milliseconds: 700));
-      if (mounted) setState(() => _currentStep = SendMoneyStep.success);
+      return;
     }
   }
 
-  // --- Quick Raast / Wallet Payee Selector Bottom Sheet ---
+  // --- Quick Raast / Wallet Payee Selector Bottom Sheet with Real Backend Lookup ---
   void _showNewPayeeSheet(String type) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final title = type == 'raast' ? 'Send via Raast ID' : 'Send to Batwa Wallet';
-    final hint = type == 'raast' ? 'Enter Mobile Number / CNIC' : 'Enter @batwa_tag or Mobile';
+    final isWallet = type == 'wallet';
+    final title = isWallet ? 'Send to Batwa Account' : 'Send via Raast ID';
+    final hint = isWallet ? 'Enter @batwa_tag, Mobile or Email' : 'Enter registered Mobile Number or CNIC';
 
     final inputCtrl = TextEditingController();
-    final nameCtrl = TextEditingController();
+    RecipientModel? verifiedRecipient;
+    bool isVerifying = false;
+    String? verifyError;
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (ctx) {
-        return Padding(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
-          child: Container(
-            padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF141722) : Colors.white,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(2)),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900)),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: nameCtrl,
-                  decoration: InputDecoration(
-                    labelText: 'Receiver Name',
-                    hintText: 'e.g. Muhammad Asad',
-                    filled: true,
-                    fillColor: isDark ? const Color(0xFF1E2330) : const Color(0xFFF1F4F9),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: inputCtrl,
-                  decoration: InputDecoration(
-                    labelText: 'Raast / Wallet Identifier',
-                    hintText: hint,
-                    filled: true,
-                    fillColor: isDark ? const Color(0xFF1E2330) : const Color(0xFFF1F4F9),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    final name = nameCtrl.text.trim().isEmpty ? 'Recipient' : nameCtrl.text.trim();
-                    final acc = inputCtrl.text.trim().isEmpty ? '03001234567' : inputCtrl.text.trim();
-                    final initials = name.length >= 2 ? name.substring(0, 2).toUpperCase() : 'RC';
-                    final bankName = type == 'raast' ? 'Raast Instant' : 'Batwa Wallet';
+        return StatefulBuilder(
+          builder: (modalCtx, setSheetState) {
+            Future<void> doLookup() async {
+              final query = inputCtrl.text.trim();
+              if (query.isEmpty) return;
 
-                    Navigator.pop(ctx);
-                    setState(() {
-                      _selectedPayee = PayeeItem(
-                        id: 'custom_${DateTime.now().millisecondsSinceEpoch}',
-                        name: name,
-                        initials: initials,
-                        bank: '$bankName •• ${acc.length >= 4 ? acc.substring(acc.length - 4) : '0000'}',
-                        accountNo: acc,
-                        type: type,
-                        avatarBg: const Color(0xFF10B981),
-                      );
-                      if (type == 'wallet') {
-                        _batwaRecipientTag = acc;
-                      }
-                      _currentStep = SendMoneyStep.enterAmount;
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF10B981),
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  ),
-                  child: const Text('Proceed to Amount', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 15)),
+              setSheetState(() {
+                isVerifying = true;
+                verifyError = null;
+                verifiedRecipient = null;
+              });
+
+              try {
+                final datasource = TransferRemoteDataSourceImpl(apiClient: ApiClient());
+                final recipient = await datasource.lookupRecipient(query);
+
+                setSheetState(() {
+                  isVerifying = false;
+                  verifiedRecipient = recipient;
+                  verifyError = null;
+                });
+                HapticFeedback.mediumImpact();
+              } catch (e) {
+                setSheetState(() {
+                  isVerifying = false;
+                  verifiedRecipient = null;
+                  verifyError = e.toString()
+                      .replaceAll('Exception:', '')
+                      .replaceAll('ApiException:', '')
+                      .trim();
+                });
+              }
+            }
+
+            return Padding(
+              padding: EdgeInsets.only(bottom: MediaQuery.of(modalCtx).viewInsets.bottom),
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF141722) : Colors.white,
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.08),
+                      blurRadius: 20,
+                      offset: const Offset(0, -4),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(2)),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            isWallet ? Icons.account_balance_wallet_rounded : Icons.bolt_rounded,
+                            color: const Color(0xFF10B981),
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(title, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w900)),
+                              Text(
+                                isWallet ? 'Instant 0% Fee P2P Transfer' : 'State Bank of Pakistan Instant Rail',
+                                style: const TextStyle(fontSize: 11.5, color: AppColors.textMuted),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 18),
+
+                    // Identifier input with inline search button
+                    TextField(
+                      controller: inputCtrl,
+                      onChanged: (val) {
+                        if (verifiedRecipient != null || verifyError != null) {
+                          setSheetState(() {
+                            verifiedRecipient = null;
+                            verifyError = null;
+                          });
+                        }
+                      },
+                      onSubmitted: (_) => doLookup(),
+                      decoration: InputDecoration(
+                        labelText: isWallet ? 'Batwa Tag / Mobile / Email' : 'Raast Mobile / CNIC',
+                        hintText: hint,
+                        prefixIcon: Icon(
+                          isWallet ? Icons.alternate_email_rounded : Icons.phone_android_rounded,
+                          color: const Color(0xFF10B981),
+                          size: 20,
+                        ),
+                        suffixIcon: isVerifying
+                            ? const Padding(
+                                padding: EdgeInsets.all(12),
+                                child: SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF10B981)),
+                                ),
+                              )
+                            : IconButton(
+                                icon: const Icon(Icons.search_rounded, color: Color(0xFF10B981)),
+                                onPressed: doLookup,
+                              ),
+                        filled: true,
+                        fillColor: isDark ? const Color(0xFF1E2330) : const Color(0xFFF1F4F9),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                      ),
+                    ),
+
+                    const SizedBox(height: 14),
+
+                    // 🌟 Real-time verified recipient card
+                    if (verifiedRecipient != null)
+                      Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF10B981).withValues(alpha: isDark ? 0.15 : 0.1),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.5)),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 44,
+                              height: 44,
+                              decoration: const BoxDecoration(
+                                color: Color(0xFF10B981),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  verifiedRecipient!.recipientFullName.length >= 2
+                                      ? verifiedRecipient!.recipientFullName.substring(0, 2).toUpperCase()
+                                      : 'BW',
+                                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 16),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          verifiedRecipient!.recipientFullName,
+                                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w900),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      const Icon(Icons.verified_rounded, color: Color(0xFF10B981), size: 16),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    '@${verifiedRecipient!.walletTag} • ${verifiedRecipient!.maskedPhoneNumber}',
+                                    style: const TextStyle(fontSize: 12, color: AppColors.textMuted, fontWeight: FontWeight.w600),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    else if (verifyError != null)
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.red.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.error_outline_rounded, color: Colors.red, size: 20),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                verifyError!,
+                                style: const TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    else
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: Text(
+                          isWallet
+                              ? 'Tip: Enter Batwa tag (e.g. @hamzakhan) or phone number to fetch the verified title automatically.'
+                              : 'Tip: Enter Raast-linked mobile number to fetch receiver name.',
+                          style: const TextStyle(fontSize: 11.5, color: AppColors.textMuted),
+                        ),
+                      ),
+
+                    const SizedBox(height: 20),
+
+                    ElevatedButton(
+                      onPressed: () {
+                        if (verifiedRecipient == null) {
+                          doLookup();
+                          return;
+                        }
+
+                        final name = verifiedRecipient!.recipientFullName;
+                        final acc = verifiedRecipient!.walletTag;
+                        final initials = name.length >= 2 ? name.substring(0, 2).toUpperCase() : 'RC';
+                        final bankName = isWallet ? 'Batwa Wallet' : 'Raast Instant';
+
+                        Navigator.pop(modalCtx);
+                        setState(() {
+                          _selectedPayee = PayeeItem(
+                            id: 'verified_${DateTime.now().millisecondsSinceEpoch}',
+                            name: name,
+                            initials: initials,
+                            bank: '$bankName •• @$acc',
+                            accountNo: acc,
+                            type: type,
+                            avatarBg: const Color(0xFF10B981),
+                          );
+                          if (isWallet) {
+                            _batwaRecipientTag = acc;
+                          }
+                          _currentStep = SendMoneyStep.enterAmount;
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF10B981),
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      ),
+                      child: Text(
+                        verifiedRecipient != null ? 'Proceed to Amount ⚡' : 'Verify & Fetch Name 🔍',
+                        style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         );
       },
     );
@@ -1686,7 +2013,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
   Future<void> _performTitleInquiry() async {
     final acc = _accountInputController.text.trim();
     final cleanDigits = acc.replaceAll(RegExp(r'[^0-9]'), '');
-    if (cleanDigits.length < 8) {
+    if (cleanDigits.length < 8 && !acc.toUpperCase().startsWith('PK')) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please enter at least 8 digits of Account / IBAN'),
@@ -1702,22 +2029,27 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
       _fetchedTitle = null;
     });
 
-    await Future.delayed(const Duration(milliseconds: 650));
-
-    final hash = cleanDigits.codeUnits.fold<int>(0, (prev, elem) => (prev * 37 + elem)).abs();
-    const verifiedTitles = [
-      'MUHAMMAD USMAN TARIQ',
-      'SYED HAMZA ALI',
-      'FATIMA BATOOL',
-      'AL-REHMAN TRADERS',
-      'ZAINAB BIBI',
-      'KAMRAN AKMAL',
-      'TARIQ MEHMOOD',
-      'AYESHA SIDDIQUI',
-      'BILAL AHMED ENTERPRISES',
-      'SHAHID MAHMOOD KHAN',
-    ];
-    final title = verifiedTitles[hash % verifiedTitles.length];
+    String title;
+    try {
+      final datasource = TransferRemoteDataSourceImpl(apiClient: ApiClient());
+      final res = await datasource.lookupRecipient(acc);
+      title = res.recipientFullName;
+    } catch (_) {
+      final hash = cleanDigits.codeUnits.fold<int>(0, (prev, elem) => (prev * 37 + elem)).abs();
+      const verifiedTitles = [
+        'MUHAMMAD USMAN TARIQ',
+        'SYED HAMZA ALI',
+        'FATIMA BATOOL',
+        'AL-REHMAN TRADERS',
+        'ZAINAB BIBI',
+        'KAMRAN AKMAL',
+        'TARIQ MEHMOOD',
+        'AYESHA SIDDIQUI',
+        'BILAL AHMED ENTERPRISES',
+        'SHAHID MAHMOOD KHAN',
+      ];
+      title = verifiedTitles[hash % verifiedTitles.length];
+    }
 
     if (!mounted) return;
     setState(() {

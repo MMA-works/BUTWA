@@ -7,6 +7,8 @@ import com.batwa.wallet.dto.response.SecurityAuditLogResponse;
 import com.batwa.wallet.dto.response.SecuritySettingsResponse;
 import com.batwa.wallet.dto.response.UserSessionResponse;
 import com.batwa.wallet.entity.*;
+import com.batwa.wallet.dto.response.VerifyPinResponse;
+import com.batwa.wallet.exception.AccountLockedException;
 import com.batwa.wallet.exception.InvalidPinException;
 import com.batwa.wallet.exception.ResourceNotFoundException;
 import com.batwa.wallet.repository.*;
@@ -146,8 +148,10 @@ public class SecurityService {
         BigDecimal monthSpent = BigDecimal.ZERO;
 
         if (wallet != null) {
-            List<TransactionLedger> outTransactions = transactionRepository.findAllBySourceWalletIdOrderByCreatedAtDesc(wallet.getId());
-            for (TransactionLedger tx : outTransactions) {
+            todaySpent = transactionRepository.sumSpentSince(wallet.getId(), startOfDay);
+            monthSpent = transactionRepository.sumSpentSince(wallet.getId(), startOfMonth);
+            // Fast SQL SUM aggregate
+            for (TransactionLedger tx : java.util.Collections.<TransactionLedger>emptyList()) {
                 if (tx.getStatus() == TransactionStatus.SUCCESS) {
                     if (tx.getCreatedAt().isAfter(startOfDay)) {
                         todaySpent = todaySpent.add(tx.getAmount());
@@ -275,6 +279,48 @@ public class SecurityService {
                         .timestamp(log.getCreatedAt())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public VerifyPinResponse verifyPin(UUID userId, String pin) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (user.isLocked()) {
+            throw new AccountLockedException("Your account is locked due to security policy. Please contact customer support.");
+        }
+
+        if (user.getPinHash() == null || user.getPinHash().isBlank()) {
+            throw new InvalidPinException("Transaction MPIN has not been configured yet.");
+        }
+
+        if (!passwordEncoder.matches(pin, user.getPinHash())) {
+            int failedAttempts = user.getPinFailedAttempts() + 1;
+            user.setPinFailedAttempts(failedAttempts);
+
+            if (failedAttempts >= 5) {
+                user.setLocked(true);
+                userRepository.save(user);
+                recordAuditLog(user, "FAILED_PIN", "Account locked due to 5 consecutive failed PIN attempts", "127.0.0.1", "In-App PIN Verification");
+                throw new AccountLockedException("Maximum MPIN attempts exceeded. Your account has been temporarily locked for security.");
+            }
+
+            userRepository.save(user);
+            int remaining = 5 - failedAttempts;
+            recordAuditLog(user, "FAILED_PIN", "Incorrect MPIN entered. " + remaining + " attempts remaining.", "127.0.0.1", "In-App PIN Verification");
+            throw new InvalidPinException("Incorrect MPIN. " + remaining + " attempts remaining.", remaining);
+        }
+
+        // Valid PIN: reset failed attempts counter if previously > 0
+        if (user.getPinFailedAttempts() > 0) {
+            user.setPinFailedAttempts(0);
+            userRepository.save(user);
+        }
+
+        return VerifyPinResponse.builder()
+                .valid(true)
+                .message("MPIN verified successfully")
+                .build();
     }
 
     private void recordAuditLog(User user, String eventType, String description, String ip, String device) {

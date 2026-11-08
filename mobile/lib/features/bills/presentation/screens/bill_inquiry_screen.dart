@@ -11,6 +11,7 @@ import 'package:batwa_wallet/features/bills/presentation/bloc/bills_bloc.dart';
 import 'package:batwa_wallet/features/bills/presentation/bloc/bills_event.dart';
 import 'package:batwa_wallet/features/bills/presentation/bloc/bills_state.dart';
 import 'package:batwa_wallet/features/bills/presentation/screens/bill_receipt_screen.dart';
+import 'package:batwa_wallet/core/services/in_app_notification_service.dart';
 
 class BillInquiryScreen extends StatelessWidget {
   final BillCompanyEntity company;
@@ -83,6 +84,13 @@ class _BillInquiryViewState extends State<_BillInquiryView> {
               ),
             );
           } else if (state is BillPaymentSuccessState) {
+            InAppNotificationService.showNotification(
+              context,
+              title: "Bill Paid Successfully ⚡",
+              message: "Rs. ${state.payment.amountPaid.toStringAsFixed(2)} paid to ${state.payment.companyName}",
+              type: "BILL_PAYMENT",
+              amount: state.payment.amountPaid,
+            );
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(

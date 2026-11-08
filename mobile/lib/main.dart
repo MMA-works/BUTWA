@@ -24,9 +24,9 @@ import 'package:batwa_wallet/features/auth/presentation/screens/onboarding_scree
 import 'package:batwa_wallet/features/wallet/presentation/screens/main_3d_shell_screen.dart';
 import 'package:batwa_wallet/core/theme/theme_cubit.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  ApiClient.initializeServerUrl();
+  await ApiClient.initializeServerUrl();
   runApp(const BattwaaApp());
 }
 

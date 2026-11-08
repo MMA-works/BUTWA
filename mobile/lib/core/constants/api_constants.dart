@@ -1,10 +1,12 @@
 class ApiConstants {
   // Localhost (USB reverse) & local Wi-Fi LAN IP
-  static String baseUrl = 'https://compiled-worldwide-adequate-auto.trycloudflare.com/api/v1';
-  static const String defaultBaseUrl = 'https://compiled-worldwide-adequate-auto.trycloudflare.com/api/v1';
+  static String baseUrl = 'https://katrina-lawyers-norman-floral.trycloudflare.com/api/v1';
+  static const String defaultBaseUrl = 'https://katrina-lawyers-norman-floral.trycloudflare.com/api/v1';
   
   // Auth Endpoints
   static const String verifyEmail = '/auth/verify-email';
+  static const String checkCnic = '/auth/check-cnic';
+  static const String checkUsername = '/auth/check-username';
   static const String register = '/auth/register';
   static const String login = '/auth/login';
   static const String setPin = '/auth/pin';
@@ -52,6 +54,7 @@ class ApiConstants {
   static const String revokeOtherSessions = '/security/sessions/revoke-others';
   static const String changePin = '/security/pin/change';
   static const String resetPin = '/security/pin/reset';
+  static const String verifyPin = '/security/pin/verify';
   static const String securityAuditLogs = '/security/audit-logs';
 
   // QR Payment Endpoints

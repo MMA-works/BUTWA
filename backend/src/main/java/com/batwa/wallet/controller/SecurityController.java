@@ -3,6 +3,8 @@ package com.batwa.wallet.controller;
 import com.batwa.wallet.dto.request.ChangePinRequest;
 import com.batwa.wallet.dto.request.ResetPinRequest;
 import com.batwa.wallet.dto.request.UpdateSecuritySettingsRequest;
+import com.batwa.wallet.dto.request.VerifyPinRequest;
+import com.batwa.wallet.dto.response.VerifyPinResponse;
 import com.batwa.wallet.dto.response.ApiResponse;
 import com.batwa.wallet.dto.response.SecurityAuditLogResponse;
 import com.batwa.wallet.dto.response.SecuritySettingsResponse;
@@ -72,6 +74,14 @@ public class SecurityController {
             @Valid @RequestBody ChangePinRequest request) {
         securityService.changePin(userDetails.getId(), request);
         return ResponseEntity.ok(ApiResponse.ok(null, "Transaction MPIN changed successfully"));
+    }
+
+    @PostMapping("/pin/verify")
+    public ResponseEntity<ApiResponse<VerifyPinResponse>> verifyPin(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid @RequestBody VerifyPinRequest request) {
+        VerifyPinResponse res = securityService.verifyPin(userDetails.getId(), request.getPin());
+        return ResponseEntity.ok(ApiResponse.ok(res, "MPIN verified successfully"));
     }
 
     @PostMapping("/pin/reset")

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:batwa_wallet/core/services/app_update_service.dart';
 import 'package:batwa_wallet/features/wallet/presentation/screens/dashboard_screen.dart';
 import 'package:batwa_wallet/features/wallet/presentation/screens/drawer_underlay_screen.dart';
 import 'package:batwa_wallet/features/cards/presentation/screens/cards_screen.dart';
@@ -31,6 +32,11 @@ class _Main3DShellScreenState extends State<Main3DShellScreen>
       curve: Curves.easeOutCubic,
       reverseCurve: Curves.easeInOutCubic,
     );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        AppUpdateService.promptIfUpdateAvailable(context);
+      }
+    });
   }
 
   @override

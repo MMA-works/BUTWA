@@ -13,6 +13,7 @@ import 'package:batwa_wallet/features/bills/presentation/bloc/bills_event.dart';
 import 'package:batwa_wallet/features/bills/presentation/bloc/bills_state.dart';
 import 'package:batwa_wallet/features/bills/presentation/screens/bill_inquiry_screen.dart';
 import 'package:batwa_wallet/features/bills/presentation/screens/bill_receipt_screen.dart';
+import 'package:batwa_wallet/core/services/in_app_notification_service.dart';
 import 'package:batwa_wallet/features/transfer/data/transfer_remote_datasource.dart';
 
 // ==========================================
@@ -911,6 +912,14 @@ class _MobileNetworkPopupWidgetState extends State<_MobileNetworkPopupWidget> wi
       currency: 'PKR',
       paidAt: DateTime.now(),
       transactionStatus: 'SUCCESS',
+    );
+
+    InAppNotificationService.showNotification(
+      context,
+      title: "Mobile Load Activated ⚡",
+      message: "Rs. ${amount.toStringAsFixed(2)} bundle sent to $recipientPhone",
+      type: "BILL_PAYMENT",
+      amount: amount,
     );
 
     Navigator.push(

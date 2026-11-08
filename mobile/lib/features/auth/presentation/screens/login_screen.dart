@@ -29,8 +29,8 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     // Default demo credentials prefilled for effortless testing
-    _identifierController.text = 'test@batwa.com';
-    _passwordController.text = 'password123';
+    _identifierController.text = 'batwa.tester2026@gmail.com';
+    _passwordController.text = 'Test@123456';
   }
 
   @override
