@@ -102,6 +102,46 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
   // ðŸ‡µðŸ‡° Verified Pakistani Banks with Approved Logos
   final List<BankItem> _allBanks = const [
     BankItem(
+      id: 'hbl',
+      name: 'Habib Bank Limited (HBL)',
+      code: 'HABB',
+      shortName: 'HBL',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFF007A53),
+    ),
+    BankItem(
+      id: 'meezan',
+      name: 'Meezan Bank Limited',
+      code: 'MEZN',
+      shortName: 'Meezan',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFF5B1038),
+    ),
+    BankItem(
+      id: 'ubl',
+      name: 'United Bank Limited (UBL)',
+      code: 'UNIL',
+      shortName: 'UBL',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFF005697),
+    ),
+    BankItem(
+      id: 'alfalah',
+      name: 'Bank Alfalah Limited',
+      code: 'ALFH',
+      shortName: 'Alfalah',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFFBE1E2D),
+    ),
+    BankItem(
+      id: 'mcb',
+      name: 'MCB Bank Limited',
+      code: 'MCB',
+      shortName: 'MCB',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFFE3630A),
+    ),
+    BankItem(
       id: 'allied',
       name: 'Allied Bank Limited (ABL)',
       code: 'ABPA',
@@ -110,20 +150,52 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
       brandColor: Color(0xFF2563EB),
     ),
     BankItem(
-      id: 'albaraka',
-      name: 'Al Baraka Bank',
-      code: 'BARK',
-      shortName: 'Al Baraka',
-      icon: Icons.all_inclusive_rounded,
-      brandColor: Color(0xFFEA580C),
+      id: 'alhabib',
+      name: 'Bank AL Habib Limited',
+      code: 'BAHL',
+      shortName: 'Bank AL Habib',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFF005F41),
     ),
     BankItem(
-      id: 'soneri',
-      name: 'Soneri Bank',
-      code: 'SONE',
-      shortName: 'Soneri',
+      id: 'askari',
+      name: 'Askari Bank Limited',
+      code: 'ASKP',
+      shortName: 'Askari',
       icon: Icons.account_balance_rounded,
-      brandColor: Color(0xFF16A34A),
+      brandColor: Color(0xFF1B5E20),
+    ),
+    BankItem(
+      id: 'faysal',
+      name: 'Faysal Bank Limited',
+      code: 'FAYS',
+      shortName: 'Faysal',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFF8B181B),
+    ),
+    BankItem(
+      id: 'nbp',
+      name: 'National Bank of Pakistan (NBP)',
+      code: 'NBPA',
+      shortName: 'NBP',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFF007849),
+    ),
+    BankItem(
+      id: 'scb',
+      name: 'Standard Chartered Bank',
+      code: 'SCBL',
+      shortName: 'Standard Chartered',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFF009344),
+    ),
+    BankItem(
+      id: 'bop',
+      name: 'The Bank of Punjab (BOP)',
+      code: 'BPUN',
+      shortName: 'BOP',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFFC78C20),
     ),
     BankItem(
       id: 'bok',
@@ -142,12 +214,44 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
       brandColor: Color(0xFF047857),
     ),
     BankItem(
-      id: 'raqami',
-      name: 'Raqami Islamic Digital Bank',
-      code: 'RQMI',
-      shortName: 'Raqami',
-      icon: Icons.brightness_auto_rounded,
-      brandColor: Color(0xFF502379),
+      id: 'albaraka',
+      name: 'Al Baraka Bank (Pakistan)',
+      code: 'BARK',
+      shortName: 'Al Baraka',
+      icon: Icons.all_inclusive_rounded,
+      brandColor: Color(0xFFEA580C),
+    ),
+    BankItem(
+      id: 'soneri',
+      name: 'Soneri Bank Limited',
+      code: 'SONE',
+      shortName: 'Soneri',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFF16A34A),
+    ),
+    BankItem(
+      id: 'js',
+      name: 'JS Bank Limited',
+      code: 'JSBL',
+      shortName: 'JS Bank',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFF003882),
+    ),
+    BankItem(
+      id: 'habibmetro',
+      name: 'Habib Metropolitan Bank',
+      code: 'HMBP',
+      shortName: 'HabibMetro',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFF8B0000),
+    ),
+    BankItem(
+      id: 'samba',
+      name: 'Samba Bank Limited',
+      code: 'SAMB',
+      shortName: 'Samba',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFF0369A1),
     ),
     BankItem(
       id: 'bankislami',
@@ -158,6 +262,126 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
       brandColor: Color(0xFF0265A8),
     ),
     BankItem(
+      id: 'abhi',
+      name: 'ABHI Microfinance Bank',
+      code: 'ABHI',
+      shortName: 'ABHI',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFF0F2B48),
+    ),
+    BankItem(
+      id: 'raqami',
+      name: 'Raqami Islamic Digital Bank',
+      code: 'RQMI',
+      shortName: 'Raqami',
+      icon: Icons.brightness_auto_rounded,
+      brandColor: Color(0xFF502379),
+    ),
+    BankItem(
+      id: 'bml',
+      name: 'Bank Makramah Limited (BML)',
+      code: 'SMBL',
+      shortName: 'BML',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFF1F2937),
+    ),
+    BankItem(
+      id: 'fwbl',
+      name: 'First Women Bank Limited (FWBL)',
+      code: 'FWBL',
+      shortName: 'FWBL',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFF9333EA),
+    ),
+    BankItem(
+      id: 'ztbl',
+      name: 'Zarai Taraqiati Bank (ZTBL)',
+      code: 'ZTBL',
+      shortName: 'ZTBL',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFF15803D),
+    ),
+    BankItem(
+      id: 'advans',
+      name: 'Advans Pakistan Microfinance Bank',
+      code: 'ADVN',
+      shortName: 'Advans',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFFD97706),
+    ),
+    BankItem(
+      id: 'mmbl',
+      name: 'Mobilink Microfinance Bank (MMBL)',
+      code: 'MMBL',
+      shortName: 'MMBL',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFFDC2626),
+    ),
+    BankItem(
+      id: 'sindh',
+      name: 'Sindh Bank Limited',
+      code: 'SNDH',
+      shortName: 'Sindh Bank',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFFB45309),
+    ),
+    BankItem(
+      id: 'silk',
+      name: 'Silkbank Limited',
+      code: 'SILK',
+      shortName: 'Silkbank',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFF7E22CE),
+    ),
+    BankItem(
+      id: 'apna',
+      name: 'Apna Microfinance Bank',
+      code: 'APNA',
+      shortName: 'Apna Bank',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFF0369A1),
+    ),
+    BankItem(
+      id: 'mcbib',
+      name: 'MCB Islamic Bank Limited',
+      code: 'MCBI',
+      shortName: 'MCB Islamic',
+      icon: Icons.account_balance_rounded,
+      brandColor: Color(0xFF15803D),
+    ),
+    BankItem(
+      id: 'easypaisa',
+      name: 'Easypaisa (Telenor Bank)',
+      code: 'TMBP',
+      shortName: 'Easypaisa',
+      icon: Icons.account_balance_wallet_rounded,
+      brandColor: Color(0xFF00AA4F),
+    ),
+    BankItem(
+      id: 'jazzcash',
+      name: 'JazzCash (MMBL Wallet)',
+      code: 'JCBP',
+      shortName: 'JazzCash',
+      icon: Icons.account_balance_wallet_rounded,
+      brandColor: Color(0xFFE11926),
+    ),
+    BankItem(
+      id: 'sadapay',
+      name: 'SadaPay (EMI Wallet)',
+      code: 'SADA',
+      shortName: 'SadaPay',
+      icon: Icons.account_balance_wallet_rounded,
+      brandColor: Color(0xFFFF5C38),
+    ),
+    BankItem(
+      id: 'nayapay',
+      name: 'NayaPay (EMI Wallet)',
+      code: 'NAYA',
+      shortName: 'NayaPay',
+      icon: Icons.account_balance_wallet_rounded,
+      brandColor: Color(0xFFFF6B00),
+    ),
+    BankItem(
       id: 'aik',
       name: 'aik by BankIslami (Digital Wallet)',
       code: 'AIKB',
@@ -166,20 +390,20 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
       brandColor: Color(0xFF0F4C5C),
     ),
     BankItem(
-      id: 'samba',
-      name: 'Samba Bank',
-      code: 'SAMB',
-      shortName: 'Samba',
-      icon: Icons.account_balance_rounded,
-      brandColor: Color(0xFF0369A1),
+      id: 'upaisa',
+      name: 'UPaisa (U Microfinance)',
+      code: 'UPAI',
+      shortName: 'UPaisa',
+      icon: Icons.account_balance_wallet_rounded,
+      brandColor: Color(0xFFF97316),
     ),
     BankItem(
-      id: 'abhi',
-      name: 'ABHI Microfinance Bank',
-      code: 'ABHI',
-      shortName: 'ABHI',
-      icon: Icons.account_balance_rounded,
-      brandColor: Color(0xFF0F2B48),
+      id: 'zindigi',
+      name: 'Zindigi by JS Bank',
+      code: 'ZIND',
+      shortName: 'Zindigi',
+      icon: Icons.account_balance_wallet_rounded,
+      brandColor: Color(0xFF10B981),
     ),
   ];
 
@@ -839,6 +1063,25 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
     if (b.contains('bankislami')) return 'bankislami';
     if (b.contains('samba')) return 'samba';
     if (b.contains('meezan')) return 'meezan';
+    if (b.contains('alhabib') || b.contains('al habib')) return 'alhabib';
+    if (b.contains('askari')) return 'askari';
+    if (b.contains('faysal')) return 'faysal';
+    if (b.contains('nbp') || b.contains('national bank')) return 'nbp';
+    if (b.contains('scb') || b.contains('standard chartered')) return 'scb';
+    if (b.contains('bop') || b.contains('punjab')) return 'bop';
+    if (b.contains('js bank') || b == 'js') return 'js';
+    if (b.contains('habibmetro') || b.contains('habib metro')) return 'habibmetro';
+    if (b.contains('makramah') || b.contains('bml')) return 'bml';
+    if (b.contains('fwbl') || b.contains('first women')) return 'fwbl';
+    if (b.contains('ztbl') || b.contains('zarai')) return 'ztbl';
+    if (b.contains('advans')) return 'advans';
+    if (b.contains('mmbl') || b.contains('mobilink microfinance')) return 'mmbl';
+    if (b.contains('sindh')) return 'sindh';
+    if (b.contains('silk')) return 'silk';
+    if (b.contains('apna')) return 'apna';
+    if (b.contains('mcbib') || b.contains('mcb islamic')) return 'mcbib';
+    if (b.contains('upaisa') || b.contains('u microfinance')) return 'upaisa';
+    if (b.contains('zindigi')) return 'zindigi';
     if (b.contains('hbl') || b.contains('habib bank')) return 'hbl';
     if (b.contains('alfalah')) return 'alfalah';
     if (b.contains('ubl') || b.contains('united')) return 'ubl';

@@ -1,33 +1,31 @@
 {
-  "version": "2.4.13",
-  "versionCode": 253,
-  "buildNumber": 253,
+  "version": "2.4.14",
+  "versionCode": 254,
+  "buildNumber": 254,
   "minSupportedVersion": "1.0.0",
   "releaseDate": "2026-11-08",
   "apkName": "batwa-wallet.apk",
   "apkSize": "79.3 MB",
-  "fileSizeBytes": 83182821,
+  "fileSizeBytes": 83199205,
   "fileSize": "79.3 MB",
-  "sha256": "79e31f70ed89d89461af0c0398445918f99a9a8b3c0716403a9d96a235cd562c",
+  "sha256": "758013aad24e7682090843900907f7cd128d439131d3f84d2e20c59544e2aada",
   "downloadUrl": "https://buttwaa.online/batwa-wallet.apk",
   "forceUpdate": false,
-  "title": "BATWA v2.4.13 Official Release",
-  "message": "Naya update live ho chuka hai! ABHI Microfinance Bank official branding & 1Link transfer, updated bank logos, active 24/7 Cloudflare Gateway, aur enhanced cards navigation shamil hain.",
+  "title": "BATWA v2.4.14 Official Release",
+  "message": "Naya update live ho chuka hai! Tamam 38 Pakistani verified commercial banks, microfinance banks aur digital wallets ke exact official logos aur 1Link transfer support ke sath app live hai.",
   "features": [
-    "Official HD ABHI Microfinance Bank integration with 1Link / Raast title fetch",
-    "Verified bank branding: ABHI, ABL, Al Baraka, Soneri, BOK, DIB, Raqami, aik, Samba",
-    "High-speed 24/7 Cloudflare Gateway connection to live Supabase backend",
-    "Dynamic 1Bill inquiry & fixed payment receipts with strict length validation",
-    "Official HD Telecom logos for Jazz, Ufone, and Zong (Telenor removed)",
-    "Direct Cards tab navigation to virtual cards screen without popups",
-    "Compact analytics overview cards and clean dark green category breakdown bullets",
-    "Complete purge of pig/piggy bank icons and terms across the entire app"
+    "Full suite of 38 Pakistani banks and digital wallets with verified official logos",
+    "Commercial Banks: HBL, Meezan, UBL, Alfalah, MCB, ABL, Bank AL Habib, Askari, Faysal, NBP, SCB, BOP, BOK, DIB, Al Baraka, Soneri, JS Bank, HabibMetro, Samba, BankIslami, BML, FWBL, Sindh Bank, Silkbank, MCB Islamic",
+    "Microfinance Banks: ABHI Microfinance, ZTBL, Advans, MMBL, Apna Bank, UPaisa (U Bank)",
+    "Digital Wallets & EMIs: Easypaisa, JazzCash, SadaPay, NayaPay, aik by BankIslami, Zindigi by JS Bank",
+    "1Link title inquiry and direct IBFT transfers across all 38 financial institutions",
+    "Interactive website marquee showcasing all partner banking and payment institutions",
+    "100% clean UI: vertical Batwa Black Edition card, compact analytics, no pig references"
   ],
   "changelog": [
-    "Added ABHI Microfinance Bank with official 512x512 branding and 1Link transfer support",
-    "Configured dedicated high-speed Cloudflare Gateway with instant auth/ping clearance",
-    "Integrated 1Link title fetch in Bank Transfer eliminating manual receiver name typing",
-    "Updated bank & telco logos to authentic verified PNGs",
-    "Direct Cards tab navigation and streamlined analytics dashboard"
+    "Restored and verified all 38 Pakistani banks & wallets in Bank Transfer selection",
+    "Integrated authentic bank logos across mobile app and web marquee",
+    "Updated fallback resolver for all bank IDs and clearing codes",
+    "Deployed release APK v2.4.14 (Build 254) to production server"
   ]
 }
