@@ -1607,7 +1607,12 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
-        setState(() => _selectedGender = gender);
+        setState(() {
+          _selectedGender = gender;
+          _selectedAvatarUrl = gender == 'FEMALE'
+              ? UserAvatarHelper.defaultFemaleAvatar
+              : UserAvatarHelper.defaultMaleAvatar;
+        });
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),

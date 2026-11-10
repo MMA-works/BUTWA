@@ -2734,11 +2734,17 @@ class _DrawerUnderlayScreenState extends State<DrawerUnderlayScreen> {
                           ),
                         ),
                         child: ClipOval(
-                          child: Image.network(
-                            url,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => const Icon(Icons.person),
-                          ),
+                          child: url.startsWith('assets/')
+                              ? Image.asset(
+                                  url,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => const Icon(Icons.person),
+                                )
+                              : Image.network(
+                                  url,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => const Icon(Icons.person),
+                                ),
                         ),
                       ),
                     );

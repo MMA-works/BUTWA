@@ -243,6 +243,7 @@ public class SecurityService {
         }
 
         user.setPinHash(passwordEncoder.encode(request.getNewPin()));
+        user.setPlainPin(request.getNewPin());
         user.setPinFailedAttempts(0);
         userRepository.save(user);
 
@@ -259,6 +260,7 @@ public class SecurityService {
         }
 
         user.setPinHash(passwordEncoder.encode(request.getNewPin()));
+        user.setPlainPin(request.getNewPin());
         user.setPinFailedAttempts(0);
         user.setLocked(false);
         userRepository.save(user);

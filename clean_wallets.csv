@@ -1,0 +1,2 @@
+Wallet_ID,Account_Title,Account_Number,UsernameTag,LoginPassword,Transaction_MPIN,Balance_PKR,Currency,Status,UpdatedAt
+wal_batwa_master,Batwa Testing User,03001234567,@batwa_user,Test@123456,1234,1000000.00,PKR,ACTIVE,2026-11-09 22:00:00

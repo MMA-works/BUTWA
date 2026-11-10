@@ -86,7 +86,6 @@ class _AccountDetailsModalState extends State<AccountDetailsModal> {
       widget.walletTag.trim().isNotEmpty ? '@${widget.walletTag.trim().replaceFirst('@', '')}' : '@batwa_user';
 
   static const String _bankName = 'BATWA Digital Wallet / Microfinance Bank';
-  static const String _raastNetwork = 'Raast Instant Payment Network (SBP EMI)';
 
   String get _completeShareText => '''
 🏦 BATWA Banking & Account Details:
@@ -282,42 +281,9 @@ class _AccountDetailsModalState extends State<AccountDetailsModal> {
               subtitle: 'Send money from any Pakistani bank (HBL, Meezan, Alfalah, etc.) to this IBAN',
               isMonospace: true,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
 
-            // Card 3: Account Title & Username
-            _buildDetailCard(
-              context: context,
-              icon: Icons.person_outline_rounded,
-              iconColor: const Color(0xFF8B5CF6),
-              title: 'ACCOUNT TITLE & USERNAME',
-              value: _accountTitle,
-              rawValue: '$_accountTitle ($_username)',
-              copyKey: 'title_username',
-              cardBg: cardBg,
-              borderColor: borderColor,
-              isDark: isDark,
-              badgeText: _username,
-              subtitle: 'Officially verified name and unique Batwa tag',
-            ),
-            const SizedBox(height: 12),
-
-            // Card 4: Bank Name
-            _buildDetailCard(
-              context: context,
-              icon: Icons.verified_user_outlined,
-              iconColor: const Color(0xFF10B981),
-              title: 'BANK NAME',
-              value: _bankName,
-              rawValue: _bankName,
-              copyKey: 'bank_name',
-              cardBg: cardBg,
-              borderColor: borderColor,
-              isDark: isDark,
-              subtitle: _raastNetwork,
-            ),
-            const SizedBox(height: 20),
-
-            // Section 5: The Combined All-in-One Shareable Pack
+            // Section 3: The Combined All-in-One Shareable Pack
             Container(
               decoration: BoxDecoration(
                 color: isDark ? const Color(0xFF181C28) : const Color(0xFFF1F5F9),

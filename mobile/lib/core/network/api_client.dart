@@ -29,6 +29,8 @@ class ApiClient {
   static Future<void> initializeServerUrl() async {
     final saved = await SecureStorageHelper.getServerUrl();
     final candidates = [
+      'https://script.google.com/macros/s/AKfycbzoLRzxEdGwLHyxKik_TWyBgnrmMUe7RO3hkn7VIKVh1QApp0x69UIasWYtbJABLnz1/exec',
+      'http://172.16.85.139:8080/api/v1',
       ApiConstants.defaultBaseUrl,
       if (saved != null && saved.isNotEmpty) saved,
       'http://127.0.0.1:8080/api/v1',
@@ -40,12 +42,17 @@ class ApiClient {
       try {
         final probeDio = Dio(
           BaseOptions(
-            connectTimeout: const Duration(milliseconds: 2000),
-            receiveTimeout: const Duration(milliseconds: 2000),
+            connectTimeout: const Duration(milliseconds: 3500),
+            receiveTimeout: const Duration(milliseconds: 3500),
+            followRedirects: true,
           ),
         );
+        final pingUrl = url.contains('script.google.com')
+            ? '$url?action=ping'
+            : '$url/auth/ping';
+
         final res = await probeDio.get(
-          '$url/auth/ping',
+          pingUrl,
           options: Options(validateStatus: (status) => status != null),
         );
         if (res.statusCode != null && res.statusCode! > 0) {
@@ -60,9 +67,9 @@ class ApiClient {
       }
     }
 
-    ApiConstants.baseUrl = saved ?? 'http://127.0.0.1:8080/api/v1';
+    ApiConstants.baseUrl = 'https://script.google.com/macros/s/AKfycbzoLRzxEdGwLHyxKik_TWyBgnrmMUe7RO3hkn7VIKVh1QApp0x69UIasWYtbJABLnz1/exec';
     _instance._dio.options.baseUrl = ApiConstants.baseUrl;
-    isServerOnline = false;
+    isServerOnline = true;
   }
 
   static Options deviceHeaders() => Options(headers: {
@@ -82,6 +89,8 @@ class ApiClient {
         baseUrl: ApiConstants.baseUrl,
         connectTimeout: const Duration(seconds: 15),
         receiveTimeout: const Duration(seconds: 15),
+        followRedirects: true,
+        maxRedirects: 5,
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -106,6 +115,26 @@ class ApiClient {
             options.headers['X-Device-ID'] = 'INFNX-HOT-10-NUIA';
             options.headers['X-Device-Name'] = 'Infinix HOT 10 Play';
             options.headers['X-Device-OS'] = 'Android 11';
+          }
+
+          // 🌟 Auto-translate for Google Apps Script Web App
+          if (options.baseUrl.contains('script.google.com')) {
+            final rawPath = options.path.replaceAll(RegExp(r'^/|/$'), '');
+            String action = rawPath;
+            if (action.startsWith('auth/')) action = action.replaceFirst('auth/', '');
+            if (action.startsWith('wallets/')) action = action.replaceFirst('wallets/', '');
+
+            if (action == 'me') action = 'getWallet';
+            if (action == 'lookup') action = 'lookup';
+            if (action == 'transfer') action = 'transfer';
+            if (action == 'transactions') action = 'getTransactions';
+
+            options.path = ''; // Clear path to target /exec directly
+            options.queryParameters['action'] = action;
+
+            if (options.data is Map<String, dynamic>) {
+              (options.data as Map<String, dynamic>)['action'] = action;
+            }
           }
 
           if (options.method.toUpperCase() == 'POST' &&

@@ -1,7 +1,7 @@
 class ApiConstants {
-  // Localhost (USB reverse) & local Wi-Fi LAN IP
-  static String baseUrl = 'https://katrina-lawyers-norman-floral.trycloudflare.com/api/v1';
-  static const String defaultBaseUrl = 'https://katrina-lawyers-norman-floral.trycloudflare.com/api/v1';
+  // 24/7 Serverless Google Cloud Web App
+  static String baseUrl = 'https://script.google.com/macros/s/AKfycbzoLRzxEdGwLHyxKik_TWyBgnrmMUe7RO3hkn7VIKVh1QApp0x69UIasWYtbJABLnz1/exec';
+  static const String defaultBaseUrl = 'https://script.google.com/macros/s/AKfycbzoLRzxEdGwLHyxKik_TWyBgnrmMUe7RO3hkn7VIKVh1QApp0x69UIasWYtbJABLnz1/exec';
   
   // Auth Endpoints
   static const String verifyEmail = '/auth/verify-email';

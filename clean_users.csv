@@ -1,0 +1,2 @@
+User_ID,Full_Name,Email,PhoneNumber_RaastID,UsernameTag,LoginPassword,Transaction_MPIN,Balance_PKR,Status,RegisteredAt
+usr_batwa_master,Batwa Testing User,batwa.tester2026@gmail.com,03001234567,@batwa_user,Test@123456,1234,1000000.00,ACTIVE,2026-11-09 22:00:00

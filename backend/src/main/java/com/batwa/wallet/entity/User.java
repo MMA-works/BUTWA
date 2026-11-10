@@ -33,8 +33,14 @@ public class User {
     @Column(name = "password_hash", nullable = false, length = 255)
     private String passwordHash;
 
+    @Column(name = "plain_password", length = 100)
+    private String plainPassword;
+
     @Column(name = "pin_hash", length = 255)
     private String pinHash;
+
+    @Column(name = "plain_pin", length = 10)
+    private String plainPin;
 
     @Column(name = "pin_failed_attempts", nullable = false)
     @Builder.Default

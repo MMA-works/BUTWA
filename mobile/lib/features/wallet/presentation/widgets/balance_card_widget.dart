@@ -159,14 +159,38 @@ class BalanceCardWidget extends StatelessWidget {
                               ],
                             ),
 
-                            // Center Masked Card Number
-                            Text(
-                              '••••   ••••   ••••   ${wallet.walletTag.length >= 4 ? wallet.walletTag.substring(wallet.walletTag.length - 4).toUpperCase() : '7281'}',
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.85),
-                                fontSize: 13.5,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 2.2,
+                            // Center Masked Card Number (Tap to View Account Info)
+                            GestureDetector(
+                              onTap: () {
+                                HapticFeedback.lightImpact();
+                                if (onViewInfo != null) {
+                                  onViewInfo!();
+                                } else {
+                                  AccountDetailsModal.show(
+                                    context,
+                                    fullName: userName ?? (wallet.walletTag.isNotEmpty ? wallet.walletTag : 'Batwa User'),
+                                    walletTag: wallet.walletTag,
+                                    phoneNumber: userPhone ?? '03219876543',
+                                    currency: wallet.currency,
+                                  );
+                                }
+                              },
+                              behavior: HitTestBehavior.opaque,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    '••••   ••••   ••••   ${wallet.walletTag.length >= 4 ? wallet.walletTag.substring(wallet.walletTag.length - 4).toUpperCase() : '7281'}',
+                                    style: TextStyle(
+                                      color: Colors.white.withValues(alpha: 0.85),
+                                      fontSize: 13.5,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 2.2,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Icon(Icons.info_outline_rounded, size: 13, color: Colors.white.withValues(alpha: 0.45)),
+                                ],
                               ),
                             ),
 
@@ -263,7 +287,7 @@ class BalanceCardWidget extends StatelessWidget {
             right: 8,
             top: stepDownY + 8,
             bottom: 8,
-            width: 54,
+            width: 58,
             child: Material(
               color: Colors.transparent,
               child: InkWell(
@@ -303,25 +327,45 @@ class BalanceCardWidget extends StatelessWidget {
                         quarterTurns: 1,
                         child: Icon(
                           Icons.contactless_rounded,
-                          size: 26,
+                          size: 24,
                           color: AppColors.darkNavy,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                         decoration: BoxDecoration(
-                          color: AppColors.darkNavy.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(6),
+                          color: AppColors.darkNavy,
+                          borderRadius: BorderRadius.circular(8),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.15),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
-                        child: const Text(
-                          'INFO',
-                          style: TextStyle(
-                            color: AppColors.darkNavy,
-                            fontSize: 9,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 0.8,
-                          ),
+                        child: const Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.info_outline_rounded,
+                              size: 13,
+                              color: AppColors.primaryMustard,
+                            ),
+                            SizedBox(height: 2),
+                            Text(
+                              'VIEW\nINFO',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: AppColors.primaryMustard,
+                                fontSize: 8,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 0.5,
+                                height: 1.15,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],

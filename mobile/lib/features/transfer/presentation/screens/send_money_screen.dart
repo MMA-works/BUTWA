@@ -910,15 +910,41 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
     } catch (e) {
       debugPrint('Real transfer failed: $e');
       if (mounted) {
-        final errMsg = e.toString()
-            .replaceAll('Exception:', '')
-            .replaceAll('ApiException:', '')
-            .trim();
+        String cleanMsg = '';
+        if (e is DioException) {
+          final resData = e.response?.data;
+          if (resData is Map) {
+            cleanMsg = (resData['message'] ?? resData['error'] ?? '').toString();
+          } else if (resData is String && resData.isNotEmpty) {
+            cleanMsg = resData;
+          }
+        }
+        if (cleanMsg.isEmpty) {
+          cleanMsg = e.toString()
+              .replaceAll(RegExp(r'DioException.*?:', caseSensitive: false), '')
+              .replaceAll('ApiException:', '')
+              .replaceAll('Exception:', '')
+              .replaceAll(RegExp(r'null\s*Error:\s*', caseSensitive: false), '')
+              .replaceAll(RegExp(r'^Error:\s*', caseSensitive: false), '')
+              .trim();
+        }
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(errMsg.isNotEmpty ? errMsg : 'Transfer could not be processed. Please check details and try again.'),
+            content: Row(
+              children: [
+                const Icon(Icons.error_outline_rounded, color: Colors.white, size: 20),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    cleanMsg.isNotEmpty ? cleanMsg : 'Transfer could not be processed. Please check details and try again.',
+                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                  ),
+                ),
+              ],
+            ),
             backgroundColor: Colors.red.shade700,
             behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
         );
         setState(() {
@@ -2939,6 +2965,31 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
                   },
                   onHorizontalDragEnd: (details) {
                     if (_sliderPosition > maxSlide * 0.75) {
+                      final numAmount = double.tryParse(_enteredAmount) ?? 0.0;
+                      if (numAmount > widget.userBalance) {
+                        HapticFeedback.heavyImpact();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Row(
+                              children: [
+                                const Icon(Icons.error_outline_rounded, color: Colors.white, size: 20),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    'Insufficient balance. Available: Rs ${_formatWithCommas(widget.userBalance.toInt().toString())}',
+                                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            backgroundColor: Colors.red.shade700,
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
+                        );
+                        setState(() => _sliderPosition = 0.0);
+                        return;
+                      }
                       HapticFeedback.heavyImpact();
                       setState(() => _sliderPosition = maxSlide);
                       _showPinConfirmSheet();

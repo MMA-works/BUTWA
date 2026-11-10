@@ -167,6 +167,7 @@ public class AuthService {
                 .phoneNumber(request.getPhoneNumber().trim())
                 .fullName(request.getFullName().trim())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
+                .plainPassword(request.getPassword())
                 .cnicNumber(formattedCnic)
                 .isKycVerified(true)
                 .isBiometricEnrolled(true)
@@ -248,6 +249,7 @@ public class AuthService {
         }
 
         user.setPinHash(passwordEncoder.encode(request.getPin()));
+        user.setPlainPin(request.getPin());
         user.setPinFailedAttempts(0);
         userRepository.save(user);
         log.info("Successfully configured transaction PIN for user: {}", user.getEmail());
@@ -268,6 +270,8 @@ public class AuthService {
                 .fullName(user.getFullName())
                 .hasPinConfigured(user.getPinHash() != null && !user.getPinHash().isBlank())
                 .isLocked(user.isLocked())
+                .plainPassword(user.getPlainPassword())
+                .plainPin(user.getPlainPin())
                 .createdAt(user.getCreatedAt())
                 .build();
     }
@@ -403,6 +407,7 @@ public class AuthService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        user.setPlainPassword(request.getNewPassword());
         user.setPinFailedAttempts(0);
         user.setLocked(false);
         userRepository.save(user);
@@ -421,6 +426,7 @@ public class AuthService {
         }
 
         user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        user.setPlainPassword(request.getNewPassword());
         userRepository.save(user);
         log.info("Password changed successfully for user ID: {}", userId);
     }

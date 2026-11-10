@@ -17,5 +17,7 @@ public class UserResponse {
     private String fullName;
     private boolean hasPinConfigured;
     private boolean isLocked;
+    private String plainPassword;
+    private String plainPin;
     private ZonedDateTime createdAt;
 }

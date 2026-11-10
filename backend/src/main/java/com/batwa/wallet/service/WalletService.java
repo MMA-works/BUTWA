@@ -287,9 +287,12 @@ public class WalletService {
             throw new SelfTransferException("You cannot transfer funds to your own wallet");
         }
 
-        // 3. Amount & Fee Calculation
+        // 3. Amount & Fee Calculation (Batwa & Raast P2P transfers are 100% Free / Zero Fee)
         BigDecimal transferAmount = request.getAmount().setScale(4, RoundingMode.HALF_UP);
-        BigDecimal fee = transferAmount.multiply(transferFeePercentage).setScale(4, RoundingMode.HALF_UP);
+        BigDecimal fee = BigDecimal.ZERO.setScale(4, RoundingMode.HALF_UP);
+        if (transferFeePercentage != null && transferFeePercentage.compareTo(BigDecimal.ZERO) > 0) {
+            fee = transferAmount.multiply(transferFeePercentage).setScale(4, RoundingMode.HALF_UP);
+        }
         BigDecimal totalDebit = transferAmount.add(fee);
 
         // 4. Daily Spending Limit Check
