@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:batwa_wallet/core/constants/app_colors.dart';
+import 'package:batwa_wallet/features/wallet/presentation/bloc/wallet_bloc.dart';
+import 'package:batwa_wallet/features/wallet/presentation/bloc/wallet_event.dart';
 import 'package:batwa_wallet/features/bills/presentation/screens/bills_hub_screen.dart';
 import 'package:batwa_wallet/features/cards/presentation/screens/cards_screen.dart';
 import 'package:batwa_wallet/features/transfer/presentation/screens/send_money_screen.dart';
@@ -207,7 +210,9 @@ class _DashboardServicesWidgetState extends State<DashboardServicesWidget> {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => SendMoneyScreen(userBalance: widget.userBalance)),
-              );
+              ).then((_) {
+                if (context.mounted) context.read<WalletBloc>().add(LoadWalletDataEvent());
+              });
             },
           ),
           ServiceItemData(
@@ -218,7 +223,9 @@ class _DashboardServicesWidgetState extends State<DashboardServicesWidget> {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => SendMoneyScreen(userBalance: widget.userBalance)),
-              );
+              ).then((_) {
+                if (context.mounted) context.read<WalletBloc>().add(LoadWalletDataEvent());
+              });
             },
           ),
           ServiceItemData(
@@ -229,7 +236,9 @@ class _DashboardServicesWidgetState extends State<DashboardServicesWidget> {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => SendMoneyScreen(userBalance: widget.userBalance)),
-              );
+              ).then((_) {
+                if (context.mounted) context.read<WalletBloc>().add(LoadWalletDataEvent());
+              });
             },
           ),
           ServiceItemData(
@@ -240,7 +249,9 @@ class _DashboardServicesWidgetState extends State<DashboardServicesWidget> {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => SendMoneyScreen(userBalance: widget.userBalance)),
-              );
+              ).then((_) {
+                if (context.mounted) context.read<WalletBloc>().add(LoadWalletDataEvent());
+              });
             },
           ),
           ServiceItemData(

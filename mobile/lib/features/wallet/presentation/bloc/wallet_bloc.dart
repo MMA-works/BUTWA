@@ -12,7 +12,22 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
   WalletBloc({required this.walletRepository}) : super(WalletInitial()) {
     on<LoadWalletDataEvent>(_onLoadWalletData);
     on<ToggleBalanceVisibilityEvent>(_onToggleBalanceVisibility);
+    on<OptimisticTransferRecordedEvent>(_onOptimisticTransferRecorded);
     on<TopUpSubmittedEvent>(_onTopUpSubmitted);
+  }
+
+  void _onOptimisticTransferRecorded(
+    OptimisticTransferRecordedEvent event,
+    Emitter<WalletState> emit,
+  ) {
+    if (state is WalletLoaded) {
+      final current = state as WalletLoaded;
+      final updatedBal = event.newBalance ?? (current.wallet.balance - event.debitedAmount);
+      final finalBal = updatedBal < 0 ? 0.0 : updatedBal;
+      final updatedWallet = current.wallet.copyWith(balance: finalBal);
+      final updatedTxList = [event.transaction, ...current.transactions];
+      emit(current.copyWith(wallet: updatedWallet, transactions: updatedTxList));
+    }
   }
 
   Future<void> _onLoadWalletData(

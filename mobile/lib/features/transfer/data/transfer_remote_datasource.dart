@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:batwa_wallet/core/constants/api_constants.dart';
 import 'package:batwa_wallet/core/network/api_client.dart';
 import 'package:batwa_wallet/core/network/api_exception.dart';
+import 'package:batwa_wallet/core/utils/secure_storage_helper.dart';
 import 'package:batwa_wallet/features/transfer/data/models/recipient_model.dart';
 import 'package:batwa_wallet/features/wallet/data/models/transaction_model.dart';
 
@@ -23,9 +24,10 @@ class TransferRemoteDataSourceImpl implements TransferRemoteDataSource {
   @override
   Future<RecipientModel> lookupRecipient(String identifier) async {
     try {
+      final clean = identifier.trim().replaceAll(RegExp(r'^@+'), '');
       final response = await apiClient.client.get(
         ApiConstants.lookupRecipient,
-        queryParameters: {'identifier': identifier},
+        queryParameters: {'identifier': clean},
       );
       if (response.data is Map && response.data['success'] == false) {
         throw ApiException(message: response.data['message'] ?? 'Recipient not found');
@@ -55,12 +57,30 @@ class TransferRemoteDataSourceImpl implements TransferRemoteDataSource {
     String? note,
   }) async {
     try {
+      final cleanRecipient = recipientIdentifier.trim().replaceAll(RegExp(r'^@+'), '');
+      final phone = await SecureStorageHelper.getUserPhone();
+      final tag = await SecureStorageHelper.getWalletTag();
+      final email = await SecureStorageHelper.getUserEmail();
+      final sender = (phone != null && phone.isNotEmpty)
+          ? phone
+          : (tag != null && tag.isNotEmpty)
+              ? tag
+              : (email != null && email.isNotEmpty)
+                  ? email
+                  : '';
+
       final response = await apiClient.client.post(
         ApiConstants.transfer,
         data: {
-          'recipientIdentifier': recipientIdentifier,
+          'senderId': sender,
+          'senderPhone': phone ?? sender,
+          'sender': sender,
+          'recipientIdentifier': cleanRecipient,
+          'receiver': cleanRecipient,
+          'receiverQuery': cleanRecipient,
           'amount': amount,
           'pin': pin,
+          'mpin': pin,
           if (note != null && note.isNotEmpty) 'note': note,
         },
       );

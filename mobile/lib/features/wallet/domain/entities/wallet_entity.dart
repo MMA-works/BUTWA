@@ -19,4 +19,22 @@ class WalletEntity extends Equatable {
 
   @override
   List<Object?> get props => [id, walletTag, currency, balance, isActive, qrCodeData];
+
+  WalletEntity copyWith({
+    String? id,
+    String? walletTag,
+    String? currency,
+    double? balance,
+    bool? isActive,
+    String? qrCodeData,
+  }) {
+    return WalletEntity(
+      id: id ?? this.id,
+      walletTag: walletTag ?? this.walletTag,
+      currency: currency ?? this.currency,
+      balance: balance ?? this.balance,
+      isActive: isActive ?? this.isActive,
+      qrCodeData: qrCodeData ?? this.qrCodeData,
+    );
+  }
 }

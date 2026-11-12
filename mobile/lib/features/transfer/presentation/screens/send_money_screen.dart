@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:batwa_wallet/core/constants/app_colors.dart';
+import 'package:batwa_wallet/features/wallet/presentation/bloc/wallet_bloc.dart';
+import 'package:batwa_wallet/features/wallet/presentation/bloc/wallet_event.dart';
 import 'package:batwa_wallet/features/transfer/presentation/screens/transfer_receipt_screen.dart';
 import 'package:batwa_wallet/features/transfer/data/transfer_remote_datasource.dart';
 import 'package:batwa_wallet/features/transfer/data/models/recipient_model.dart';
@@ -103,8 +106,16 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
   bool _saveAsBeneficiary = true;
   final TextEditingController _beneficiaryNicknameController = TextEditingController();
 
-  // ðŸ‡µðŸ‡° Verified Pakistani Banks with Approved Logos
+  // 🇵🇰 Verified Pakistani Banks & Digital Wallets (BATWA #1 Official)
   final List<BankItem> _allBanks = const [
+    BankItem(
+      id: 'batwa',
+      name: 'BATWA Digital Bank & Wallet (Official)',
+      code: 'BTWA',
+      shortName: 'BATWA',
+      icon: Icons.account_balance_wallet_rounded,
+      brandColor: Color(0xFFFFD700),
+    ),
     BankItem(
       id: 'hbl',
       name: 'Habib Bank Limited (HBL)',
@@ -535,6 +546,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
 
   String _detectBankFromIban(String iban) {
     final clean = iban.replaceAll(' ', '').toUpperCase();
+    if (clean.contains('BTWA') || clean.contains('BATW')) return 'BATWA Digital Bank & Wallet';
     if (clean.contains('MEZN')) return 'Meezan Bank';
     if (clean.contains('HABB')) return 'Habib Bank Limited (HBL)';
     if (clean.contains('UNIL')) return 'United Bank Limited (UBL)';
@@ -853,7 +865,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
 
   Future<void> _executeRealTransfer() async {
     final amountVal = double.tryParse(_enteredAmount.replaceAll(',', '')) ?? 0.0;
-    final isWallet = _selectedPayee?.type == 'wallet' || _batwaRecipientTag.isNotEmpty;
+    final isWallet = _selectedPayee?.type == 'wallet' || _batwaRecipientTag.isNotEmpty || _selectedBank?.id == 'batwa';
 
     // Recipient tag or identifier
     String rawRecipient = isWallet
@@ -865,7 +877,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
             : (_accountInputController.text.trim().isNotEmpty
                 ? _accountInputController.text.trim()
                 : 'bank_settlement'));
-    rawRecipient = rawRecipient.trim().replaceFirst('@', '');
+    rawRecipient = rawRecipient.trim().replaceAll(RegExp(r'^@+'), '');
 
     final noteText = _transferPurpose.isNotEmpty
         ? _transferPurpose
@@ -883,6 +895,20 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
         pin: _confirmedPin ?? '1234',
         note: noteText,
       );
+
+      // ⚡ Optimistic Instant Update to WalletBloc: 0ms real-time dashboard update
+      if (mounted) {
+        try {
+          final parsedBal = (tx as dynamic).senderNewBalance != null
+              ? ((tx as dynamic).senderNewBalance as num).toDouble()
+              : null;
+          context.read<WalletBloc>().add(OptimisticTransferRecordedEvent(
+                transaction: tx,
+                debitedAmount: amountVal,
+                newBalance: parsedBal,
+              ));
+        } catch (_) {}
+      }
 
       _transactionRef = tx.referenceNumber;
       if (mounted) {
@@ -1205,7 +1231,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
                         }
 
                         final name = verifiedRecipient!.recipientFullName;
-                        final acc = verifiedRecipient!.walletTag;
+                        final acc = verifiedRecipient!.walletTag.replaceAll(RegExp(r'^@+'), '');
                         final initials = name.length >= 2 ? name.substring(0, 2).toUpperCase() : 'RC';
                         final bankName = isWallet ? 'Batwa Wallet' : 'Raast Instant';
 
@@ -1894,6 +1920,35 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
   // 🏛️ STEP: SELECT A BANK
   // ====================================================
   Widget _buildBankLogoWidget(BankItem bank, {double size = 48}) {
+    if (bank.id == 'batwa') {
+      return Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFD700),
+          borderRadius: BorderRadius.circular(size * 0.28),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFFFFD700).withValues(alpha: 0.35),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        padding: EdgeInsets.all(size * 0.15),
+        child: Image.asset(
+          'assets/images/app_logo.png',
+          width: size,
+          height: size,
+          fit: BoxFit.contain,
+          errorBuilder: (_, __, ___) => const Icon(
+            Icons.account_balance_wallet_rounded,
+            color: Color(0xFF141722),
+            size: 24,
+          ),
+        ),
+      );
+    }
     return SizedBox(
       width: size,
       height: size,
@@ -1982,7 +2037,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
                         HapticFeedback.lightImpact();
                         setState(() {
                           _selectedBank = bank;
-                          _accountInputController.text = 'PK${bank.code}';
+                          _accountInputController.text = bank.id == 'batwa' ? '' : 'PK${bank.code}';
                           _currentStep = SendMoneyStep.enterBankAccount;
                         });
                       },
@@ -2039,7 +2094,20 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
   Future<void> _performTitleInquiry() async {
     final acc = _accountInputController.text.trim();
     final cleanDigits = acc.replaceAll(RegExp(r'[^0-9]'), '');
-    if (cleanDigits.length < 8 && !acc.toUpperCase().startsWith('PK')) {
+    final cleanTag = acc.replaceAll(RegExp(r'^@+'), '');
+
+    if (_selectedBank?.id == 'batwa') {
+      if (cleanTag.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please enter Batwa Tag (e.g. @username) or Phone Number'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        return;
+      }
+    } else if (cleanDigits.length < 8 && !acc.toUpperCase().startsWith('PK')) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please enter at least 8 digits of Account / IBAN'),
@@ -2058,9 +2126,24 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
     String title;
     try {
       final datasource = TransferRemoteDataSourceImpl(apiClient: ApiClient());
-      final res = await datasource.lookupRecipient(acc);
+      final res = await datasource.lookupRecipient(cleanTag.isNotEmpty ? cleanTag : acc);
       title = res.recipientFullName;
+      if (res.walletTag.isNotEmpty) {
+        _batwaRecipientTag = res.walletTag.replaceAll(RegExp(r'^@+'), '');
+      }
     } catch (_) {
+      if (_selectedBank?.id == 'batwa') {
+        if (!mounted) return;
+        setState(() => _isFetchingTitle = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('No BATWA account found for: $acc'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        return;
+      }
       final hash = cleanDigits.codeUnits.fold<int>(0, (prev, elem) => (prev * 37 + elem)).abs();
       const verifiedTitles = [
         'MUHAMMAD USMAN TARIQ',
@@ -2212,7 +2295,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
                 color: isDark ? Colors.white : const Color(0xFF1B1D28),
               ),
               decoration: InputDecoration(
-                hintText: 'e.g. PK6400012345678901',
+                hintText: bank.id == 'batwa' ? 'e.g. @username or 03232320829' : 'e.g. PK6400012345678901',
                 hintStyle: const TextStyle(fontSize: 13, color: AppColors.textMuted, fontFamily: 'sans-serif'),
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(vertical: 14),
@@ -2465,15 +2548,19 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
                   : name;
 
               final payee = PayeeItem(
-                id: 'bank_',
+                id: 'bank_${DateTime.now().millisecondsSinceEpoch}',
                 name: displayName,
                 initials: initials,
-                bank: ' â€¢â€¢ ',
+                bank: '${bank.shortName} •• ${acc.length > 4 ? acc.substring(acc.length - 4) : acc}',
                 accountNo: acc,
-                type: 'bank',
+                type: bank.id == 'batwa' ? 'wallet' : 'bank',
                 avatarBg: bank.brandColor,
                 bankId: bank.id,
               );
+
+              if (bank.id == 'batwa') {
+                _batwaRecipientTag = acc.replaceAll(RegExp(r'^@+'), '');
+              }
 
               if (_saveAsBeneficiary) {
                 // Add to user session beneficiaries

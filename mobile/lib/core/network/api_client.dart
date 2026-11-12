@@ -164,7 +164,32 @@ class ApiClient {
             }
 
             if (options.data is Map<String, dynamic>) {
-              (options.data as Map<String, dynamic>)['action'] = action;
+              final map = options.data as Map<String, dynamic>;
+              map['action'] = action;
+              if (action == 'transfer') {
+                if (!map.containsKey('senderId') || map['senderId'] == null || map['senderId'].toString().isEmpty) {
+                  final phone = await SecureStorageHelper.getUserPhone();
+                  final tag = await SecureStorageHelper.getWalletTag();
+                  final email = await SecureStorageHelper.getUserEmail();
+                  final id = (phone != null && phone.isNotEmpty)
+                      ? phone
+                      : (tag != null && tag.isNotEmpty)
+                          ? tag
+                          : (email != null && email.isNotEmpty)
+                              ? email
+                              : '';
+                  if (id.isNotEmpty) {
+                    map['senderId'] = id;
+                    map['senderPhone'] = phone ?? id;
+                    map['sender'] = id;
+                  }
+                }
+                if (map.containsKey('recipientIdentifier') && map['recipientIdentifier'] != null) {
+                  map['recipientIdentifier'] = map['recipientIdentifier'].toString().replaceAll(RegExp(r'^@+'), '');
+                  map['receiver'] = map['recipientIdentifier'];
+                  map['receiverQuery'] = map['recipientIdentifier'];
+                }
+              }
             }
           }
 
