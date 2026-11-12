@@ -101,7 +101,8 @@ class ApiClient {
         baseUrl: ApiConstants.baseUrl,
         connectTimeout: const Duration(seconds: 20),
         receiveTimeout: const Duration(seconds: 20),
-        followRedirects: false,
+        followRedirects: true,
+        maxRedirects: 5,
         validateStatus: (status) => status != null && status < 500,
         headers: {
           'Content-Type': 'application/json',
@@ -143,6 +144,24 @@ class ApiClient {
 
             options.path = ''; // Clear path to target /exec directly
             options.queryParameters['action'] = action;
+
+            if (action == 'getWallet' || action == 'getTransactions') {
+              if (!options.queryParameters.containsKey('identifier')) {
+                final phone = await SecureStorageHelper.getUserPhone();
+                final tag = await SecureStorageHelper.getWalletTag();
+                final email = await SecureStorageHelper.getUserEmail();
+                final id = (phone != null && phone.isNotEmpty)
+                    ? phone
+                    : (tag != null && tag.isNotEmpty)
+                        ? tag
+                        : (email != null && email.isNotEmpty)
+                            ? email
+                            : '';
+                if (id.isNotEmpty) {
+                  options.queryParameters['identifier'] = id;
+                }
+              }
+            }
 
             if (options.data is Map<String, dynamic>) {
               (options.data as Map<String, dynamic>)['action'] = action;

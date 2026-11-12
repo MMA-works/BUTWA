@@ -21,6 +21,10 @@ class AuthRepositoryImpl implements AuthRepository {
       fullName: authData.user.fullName,
       walletTag: authData.wallet.walletTag,
     );
+    await SecureStorageHelper.saveUserProfile(
+      phone: authData.user.phoneNumber,
+      email: authData.user.email,
+    );
     return authData.user;
   }
 
@@ -49,6 +53,11 @@ class AuthRepositoryImpl implements AuthRepository {
     await SecureStorageHelper.saveUserDetails(
       fullName: authData.user.fullName,
       walletTag: authData.wallet.walletTag,
+    );
+    await SecureStorageHelper.saveUserProfile(
+      phone: authData.user.phoneNumber,
+      email: authData.user.email,
+      cnic: cnicNumber,
     );
     return authData.user;
   }

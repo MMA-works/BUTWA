@@ -40,8 +40,8 @@ class AppUpdateInfo {
 }
 
 class AppUpdateService {
-  static const int currentVersionCode = 276;
-  static const String currentVersionName = "2.4.36";
+  static const int currentVersionCode = 277;
+  static const String currentVersionName = "2.4.37";
 
   /// Server URLs where version.json might be hosted
   static List<String> get updateUrls => [

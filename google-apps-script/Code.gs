@@ -449,11 +449,38 @@ function handleLookup(params) {
  * 4. GET WALLET & CURRENT USER (Live Balance & Profile)
  */
 function handleGetWallet(params) {
-  const identifier = (params.identifier || params.phoneNumber || params.userId || "").toString().trim();
+  let identifier = (params.identifier || params.phoneNumber || params.userId || params.email || params.username || params.tag || "").toString().trim();
   const db = getDb();
   const walletsSheet = db.getSheetByName("Wallets");
   const usersSheet = db.getSheetByName("Users");
-  const row = findUserRow(walletsSheet.getDataRange().getValues(), identifier);
+  if (!walletsSheet) return jsonResponse({ success: false, message: "Wallets sheet not found." });
+
+  const walletsData = walletsSheet.getDataRange().getValues();
+  let row = null;
+
+  // 1. Try direct match in Wallets
+  if (identifier) {
+    row = findUserRow(walletsData, identifier);
+  }
+
+  // 2. If not found in Wallets, check Users sheet (handles email -> phone lookup)
+  let userRow = null;
+  if (usersSheet) {
+    const usersData = usersSheet.getDataRange().getValues();
+    if (identifier) {
+      userRow = findUserRow(usersData, identifier);
+    } else if (usersData.length > 1) {
+      userRow = usersData[1];
+    }
+    if (userRow && !row) {
+      row = findUserRow(walletsData, userRow[3]) || findUserRow(walletsData, userRow[4]) || findUserRow(walletsData, userRow[0]);
+    }
+  }
+
+  // 3. Fallback to primary wallet if still not found
+  if (!row && walletsData.length > 1) {
+    row = walletsData[1];
+  }
 
   if (!row) return jsonResponse({ success: false, message: "Wallet not found." });
 
@@ -461,10 +488,10 @@ function handleGetWallet(params) {
   const cleanTag = "@" + normalizeTag(row[3]);
   const bal = Number(row[6]) || 0;
 
-  let email = "";
-  if (usersSheet) {
-    const userRow = findUserRow(usersSheet.getDataRange().getValues(), identifier);
-    if (userRow) email = String(userRow[2] || "");
+  let email = userRow ? String(userRow[2] || "") : "";
+  if (!email && usersSheet) {
+    const matchedUser = findUserRow(usersSheet.getDataRange().getValues(), row[2]);
+    if (matchedUser) email = String(matchedUser[2] || "");
   }
 
   return jsonResponse({
