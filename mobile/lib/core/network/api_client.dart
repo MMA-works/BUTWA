@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
@@ -98,10 +99,10 @@ class ApiClient {
     _dio = Dio(
       BaseOptions(
         baseUrl: ApiConstants.baseUrl,
-        connectTimeout: const Duration(seconds: 15),
-        receiveTimeout: const Duration(seconds: 15),
-        followRedirects: true,
-        maxRedirects: 5,
+        connectTimeout: const Duration(seconds: 20),
+        receiveTimeout: const Duration(seconds: 20),
+        followRedirects: false,
+        validateStatus: (status) => status != null && status < 500,
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -157,6 +158,46 @@ class ApiClient {
 
           return handler.next(options);
         },
+        onResponse: (response, handler) async {
+          // 🌟 Handle Google Apps Script 302 Redirect cleanly
+          if (response.statusCode == 302 || response.statusCode == 301 || response.statusCode == 307) {
+            final location = response.headers.value('location');
+            if (location != null && location.isNotEmpty) {
+              final cleanDio = Dio(
+                BaseOptions(
+                  connectTimeout: const Duration(seconds: 20),
+                  receiveTimeout: const Duration(seconds: 20),
+                ),
+              );
+              final redirectedRes = await cleanDio.get<dynamic>(location);
+
+              dynamic body = redirectedRes.data;
+              if (body is String) {
+                try {
+                  body = jsonDecode(body);
+                } catch (_) {}
+              }
+
+              return handler.resolve(
+                Response(
+                  requestOptions: response.requestOptions,
+                  data: body,
+                  statusCode: 200,
+                  headers: redirectedRes.headers,
+                ),
+              );
+            }
+          }
+
+          // Ensure JSON String is parsed to Map
+          if (response.data is String) {
+            try {
+              response.data = jsonDecode(response.data as String);
+            } catch (_) {}
+          }
+
+          return handler.next(response);
+        },
         onError: (DioException e, handler) {
           String errorMessage = 'An unexpected network error occurred';
           int? statusCode = e.response?.statusCode;
@@ -169,7 +210,12 @@ class ApiClient {
 
           if (e.response != null && e.response?.data != null) {
             isServerOnline = true;
-            final data = e.response!.data;
+            dynamic data = e.response!.data;
+            if (data is String) {
+              try {
+                data = jsonDecode(data);
+              } catch (_) {}
+            }
             if (data is Map<String, dynamic>) {
               errorMessage = data['message'] ?? errorMessage;
               details = data['data'];

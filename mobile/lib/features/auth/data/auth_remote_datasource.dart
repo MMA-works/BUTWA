@@ -54,6 +54,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'password': password,
         },
       );
+      if (response.data is Map && response.data['success'] == false) {
+        throw ApiException(message: response.data['message'] ?? 'Login failed. Please check your credentials.');
+      }
       return AuthResponseModel.fromJson(response.data['data']);
     } catch (e) {
       throw _handleError(e);
@@ -81,6 +84,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           if (cnicNumber != null && cnicNumber.isNotEmpty) 'cnicNumber': cnicNumber,
         },
       );
+      if (response.data is Map && response.data['success'] == false) {
+        throw ApiException(message: response.data['message'] ?? 'Registration failed.');
+      }
       return AuthResponseModel.fromJson(response.data['data']);
     } catch (e) {
       throw _handleError(e);

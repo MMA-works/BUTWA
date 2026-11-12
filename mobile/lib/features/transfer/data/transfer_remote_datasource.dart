@@ -27,6 +27,9 @@ class TransferRemoteDataSourceImpl implements TransferRemoteDataSource {
         ApiConstants.lookupRecipient,
         queryParameters: {'identifier': identifier},
       );
+      if (response.data is Map && response.data['success'] == false) {
+        throw ApiException(message: response.data['message'] ?? 'Recipient not found');
+      }
       return RecipientModel.fromJson(response.data['data']);
     } on ApiException {
       rethrow;
@@ -61,6 +64,9 @@ class TransferRemoteDataSourceImpl implements TransferRemoteDataSource {
           if (note != null && note.isNotEmpty) 'note': note,
         },
       );
+      if (response.data is Map && response.data['success'] == false) {
+        throw ApiException(message: response.data['message'] ?? 'Transfer failed');
+      }
       return TransactionModel.fromJson(response.data['data']);
     } on ApiException {
       rethrow;

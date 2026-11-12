@@ -38,8 +38,14 @@ class WalletRemoteDataSourceImpl implements WalletRemoteDataSource {
         ApiConstants.transactions,
         queryParameters: {'page': page, 'size': size},
       );
-      final content = response.data['data']['content'] as List<dynamic>;
-      return content.map((item) => TransactionModel.fromJson(item)).toList();
+      final rawData = response.data['data'];
+      List<dynamic> content = [];
+      if (rawData is List) {
+        content = rawData;
+      } else if (rawData is Map && rawData['content'] is List) {
+        content = rawData['content'] as List<dynamic>;
+      }
+      return content.map((item) => TransactionModel.fromJson(item as Map<String, dynamic>)).toList();
     } on ApiException {
       rethrow;
     } catch (e) {
