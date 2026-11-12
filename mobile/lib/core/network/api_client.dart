@@ -26,24 +26,33 @@ class ApiClient {
     SecureStorageHelper.saveServerUrl(newUrl);
   }
 
+  static const String cloudBackendUrl =
+      'https://script.google.com/macros/s/AKfycbzoLRzxEdGwLHyxKik_TWyBgnrmMUe7RO3hkn7VIKVh1QApp0x69UIasWYtbJABLnz1/exec';
+
   static Future<void> initializeServerUrl() async {
-    final saved = await SecureStorageHelper.getServerUrl();
+    // 1. Sanitize saved URL - remove dead localhosts from physical devices
+    String? saved = await SecureStorageHelper.getServerUrl();
+    if (saved != null && (saved.contains('127.0.0.1') || saved.contains('10.0.2.2') || saved.contains('172.16.'))) {
+      saved = null;
+      await SecureStorageHelper.saveServerUrl(cloudBackendUrl);
+    }
+
+    // 2. Verified candidate URLs (Cloud first, then local Wi-Fi if running in debug)
     final candidates = [
-      'https://script.google.com/macros/s/AKfycbzoLRzxEdGwLHyxKik_TWyBgnrmMUe7RO3hkn7VIKVh1QApp0x69UIasWYtbJABLnz1/exec',
-      'http://172.16.85.139:8080/api/v1',
+      cloudBackendUrl,
       ApiConstants.defaultBaseUrl,
       if (saved != null && saved.isNotEmpty) saved,
-      'http://127.0.0.1:8080/api/v1',
       'http://192.168.0.105:8080/api/v1',
-      'http://10.0.2.2:8080/api/v1',
+      if (kDebugMode) 'http://127.0.0.1:8080/api/v1',
+      if (kDebugMode) 'http://10.0.2.2:8080/api/v1',
     ].toSet().toList();
 
     for (final url in candidates) {
       try {
         final probeDio = Dio(
           BaseOptions(
-            connectTimeout: const Duration(milliseconds: 3500),
-            receiveTimeout: const Duration(milliseconds: 3500),
+            connectTimeout: const Duration(milliseconds: 6000),
+            receiveTimeout: const Duration(milliseconds: 6000),
             followRedirects: true,
           ),
         );
@@ -55,7 +64,7 @@ class ApiClient {
           pingUrl,
           options: Options(validateStatus: (status) => status != null),
         );
-        if (res.statusCode != null && res.statusCode! > 0) {
+        if (res.statusCode != null && res.statusCode! >= 200 && res.statusCode! < 400) {
           ApiConstants.baseUrl = url;
           _instance._dio.options.baseUrl = url;
           isServerOnline = true;
@@ -67,9 +76,11 @@ class ApiClient {
       }
     }
 
-    ApiConstants.baseUrl = 'https://script.google.com/macros/s/AKfycbzoLRzxEdGwLHyxKik_TWyBgnrmMUe7RO3hkn7VIKVh1QApp0x69UIasWYtbJABLnz1/exec';
-    _instance._dio.options.baseUrl = ApiConstants.baseUrl;
+    // Bulletproof default: always lock onto 24/7 Cloud Backend
+    ApiConstants.baseUrl = cloudBackendUrl;
+    _instance._dio.options.baseUrl = cloudBackendUrl;
     isServerOnline = true;
+    await SecureStorageHelper.saveServerUrl(cloudBackendUrl);
   }
 
   static Options deviceHeaders() => Options(headers: {

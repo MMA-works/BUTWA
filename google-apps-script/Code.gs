@@ -89,6 +89,11 @@ function handleRequest(e, method) {
       return handleLookup(params);
     }
 
+    // PIN Setup / Change
+    if (action.includes("pin")) {
+      return handleSetPin(params);
+    }
+
     // Wallet / Balance / Current User
     if (action.includes("wallet") || action.includes("balance") || action.includes("me")) {
       return handleGetWallet(params);
@@ -441,12 +446,13 @@ function handleLookup(params) {
 }
 
 /**
- * 4. GET WALLET (Live Balance)
+ * 4. GET WALLET & CURRENT USER (Live Balance & Profile)
  */
 function handleGetWallet(params) {
   const identifier = (params.identifier || params.phoneNumber || params.userId || "").toString().trim();
   const db = getDb();
   const walletsSheet = db.getSheetByName("Wallets");
+  const usersSheet = db.getSheetByName("Users");
   const row = findUserRow(walletsSheet.getDataRange().getValues(), identifier);
 
   if (!row) return jsonResponse({ success: false, message: "Wallet not found." });
@@ -455,13 +461,25 @@ function handleGetWallet(params) {
   const cleanTag = "@" + normalizeTag(row[3]);
   const bal = Number(row[6]) || 0;
 
+  let email = "";
+  if (usersSheet) {
+    const userRow = findUserRow(usersSheet.getDataRange().getValues(), identifier);
+    if (userRow) email = String(userRow[2] || "");
+  }
+
   return jsonResponse({
     success: true,
     data: {
       id: String(row[0]),
+      userId: String(row[0]),
       walletId: String(row[0]),
+      fullName: String(row[1]),
       accountTitle: String(row[1]),
+      phoneNumber: cleanPhone,
       accountNumber: cleanPhone,
+      email: email,
+      hasPinConfigured: true,
+      isLocked: false,
       walletTag: cleanTag,
       usernameTag: cleanTag,
       balance: bal,
@@ -470,6 +488,46 @@ function handleGetWallet(params) {
       status: String(row[8] || "ACTIVE"),
       qrCodeData: "BATWA:" + cleanPhone
     }
+  });
+}
+
+/**
+ * PIN SETUP / CHANGE
+ */
+function handleSetPin(params) {
+  const identifier = (params.identifier || params.phoneNumber || params.userId || "").toString().trim();
+  const pin = (params.pin || params.newPin || "1234").toString().trim();
+  if (!pin || pin.length < 4) {
+    return jsonResponse({ success: false, message: "PIN must be at least 4 digits." });
+  }
+
+  const db = getDb();
+  const usersSheet = db.getSheetByName("Users");
+  const walletsSheet = db.getSheetByName("Wallets");
+
+  if (usersSheet) {
+    const usersData = usersSheet.getDataRange().getValues();
+    for (let i = 1; i < usersData.length; i++) {
+      if (matchesUser(usersData[i], identifier)) {
+        usersSheet.getRange(i + 1, 7).setValue(pin);
+        break;
+      }
+    }
+  }
+
+  if (walletsSheet) {
+    const walletsData = walletsSheet.getDataRange().getValues();
+    for (let i = 1; i < walletsData.length; i++) {
+      if (matchesUser(walletsData[i], identifier)) {
+        walletsSheet.getRange(i + 1, 6).setValue(pin);
+        break;
+      }
+    }
+  }
+
+  return jsonResponse({
+    success: true,
+    message: "PIN updated successfully!"
   });
 }
 
