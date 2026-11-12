@@ -31,53 +31,7 @@ class ApiClient {
       'https://script.google.com/macros/s/AKfycbzoLRzxEdGwLHyxKik_TWyBgnrmMUe7RO3hkn7VIKVh1QApp0x69UIasWYtbJABLnz1/exec';
 
   static Future<void> initializeServerUrl() async {
-    // 1. Sanitize saved URL - remove dead localhosts from physical devices
-    String? saved = await SecureStorageHelper.getServerUrl();
-    if (saved != null && (saved.contains('127.0.0.1') || saved.contains('10.0.2.2') || saved.contains('172.16.'))) {
-      saved = null;
-      await SecureStorageHelper.saveServerUrl(cloudBackendUrl);
-    }
-
-    // 2. Verified candidate URLs (Cloud first, then local Wi-Fi if running in debug)
-    final candidates = [
-      cloudBackendUrl,
-      ApiConstants.defaultBaseUrl,
-      if (saved != null && saved.isNotEmpty) saved,
-      'http://192.168.0.105:8080/api/v1',
-      if (kDebugMode) 'http://127.0.0.1:8080/api/v1',
-      if (kDebugMode) 'http://10.0.2.2:8080/api/v1',
-    ].toSet().toList();
-
-    for (final url in candidates) {
-      try {
-        final probeDio = Dio(
-          BaseOptions(
-            connectTimeout: const Duration(milliseconds: 6000),
-            receiveTimeout: const Duration(milliseconds: 6000),
-            followRedirects: true,
-          ),
-        );
-        final pingUrl = url.contains('script.google.com')
-            ? '$url?action=ping'
-            : '$url/auth/ping';
-
-        final res = await probeDio.get(
-          pingUrl,
-          options: Options(validateStatus: (status) => status != null),
-        );
-        if (res.statusCode != null && res.statusCode! >= 200 && res.statusCode! < 400) {
-          ApiConstants.baseUrl = url;
-          _instance._dio.options.baseUrl = url;
-          isServerOnline = true;
-          await SecureStorageHelper.saveServerUrl(url);
-          return;
-        }
-      } catch (_) {
-        // Probe next candidate
-      }
-    }
-
-    // Bulletproof default: always lock onto 24/7 Cloud Backend
+    // 🌟 100% Zero Local Dependency: Firmly lock onto 24/7 Cloud Backend
     ApiConstants.baseUrl = cloudBackendUrl;
     _instance._dio.options.baseUrl = cloudBackendUrl;
     isServerOnline = true;
@@ -184,11 +138,24 @@ class ApiClient {
                     map['sender'] = id;
                   }
                 }
-                if (map.containsKey('recipientIdentifier') && map['recipientIdentifier'] != null) {
-                  map['recipientIdentifier'] = map['recipientIdentifier'].toString().replaceAll(RegExp(r'^@+'), '');
-                  map['receiver'] = map['recipientIdentifier'];
-                  map['receiverQuery'] = map['recipientIdentifier'];
+                final rawTarget = (map['recipientIdentifier'] ?? map['receiver'] ?? map['receiverQuery'] ?? map['accountNo'] ?? '').toString();
+                if (rawTarget.isNotEmpty) {
+                  final cleanTarget = rawTarget.replaceAll(RegExp(r'^@+'), '').trim();
+                  map['recipientIdentifier'] = cleanTarget;
+                  map['receiver'] = cleanTarget;
+                  map['receiverQuery'] = cleanTarget;
                 }
+
+                // Dual-propagate critical transfer fields to queryParameters to guarantee zero data loss
+                if (map['senderId'] != null) options.queryParameters['senderId'] = map['senderId'];
+                if (map['senderPhone'] != null) options.queryParameters['senderPhone'] = map['senderPhone'];
+                if (map['receiverQuery'] != null) options.queryParameters['receiverQuery'] = map['receiverQuery'];
+                if (map['receiver'] != null) options.queryParameters['receiver'] = map['receiver'];
+                if (map['recipientIdentifier'] != null) options.queryParameters['recipientIdentifier'] = map['recipientIdentifier'];
+                if (map['amount'] != null) options.queryParameters['amount'] = map['amount'].toString();
+                if (map['pin'] != null) options.queryParameters['pin'] = map['pin'];
+                if (map['mpin'] != null) options.queryParameters['mpin'] = map['mpin'];
+                if (map['note'] != null) options.queryParameters['note'] = map['note'];
               }
             }
           }

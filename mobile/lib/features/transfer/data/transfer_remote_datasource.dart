@@ -61,13 +61,30 @@ class TransferRemoteDataSourceImpl implements TransferRemoteDataSource {
       final phone = await SecureStorageHelper.getUserPhone();
       final tag = await SecureStorageHelper.getWalletTag();
       final email = await SecureStorageHelper.getUserEmail();
-      final sender = (phone != null && phone.isNotEmpty)
+      String sender = (phone != null && phone.isNotEmpty)
           ? phone
           : (tag != null && tag.isNotEmpty)
               ? tag
               : (email != null && email.isNotEmpty)
                   ? email
                   : '';
+
+      if (sender.isEmpty) {
+        try {
+          final myWalletRes = await apiClient.client.get(ApiConstants.myWallet);
+          if (myWalletRes.data is Map && myWalletRes.data['data'] != null) {
+            final wData = myWalletRes.data['data'];
+            sender = (wData['accountNumber'] ?? wData['walletTag'] ?? '').toString();
+            if (sender.isNotEmpty) {
+              await SecureStorageHelper.saveUserProfile(phone: wData['accountNumber']);
+              await SecureStorageHelper.saveUserDetails(
+                fullName: wData['accountTitle'] ?? '',
+                walletTag: wData['walletTag'] ?? '',
+              );
+            }
+          }
+        } catch (_) {}
+      }
 
       final response = await apiClient.client.post(
         ApiConstants.transfer,

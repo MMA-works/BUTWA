@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:batwa_wallet/core/constants/app_colors.dart';
+import 'package:batwa_wallet/features/qr/presentation/screens/qr_scanner_screen.dart';
 import '../../domain/entities/qr_payload_entity.dart';
 import '../bloc/qr_bloc.dart';
 import '../bloc/qr_event.dart';
@@ -62,6 +63,28 @@ class _MyQrScreenState extends State<MyQrScreen> with SingleTickerProviderStateM
           'My QR Code',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white),
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: TextButton.icon(
+              onPressed: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (_) => const QrScannerScreen()),
+                );
+              },
+              icon: const Icon(Icons.qr_code_scanner_rounded, size: 18, color: Color(0xFFFFD700)),
+              label: const Text(
+                'Scan & Pay',
+                style: TextStyle(color: Color(0xFFFFD700), fontWeight: FontWeight.bold, fontSize: 12),
+              ),
+              style: TextButton.styleFrom(
+                backgroundColor: const Color(0xFFFFD700).withValues(alpha: 0.15),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+            ),
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: AppColors.primary,

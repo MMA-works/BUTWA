@@ -9,7 +9,7 @@ import 'package:batwa_wallet/features/cards/presentation/screens/cards_screen.da
 import 'package:batwa_wallet/features/transfer/presentation/screens/send_money_screen.dart';
 import 'package:batwa_wallet/features/vaults/presentation/screens/vaults_screen.dart';
 import 'package:batwa_wallet/features/splits/presentation/screens/splits_hub_screen.dart';
-import 'package:batwa_wallet/features/qr/presentation/screens/my_qr_screen.dart';
+import 'package:batwa_wallet/features/qr/presentation/widgets/qr_mode_bottom_sheet.dart';
 
 class ServiceItemData {
   final String id;
@@ -267,13 +267,11 @@ class _DashboardServicesWidgetState extends State<DashboardServicesWidget> {
           ),
           ServiceItemData(
             id: 'request_qr',
-            label: 'Request / QR',
+            label: 'QR Pay & Receive',
             icon: Icons.qr_code_2_rounded,
             isPinned: _pinnedServiceIds.contains('request_qr'),
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const MyQrScreen()),
-              );
+              QrModeBottomSheet.show(context);
             },
           ),
           ServiceItemData(

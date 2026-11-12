@@ -74,6 +74,15 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<UserEntity?> getCurrentUser() async {
     try {
       final userModel = await remoteDataSource.getCurrentUser();
+      final currentTag = await SecureStorageHelper.getWalletTag();
+      await SecureStorageHelper.saveUserDetails(
+        fullName: userModel.fullName,
+        walletTag: currentTag ?? '',
+      );
+      await SecureStorageHelper.saveUserProfile(
+        phone: userModel.phoneNumber,
+        email: userModel.email,
+      );
       return userModel;
     } catch (_) {
       return null;

@@ -26,6 +26,7 @@ import 'package:batwa_wallet/features/vaults/presentation/screens/vaults_screen.
 import 'package:batwa_wallet/features/splits/presentation/screens/splits_hub_screen.dart';
 import 'package:batwa_wallet/features/security/presentation/screens/security_settings_screen.dart';
 import 'package:batwa_wallet/features/qr/presentation/screens/qr_scanner_screen.dart';
+import 'package:batwa_wallet/features/qr/presentation/widgets/qr_mode_bottom_sheet.dart';
 import 'package:batwa_wallet/features/recurring/presentation/screens/recurring_hub_screen.dart';
 import 'package:batwa_wallet/features/analytics/presentation/screens/analytics_dashboard_screen.dart';
 import 'package:batwa_wallet/features/analytics/presentation/widgets/set_budget_dialog.dart';
@@ -632,9 +633,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 ).then((_) => context.read<WalletBloc>().add(LoadWalletDataEvent()));
                               },
                               onQr: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(builder: (_) => const QrScannerScreen()),
-                                ).then((_) => context.read<WalletBloc>().add(LoadWalletDataEvent()));
+                                QrModeBottomSheet.show(context).then((_) {
+                                  if (context.mounted) {
+                                    context.read<WalletBloc>().add(LoadWalletDataEvent());
+                                  }
+                                });
                               },
                               onBill: () {
                                 Navigator.of(context).push(

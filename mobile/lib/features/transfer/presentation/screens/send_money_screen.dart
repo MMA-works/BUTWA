@@ -868,15 +868,14 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
     final isWallet = _selectedPayee?.type == 'wallet' || _batwaRecipientTag.isNotEmpty || _selectedBank?.id == 'batwa';
 
     // Recipient tag or identifier
-    String rawRecipient = isWallet
-        ? (_batwaRecipientTag.isNotEmpty
-            ? _batwaRecipientTag
-            : (_selectedPayee?.accountNo.isNotEmpty == true ? _selectedPayee!.accountNo : ''))
-        : (_selectedPayee?.accountNo.isNotEmpty == true
-            ? _selectedPayee!.accountNo
-            : (_accountInputController.text.trim().isNotEmpty
-                ? _accountInputController.text.trim()
-                : 'bank_settlement'));
+    String rawRecipient = '';
+    if (_batwaRecipientTag.isNotEmpty) {
+      rawRecipient = _batwaRecipientTag;
+    } else if (_selectedPayee != null && _selectedPayee!.accountNo.isNotEmpty) {
+      rawRecipient = _selectedPayee!.accountNo;
+    } else if (_accountInputController.text.trim().isNotEmpty) {
+      rawRecipient = _accountInputController.text.trim();
+    }
     rawRecipient = rawRecipient.trim().replaceAll(RegExp(r'^@+'), '');
 
     final noteText = _transferPurpose.isNotEmpty
@@ -1231,9 +1230,13 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
                         }
 
                         final name = verifiedRecipient!.recipientFullName;
-                        final acc = verifiedRecipient!.walletTag.replaceAll(RegExp(r'^@+'), '');
+                        final cleanTag = verifiedRecipient!.walletTag.replaceAll(RegExp(r'^@+'), '').trim();
+                        final phone = verifiedRecipient!.maskedPhoneNumber.replaceAll(RegExp(r'[^0-9]'), '').trim();
+                        final acc = isWallet ? (cleanTag.isNotEmpty ? cleanTag : phone) : (phone.isNotEmpty ? phone : cleanTag);
                         final initials = name.length >= 2 ? name.substring(0, 2).toUpperCase() : 'RC';
-                        final bankName = isWallet ? 'Batwa Wallet' : 'Raast Instant';
+                        final bankSubtitle = isWallet
+                            ? 'Batwa Wallet •• @$cleanTag'
+                            : (cleanTag.isNotEmpty ? 'Raast Instant •• @$cleanTag' : 'Raast Instant •• $phone');
 
                         Navigator.pop(modalCtx);
                         setState(() {
@@ -1241,14 +1244,12 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
                             id: 'verified_${DateTime.now().millisecondsSinceEpoch}',
                             name: name,
                             initials: initials,
-                            bank: '$bankName •• @$acc',
+                            bank: bankSubtitle,
                             accountNo: acc,
                             type: type,
                             avatarBg: const Color(0xFF10B981),
                           );
-                          if (isWallet) {
-                            _batwaRecipientTag = acc;
-                          }
+                          _batwaRecipientTag = cleanTag;
                           _currentStep = SendMoneyStep.enterAmount;
                         });
                       },

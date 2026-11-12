@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:batwa_wallet/core/constants/app_colors.dart';
+import 'my_qr_screen.dart';
 import '../bloc/qr_bloc.dart';
 import '../bloc/qr_event.dart';
 import '../bloc/qr_state.dart';
@@ -193,6 +194,27 @@ class _QrScannerScreenState extends State<QrScannerScreen>
           style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: Colors.white),
         ),
         actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+            child: TextButton.icon(
+              onPressed: () {
+                _scannerController.stop();
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (_) => const MyQrScreen()),
+                );
+              },
+              icon: const Icon(Icons.qr_code_2_rounded, size: 16, color: Color(0xFF10B981)),
+              label: const Text(
+                'My QR',
+                style: TextStyle(color: Color(0xFF10B981), fontWeight: FontWeight.w900, fontSize: 11.5),
+              ),
+              style: TextButton.styleFrom(
+                backgroundColor: const Color(0xFF10B981).withValues(alpha: 0.16),
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 2),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+            ),
+          ),
           if (_hasPermission) ...[
             IconButton(
               onPressed: () async {
@@ -500,6 +522,27 @@ class _QrScannerScreenState extends State<QrScannerScreen>
                         padding: EdgeInsets.only(bottom: 16),
                         child: CircularProgressIndicator(color: AppColors.primaryYellow),
                       ),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        _scannerController.stop();
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (_) => const MyQrScreen()),
+                        );
+                      },
+                      icon: const Icon(Icons.qr_code_2_rounded, size: 20, color: Color(0xFF10B981)),
+                      label: const Text(
+                        'Show My QR Code (Receive Money) 📥',
+                        style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13.5),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF10B981).withValues(alpha: 0.16),
+                        foregroundColor: const Color(0xFF10B981),
+                        side: const BorderSide(color: Color(0xFF10B981), width: 1.5),
+                        minimumSize: const Size(double.infinity, 48),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
                     Row(
                       children: [
                         Expanded(
@@ -510,7 +553,7 @@ class _QrScannerScreenState extends State<QrScannerScreen>
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF191B21),
                               foregroundColor: Colors.white,
-                              minimumSize: const Size(0, 48),
+                              minimumSize: const Size(0, 44),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(14),
                                 side: BorderSide(color: Colors.white.withValues(alpha: 0.15)),
@@ -529,7 +572,7 @@ class _QrScannerScreenState extends State<QrScannerScreen>
                             label: const Text('Test Scan', style: TextStyle(color: Color(0xFF1B1D28), fontWeight: FontWeight.w800)),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primaryYellow,
-                              minimumSize: const Size(0, 48),
+                              minimumSize: const Size(0, 44),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                             ),
                           ),

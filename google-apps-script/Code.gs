@@ -114,6 +114,11 @@ function handleRequest(e, method) {
       return handleGetTransactions(params);
     }
 
+    // QR Code / My Code / Parse
+    if (action.includes("qr") || action.includes("my-code") || action.includes("mycode")) {
+      return handleGetMyQr(params);
+    }
+
     return jsonResponse({
       success: false,
       message: "Unknown action: " + action
@@ -359,9 +364,11 @@ function handleRegister(params) {
   const displayPhone = "0" + phoneNumber;
   const displayTag = "@" + usernameTag;
 
-  // Append to Users
+  // Append to Users with dynamic balance formula linked to Wallets tab
+  const nextUserRow = usersSheet.getLastRow() + 1;
+  const balanceFormula = "=IFERROR(INDEX(Wallets!G:G, MATCH(D" + nextUserRow + ", Wallets!C:C, 0)), 0)";
   usersSheet.appendRow([
-    userId, fullName, email, phoneNumber, displayTag, password, mpin, initialBalance, "ACTIVE", nowStr
+    userId, fullName, email, phoneNumber, displayTag, password, mpin, balanceFormula, "ACTIVE", nowStr
   ]);
 
   // Append to Wallets
@@ -486,12 +493,31 @@ function handleGetWallet(params) {
 
   const cleanPhone = "0" + normalizePhone(row[2]);
   const cleanTag = "@" + normalizeTag(row[3]);
-  const bal = Number(row[6]) || 0;
+  let bal = Number(row[6]) || 0;
 
   let email = userRow ? String(userRow[2] || "") : "";
   if (!email && usersSheet) {
     const matchedUser = findUserRow(usersSheet.getDataRange().getValues(), row[2]);
-    if (matchedUser) email = String(matchedUser[2] || "");
+    if (matchedUser) {
+      email = String(matchedUser[2] || "");
+      if (!userRow) userRow = matchedUser;
+    }
+  }
+
+  // 🌟 Bi-Directional Auto-Sync: Keep Users & Wallets tabs identical
+  if (userRow && usersSheet) {
+    const userBal = Number(userRow[7]) || 0;
+    if (userBal !== bal) {
+      const syncBal = (userBal > 0 && bal === 0) ? userBal : bal;
+      bal = syncBal;
+      try {
+        const wIdx = walletsData.indexOf(row);
+        if (wIdx > 0) walletsSheet.getRange(wIdx + 1, 7).setValue(syncBal);
+        const usersData = usersSheet.getDataRange().getValues();
+        const uIdx = usersData.indexOf(userRow);
+        if (uIdx > 0) usersSheet.getRange(uIdx + 1, 8).setValue(syncBal);
+      } catch (_) {}
+    }
   }
 
   return jsonResponse({
@@ -562,8 +588,8 @@ function handleSetPin(params) {
  * 5. P2P TRANSFER (LockService Concurrency Protection)
  */
 function handleTransfer(params) {
-  let senderId = (params.senderId || params.senderPhone || params.sender || params.userId || params.identifier || "").toString().trim();
-  let receiverQuery = (params.receiver || params.receiverPhone || params.receiverQuery || params.recipientIdentifier || "").toString().trim();
+  let senderId = (params.senderId || params.senderPhone || params.sender || params.userId || params.identifier || params.from || "").toString().trim();
+  let receiverQuery = (params.receiver || params.receiverPhone || params.receiverQuery || params.recipientIdentifier || params.query || params.accountNo || params.accountNumber || params.to || params.target || "").toString().trim();
   const amount = parseFloat(params.amount);
   const mpin = (params.mpin || params.pin || "").toString().trim();
   const note = (params.note || "Transfer via BATWA").toString().trim();
@@ -862,6 +888,47 @@ function handleGetTransactions(params) {
     if (results.length >= 50) break;
   }
   return jsonResponse({ success: true, data: results });
+}
+
+/**
+ * 8. GET USER QR PAYLOAD
+ */
+function handleGetMyQr(params) {
+  let identifier = (params.identifier || params.phoneNumber || params.userId || params.email || params.username || params.tag || "").toString().trim();
+  const db = getDb();
+  const walletsSheet = db.getSheetByName("Wallets");
+  const usersSheet = db.getSheetByName("Users");
+  const walletsData = walletsSheet ? walletsSheet.getDataRange().getValues() : [];
+
+  let row = null;
+  if (identifier) {
+    row = findUserRow(walletsData, identifier);
+  }
+  if (!row && usersSheet) {
+    const usersData = usersSheet.getDataRange().getValues();
+    const userRow = findUserRow(usersData, identifier) || (usersData.length > 1 ? usersData[1] : null);
+    if (userRow) {
+      row = findUserRow(walletsData, userRow[3]) || findUserRow(walletsData, userRow[4]);
+    }
+  }
+  if (!row && walletsData.length > 1) {
+    row = walletsData[1];
+  }
+
+  const phone = row ? "0" + normalizePhone(row[2]) : "03232320829";
+  const tag = row ? "@" + normalizeTag(row[3]) : "@batwa_user";
+  const title = row ? String(row[1]) : "BATWA Verified User";
+
+  return jsonResponse({
+    success: true,
+    data: {
+      type: "P2P_STATIC",
+      walletId: phone,
+      accountEmail: tag,
+      accountName: title,
+      rawQrData: "BATWA:" + phone
+    }
+  });
 }
 
 // Helpers
