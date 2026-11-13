@@ -42,6 +42,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
   String? _emailCheckMessage;
 
   // Real-time Username / Custom Tag availability state
+  bool _hasSubmittedRegistration = false;
   bool _isCheckingUsername = false;
   bool? _isUsernameAvailable;
   String? _usernameCheckMessage;
@@ -125,7 +126,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
       final data = response.data is Map ? response.data['data'] as Map<String, dynamic>? : null;
       final bool isAlreadyRegistered = data?['isAlreadyRegistered'] == true ||
           (data?['isAvailable'] == false && (data?['message']?.toString().toLowerCase().contains('already') == true));
-      final bool isReal = data?['isRealDomain'] ?? hasValidDomain;
+      final bool isReal = hasValidDomain || (data?['isRealDomain'] == true);
 
       setState(() {
         _isCheckingEmail = false;
@@ -628,6 +629,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
   // 🌟 Submit Final Registration
   // -------------------------------------------------------------
   void _onFinalRegister() async {
+    _hasSubmittedRegistration = true;
     await UserAvatarHelper.saveGender(
       _selectedGender,
       customUrl: _selectedAvatarUrl,
@@ -670,6 +672,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthFailure) {
+            _hasSubmittedRegistration = false;
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
@@ -677,7 +680,8 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                 behavior: SnackBarBehavior.floating,
               ),
             );
-          } else if (state is Authenticated) {
+          } else if (state is Authenticated && _hasSubmittedRegistration) {
+            _hasSubmittedRegistration = false;
             // 🌟 Directly navigate to PIN Setup (no password needed!)
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(

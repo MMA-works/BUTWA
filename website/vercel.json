@@ -75,17 +75,5 @@
         }
       ]
     }
-  ],
-  "redirects": [
-    {
-      "source": "/batwa-wallet.apk",
-      "destination": "https://raw.githubusercontent.com/MMA-works/BUTWA/main/website/batwa-wallet.apk",
-      "permanent": false
-    },
-    {
-      "source": "/download/apk",
-      "destination": "https://raw.githubusercontent.com/MMA-works/BUTWA/main/website/batwa-wallet.apk",
-      "permanent": false
-    }
   ]
 }

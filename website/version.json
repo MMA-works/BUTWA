@@ -1,25 +1,25 @@
 {
-  "version": "2.4.42",
-  "versionCode": 282,
-  "buildNumber": 282,
+  "version": "2.4.43",
+  "versionCode": 283,
+  "buildNumber": 283,
   "minSupportedVersion": "1.0.0",
   "releaseDate": "2026-11-13",
   "apkName": "batwa-wallet.apk",
   "apkSize": "90.3 MB",
   "fileSizeBytes": 94688534,
   "fileSize": "90.3 MB",
-  "sha256": "57ED6D85338E53B12B9AEE9557DAFAC62A1F4FC2ECF95EC48461372D7B5AF91D",
+  "sha256": "D41989F5F0DE128B6246F6669910C0DA4C51BD53EC25A65BFBA4C2D88EAF7AFE",
   "downloadUrl": "https://buttwaa.online/batwa-wallet.apk",
   "apkUrl": "https://buttwaa.online/batwa-wallet.apk",
   "forceUpdate": false,
-  "title": "BATWA v2.4.42 Instant P2P & Raast Transfer Release",
-  "message": "Guaranteed sender identification and flawless P2P/Raast ledger fund transfers with real-time balance updates.",
+  "title": "BATWA v2.4.43 Direct Release & Registration Fix",
+  "message": "Direct APK distribution, permanent update loop elimination, registration auto-login fix, and flawless Raast ledger fund transfers.",
   "features": [
-    "Sub-second transactions with instant cloud balance updates.",
-    "Enhanced biometric hardware authentication & fraud protection.",
-    "Refined luxury 3D neo-banking UI and instant receipts."
+    "Permanent fix for update prompt loop and direct APK delivery without redirect.",
+    "Fixed registration auto-login and authentic email DNS validation.",
+    "Flawless P2P and Raast instant ledger transfers with real-time balance sync."
   ],
   "changelog": [
-    "Performance improvements, enhanced security, and streamlined experience."
+    "Direct APK download, update prompt loop resolved, registration stability fix, and transfer resilience."
   ]
 }

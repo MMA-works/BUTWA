@@ -130,11 +130,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     _notificationTimer = Timer.periodic(const Duration(seconds: 6), (_) {
       _checkIncomingNotifications();
     });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        AppUpdateService.promptIfUpdateAvailable(context);
-      }
-    });
   }
 
   @override

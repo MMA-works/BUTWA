@@ -41,8 +41,8 @@ class AppUpdateInfo {
 }
 
 class AppUpdateService {
-  static const int currentVersionCode = 282;
-  static const String currentVersionName = "2.4.42";
+  static const int currentVersionCode = 283;
+  static const String currentVersionName = "2.4.43";
 
   /// Server URLs where version.json might be hosted
   static List<String> get updateUrls => [
@@ -102,8 +102,11 @@ class AppUpdateService {
     } catch (_) {}
   }
 
+  static bool _isDialogShowing = false;
+
   /// Automatically prompt user if update is available
   static Future<void> promptIfUpdateAvailable(BuildContext context, {bool showNoUpdateNotice = false, bool forceCheck = false}) async {
+    if (_isDialogShowing) return;
     try {
       final update = await checkUpdate();
       if (!context.mounted) return;
@@ -115,7 +118,8 @@ class AppUpdateService {
           if (isDismissed) return;
         }
 
-        if (context.mounted) {
+        if (context.mounted && !_isDialogShowing) {
+          _isDialogShowing = true;
           showUpdateDialog(context, update);
         }
       } else if (showNoUpdateNotice) {
@@ -274,6 +278,7 @@ class AppUpdateService {
                         Expanded(
                           child: OutlinedButton(
                             onPressed: () {
+                              _isDialogShowing = false;
                               Navigator.pop(ctx);
                               markVersionDismissed(update.versionCode);
                             },
@@ -290,6 +295,7 @@ class AppUpdateService {
                         flex: update.forceUpdate ? 1 : 2,
                         child: ElevatedButton(
                           onPressed: () async {
+                            _isDialogShowing = false;
                             Navigator.pop(ctx);
                             markVersionDismissed(update.versionCode);
                             final target = update.apkUrl.isNotEmpty ? update.apkUrl : update.downloadUrl;
