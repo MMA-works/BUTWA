@@ -425,8 +425,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       const SizedBox(width: 10),
                                       BlocBuilder<AuthBloc, AuthState>(
                                         builder: (context, authState) {
-                                          String name = _cachedUserName.isNotEmpty ? _cachedUserName : 'Batwa Member';
-                                          if (authState is Authenticated && authState.user.fullName.trim().isNotEmpty) {
+                                          String effectiveTag = _cachedWalletTag.isNotEmpty
+                                              ? (_cachedWalletTag.startsWith('@') ? _cachedWalletTag : '@$_cachedWalletTag')
+                                              : '@user';
+                                          String name = (_cachedUserName.isNotEmpty && _cachedUserName != 'Batwa Member' && _cachedUserName != 'Batwa User')
+                                              ? _cachedUserName
+                                              : effectiveTag;
+                                          if (authState is Authenticated && authState.user.fullName.trim().isNotEmpty && authState.user.fullName.trim() != 'Batwa Member' && authState.user.fullName.trim() != 'Batwa User') {
                                             name = authState.user.fullName.trim();
                                           }
                                           return Column(
@@ -472,9 +477,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       onTap: () {
                                         HapticFeedback.lightImpact();
                                         final authState = context.read<AuthBloc>().state;
-                                        final currentUserName = (authState is Authenticated && authState.user.fullName.trim().isNotEmpty)
+                                        final currentUserName = (authState is Authenticated && authState.user.fullName.trim().isNotEmpty && authState.user.fullName.trim() != 'Batwa Member')
                                             ? authState.user.fullName.trim()
-                                            : (_cachedUserName.isNotEmpty ? _cachedUserName : 'Batwa Member');
+                                            : (_cachedUserName.isNotEmpty && _cachedUserName != 'Batwa Member' ? _cachedUserName : (_cachedWalletTag.isNotEmpty ? _cachedWalletTag : '@user'));
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -602,7 +607,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: BlocBuilder<AuthBloc, AuthState>(
                               builder: (context, authState) {
-                                String name = _cachedUserName.isNotEmpty ? _cachedUserName : 'Batwa Member';
+                                String effectiveTag = _cachedWalletTag.isNotEmpty
+                                    ? (_cachedWalletTag.startsWith('@') ? _cachedWalletTag : '@$_cachedWalletTag')
+                                    : '@user';
+                                String name = (_cachedUserName.isNotEmpty && _cachedUserName != 'Batwa Member' && _cachedUserName != 'Batwa User')
+                                    ? _cachedUserName
+                                    : effectiveTag;
                                 String? phone;
                                 if (authState is Authenticated) {
                                   if (authState.user.fullName.trim().isNotEmpty) {
@@ -637,8 +647,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   phone = authState.user.phoneNumber;
                                   name = authState.user.fullName;
                                 }
-                                if (name == null || name.trim().isEmpty) {
-                                  name = _cachedUserName.isNotEmpty ? _cachedUserName : 'Batwa Member';
+                                if (name == null || name.trim().isEmpty || name.trim() == 'Batwa Member' || name.trim() == 'Batwa User') {
+                                  name = (_cachedUserName.isNotEmpty && _cachedUserName != 'Batwa Member' && _cachedUserName != 'Batwa User')
+                                      ? _cachedUserName
+                                      : (_cachedWalletTag.isNotEmpty ? _cachedWalletTag : '@user');
                                 }
                                 phone ??= state.wallet.qrCodeData.replaceAll('BATWA:', '').trim();
                                 Navigator.of(context).push(

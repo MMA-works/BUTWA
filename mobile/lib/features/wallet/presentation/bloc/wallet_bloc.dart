@@ -53,8 +53,12 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
       }
       if (wallet.walletTag.isNotEmpty && wallet.walletTag != '@batwa') {
         final existingName = await SecureStorageHelper.getFullName();
+        final tag = wallet.walletTag.startsWith('@') ? wallet.walletTag : '@${wallet.walletTag}';
+        final resolved = (existingName != null && existingName.isNotEmpty && existingName != 'Batwa Member' && existingName != 'Batwa User')
+            ? existingName
+            : tag;
         SecureStorageHelper.saveUserDetails(
-          fullName: existingName ?? 'Batwa Member',
+          fullName: resolved,
           walletTag: wallet.walletTag,
         );
       }

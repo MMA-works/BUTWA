@@ -32,7 +32,7 @@ class QrRemoteDataSourceImpl implements QrRemoteDataSource {
   Future<QrPayloadModel> getMyStaticQrCode() async {
     final phone = await SecureStorageHelper.getUserPhone() ?? '';
     final tag = await SecureStorageHelper.getWalletTag() ?? '';
-    final name = (await SecureStorageHelper.getFullName()) ?? 'Batwa Member';
+    final rawName = await SecureStorageHelper.getFullName();
     final email = await SecureStorageHelper.getUserEmail() ?? '';
 
     final cleanTag = tag.replaceAll(RegExp(r'^@+'), '').trim();
@@ -41,12 +41,15 @@ class QrRemoteDataSourceImpl implements QrRemoteDataSource {
         : (phone.isNotEmpty ? phone : (email.isNotEmpty ? email : '03232320829'));
 
     final displayTag = cleanTag.isNotEmpty ? '@$cleanTag' : (phone.isNotEmpty ? phone : email);
+    final name = (rawName != null && rawName.isNotEmpty && rawName != 'Batwa Member' && rawName != 'BATWA User')
+        ? rawName
+        : (displayTag.isNotEmpty ? displayTag : '@user');
 
     return QrPayloadModel(
       type: 'P2P_STATIC',
       walletId: bestId,
       accountEmail: displayTag,
-      accountName: (name.isNotEmpty && name != 'BATWA User') ? name : 'Batwa Member',
+      accountName: name,
       rawQrData: 'BATWA:$bestId',
     );
   }

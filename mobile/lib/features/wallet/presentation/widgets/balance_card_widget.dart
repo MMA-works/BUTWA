@@ -168,7 +168,7 @@ class BalanceCardWidget extends StatelessWidget {
                                 } else {
                                   AccountDetailsModal.show(
                                     context,
-                                    fullName: (userName != null && userName != 'Batwa User' && userName!.isNotEmpty) ? userName! : (wallet.walletTag.isNotEmpty ? wallet.walletTag : 'Batwa Member'),
+                                    fullName: (userName != null && userName != 'Batwa User' && userName != 'Batwa Member' && userName!.isNotEmpty) ? userName! : (wallet.walletTag.isNotEmpty ? (wallet.walletTag.startsWith('@') ? wallet.walletTag : '@${wallet.walletTag}') : '@user'),
                                     walletTag: wallet.walletTag,
                                     phoneNumber: userPhone ?? '03219876543',
                                     currency: wallet.currency,
@@ -199,7 +199,7 @@ class BalanceCardWidget extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  (userName != null && userName != 'Batwa User' && userName!.isNotEmpty) ? userName! : (wallet.walletTag.isNotEmpty ? '@${wallet.walletTag.replaceFirst('@', '')}' : 'Batwa Member'),
+                                  (userName != null && userName != 'Batwa User' && userName != 'Batwa Member' && userName!.isNotEmpty) ? userName! : (wallet.walletTag.isNotEmpty ? (wallet.walletTag.startsWith('@') ? wallet.walletTag : '@${wallet.walletTag}') : '@user'),
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 13,
@@ -298,7 +298,7 @@ class BalanceCardWidget extends StatelessWidget {
                   } else {
                     AccountDetailsModal.show(
                       context,
-                      fullName: (userName != null && userName != 'Batwa User' && userName!.isNotEmpty) ? userName! : (wallet.walletTag.isNotEmpty ? wallet.walletTag : 'Batwa Member'),
+                      fullName: (userName != null && userName != 'Batwa User' && userName != 'Batwa Member' && userName!.isNotEmpty) ? userName! : (wallet.walletTag.isNotEmpty ? (wallet.walletTag.startsWith('@') ? wallet.walletTag : '@${wallet.walletTag}') : '@user'),
                       walletTag: wallet.walletTag,
                       phoneNumber: userPhone ?? '03219876543',
                       currency: wallet.currency,

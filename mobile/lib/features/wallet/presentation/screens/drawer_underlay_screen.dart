@@ -51,7 +51,7 @@ class _DrawerUnderlayScreenState extends State<DrawerUnderlayScreen> {
   double _dailyTransferLimit = 500000;
   String _selectedCurrency = 'PKR (Rs)';
   String _selectedLanguage = 'English (US)';
-  String _userFullName = 'Batwa Member';
+  String _userFullName = '';
   String _walletTag = '@user';
   String _userEmail = 'user@batwa.com';
   String _userPhone = '+92 300 1234567';
@@ -85,8 +85,14 @@ class _DrawerUnderlayScreenState extends State<DrawerUnderlayScreen> {
 
       if (mounted) {
         setState(() {
-          if (name != null && name.trim().isNotEmpty) _userFullName = name.trim();
-          if (tag != null && tag.trim().isNotEmpty) _walletTag = tag.trim().startsWith('@') ? tag.trim() : '@${tag.trim()}';
+          if (tag != null && tag.trim().isNotEmpty) {
+            _walletTag = tag.trim().startsWith('@') ? tag.trim() : '@${tag.trim()}';
+          }
+          if (name != null && name.trim().isNotEmpty && name.trim() != 'Batwa Member' && name.trim() != 'Batwa User') {
+            _userFullName = name.trim();
+          } else if (_walletTag.isNotEmpty && _walletTag != '@user') {
+            _userFullName = _walletTag;
+          }
           if (phone != null && phone.trim().isNotEmpty) _userPhone = phone.trim();
           if (email != null && email.trim().isNotEmpty) _userEmail = email.trim();
           if (address != null && address.trim().isNotEmpty) _userAddress = address.trim();
@@ -1150,7 +1156,7 @@ class _DrawerUnderlayScreenState extends State<DrawerUnderlayScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text('NAME', style: TextStyle(color: Colors.white60, fontSize: 9)),
-                            Text(_userFullName.toUpperCase(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+                            Text(((_userFullName.isNotEmpty && _userFullName != 'Batwa Member' && _userFullName != 'Batwa User') ? _userFullName : _walletTag).toUpperCase(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
                           ],
                         ),
                         const Column(
@@ -2961,16 +2967,34 @@ class _DrawerUnderlayScreenState extends State<DrawerUnderlayScreen> {
                       // 🌟 SECTION 0: HERO PROFILE CARD
                       BlocBuilder<AuthBloc, AuthState>(
                         builder: (context, authState) {
+                          String tag = _walletTag.trim();
+                          if (tag.isEmpty || tag == 'user' || tag == '@user') {
+                            tag = '@user';
+                          } else if (!tag.startsWith('@')) {
+                            tag = '@$tag';
+                          }
+
                           String name = _userFullName;
                           String email = _userEmail;
                           if (authState is Authenticated) {
-                            if (authState.user.fullName.trim().isNotEmpty) {
+                            if (authState.user.fullName.trim().isNotEmpty &&
+                                authState.user.fullName.trim() != 'Batwa Member' &&
+                                authState.user.fullName.trim() != 'Batwa User') {
                               name = authState.user.fullName.trim();
                             }
                             if (authState.user.email.trim().isNotEmpty) {
                               email = authState.user.email.trim();
                             }
                           }
+
+                          // User request: "settting ma butwa member ki jagha @username ay"
+                          final handleTitle = (tag.isNotEmpty && tag != '@user')
+                              ? tag
+                              : (name.isNotEmpty && name != 'Batwa Member' && name != 'Batwa User' ? name : '@user');
+
+                          final realName = (name.isNotEmpty && name != 'Batwa Member' && name != 'Batwa User' && name != handleTitle)
+                              ? name
+                              : null;
 
                           return Container(
                             padding: const EdgeInsets.all(18),
@@ -3044,7 +3068,7 @@ class _DrawerUnderlayScreenState extends State<DrawerUnderlayScreen> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        name,
+                                        handleTitle,
                                         style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.w900,
@@ -3054,6 +3078,20 @@ class _DrawerUnderlayScreenState extends State<DrawerUnderlayScreen> {
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                       ),
+                                      if (realName != null) ...[
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          realName,
+                                          style: const TextStyle(
+                                            fontSize: 12.5,
+                                            fontWeight: FontWeight.w700,
+                                            color: Color(0xFFF3D602),
+                                            letterSpacing: -0.1,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
                                       const SizedBox(height: 3),
                                       Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -3063,7 +3101,7 @@ class _DrawerUnderlayScreenState extends State<DrawerUnderlayScreen> {
                                           border: Border.all(color: const Color(0xFFF3D602).withValues(alpha: 0.4), width: 0.8),
                                         ),
                                         child: Text(
-                                          _walletTag.isNotEmpty ? _walletTag : '@user',
+                                          handleTitle,
                                           style: const TextStyle(
                                             fontSize: 11.5,
                                             fontWeight: FontWeight.w800,

@@ -1,29 +1,29 @@
 ﻿{
-    "version":  "2.4.50",
-    "versionCode":  290,
-    "buildNumber":  290,
+    "version":  "2.4.51",
+    "versionCode":  291,
+    "buildNumber":  291,
     "minSupportedVersion":  "1.0.0",
     "releaseDate":  "2026-11-13",
     "apkName":  "batwa-wallet.apk",
     "apkSize":  "90.2 MB",
-    "fileSizeBytes":  94573586,
+    "fileSizeBytes":  94573582,
     "fileSize":  "90.2 MB",
-    "sha256":  "398FE4914868C63CC00D7244C82A736D18638850B5CB50D6A31D5DE975CD2705",
+    "sha256":  "C152C1EB5FD014806C3C2E7839B4D570850EAE37CA04214F984E15AE43D4E4A9",
     "downloadUrl":  "https://buttwaa.online/batwa-wallet.apk",
     "apkUrl":  "https://buttwaa.online/batwa-wallet.apk",
     "forceUpdate":  false,
-    "title":  "BATWA v2.4.50 Streamlined Clean Personal QR & Identity Display",
-    "message":  "Reverted to classic white P2P QR design, removed dynamic request and clutter, and enhanced personal handle presentation.",
+    "title":  "BATWA v2.4.51 Settings & Dashboard @username Handle Sync",
+    "message":  "Replaced all generic fallback labels in Settings and Dashboard with dynamic personal @username handles and verified tags.",
     "features":  [
-                     "Clean Personal QR: Classic white card layout with verified badge and high-contrast scanning.",
-                     "Clutter-Free: Removed redundant dynamic request tabs and bottom payload buttons.",
-                     "Seamless Scan & Pay Navigation: Quick 1-tap launcher for QR camera scanner.",
-                     "Preserved Custom Tag & Username: Full identity synchronization across app."
+                     "Settings @username Title: Prominently displays user's personal @tag in the Hero card and KYC profile.",
+                     "Universal Tag Resolution: Fallback labels dynamically resolve to active P2P handle across all screens.",
+                     "Clean QR Layout: Restored classic verified P2P QR design with clutter-free controls.",
+                     "Zero Default Fallbacks: Complete removal of generic fallback labels from storage and view models."
                  ],
     "changelog":  [
-                      "Reverted My QR Code layout to user-preferred clean white card theme.",
-                      "Removed Dynamic Amount Request tab and bottom copy payload button as requested.",
-                      "Fixed QR code screen header visibility with dark contrast title.",
-                      "Build 290 release."
+                      "Replaced 'Batwa Member' in Settings with dynamic user @username handle as requested.",
+                      "Updated Hero card and NADRA identity preview in DrawerUnderlayScreen to prioritize @tag.",
+                      "Synchronized Dashboard and BalanceCard handle resolution.",
+                      "Build 291 release."
                   ]
 }
