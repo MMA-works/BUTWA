@@ -51,7 +51,8 @@ class _DrawerUnderlayScreenState extends State<DrawerUnderlayScreen> {
   double _dailyTransferLimit = 500000;
   String _selectedCurrency = 'PKR (Rs)';
   String _selectedLanguage = 'English (US)';
-  String _userFullName = 'Batwa User';
+  String _userFullName = 'Batwa Member';
+  String _walletTag = '@user';
   String _userEmail = 'user@batwa.com';
   String _userPhone = '+92 300 1234567';
   String _userAddress = 'Plot 42, Street 18, F-7/2, Islamabad, Pakistan';
@@ -71,6 +72,7 @@ class _DrawerUnderlayScreenState extends State<DrawerUnderlayScreen> {
   Future<void> _loadUserData() async {
     try {
       final name = await SecureStorageHelper.getFullName();
+      final tag = await SecureStorageHelper.getWalletTag();
       final phone = await SecureStorageHelper.getUserPhone();
       final email = await SecureStorageHelper.getUserEmail();
       final address = await SecureStorageHelper.getUserAddress();
@@ -83,11 +85,12 @@ class _DrawerUnderlayScreenState extends State<DrawerUnderlayScreen> {
 
       if (mounted) {
         setState(() {
-          if (name != null && name.isNotEmpty) _userFullName = name;
-          if (phone != null && phone.isNotEmpty) _userPhone = phone;
-          if (email != null && email.isNotEmpty) _userEmail = email;
-          if (address != null && address.isNotEmpty) _userAddress = address;
-          if (cnic != null && cnic.isNotEmpty) _userCnic = cnic;
+          if (name != null && name.trim().isNotEmpty) _userFullName = name.trim();
+          if (tag != null && tag.trim().isNotEmpty) _walletTag = tag.trim().startsWith('@') ? tag.trim() : '@${tag.trim()}';
+          if (phone != null && phone.trim().isNotEmpty) _userPhone = phone.trim();
+          if (email != null && email.trim().isNotEmpty) _userEmail = email.trim();
+          if (address != null && address.trim().isNotEmpty) _userAddress = address.trim();
+          if (cnic != null && cnic.trim().isNotEmpty) _userCnic = cnic.trim();
           if (limit != null && limit > 0) _dailyTransferLimit = limit;
           _biometricEnabled = bio;
           _selectedCurrency = curr;
@@ -2961,8 +2964,12 @@ class _DrawerUnderlayScreenState extends State<DrawerUnderlayScreen> {
                           String name = _userFullName;
                           String email = _userEmail;
                           if (authState is Authenticated) {
-                            name = authState.user.fullName;
-                            email = authState.user.email;
+                            if (authState.user.fullName.trim().isNotEmpty) {
+                              name = authState.user.fullName.trim();
+                            }
+                            if (authState.user.email.trim().isNotEmpty) {
+                              email = authState.user.email.trim();
+                            }
                           }
 
                           return Container(
@@ -3038,7 +3045,7 @@ class _DrawerUnderlayScreenState extends State<DrawerUnderlayScreen> {
                                     children: [
                                       Text(
                                         name,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.w900,
                                           color: Colors.white,
@@ -3047,11 +3054,29 @@ class _DrawerUnderlayScreenState extends State<DrawerUnderlayScreen> {
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                       ),
-                                      const SizedBox(height: 2),
+                                      const SizedBox(height: 3),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFF3D602).withValues(alpha: 0.15),
+                                          borderRadius: BorderRadius.circular(6),
+                                          border: Border.all(color: const Color(0xFFF3D602).withValues(alpha: 0.4), width: 0.8),
+                                        ),
+                                        child: Text(
+                                          _walletTag.isNotEmpty ? _walletTag : '@user',
+                                          style: const TextStyle(
+                                            fontSize: 11.5,
+                                            fontWeight: FontWeight.w800,
+                                            color: Color(0xFFF3D602),
+                                            letterSpacing: 0.2,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 3),
                                       Text(
                                         email,
-                                        style: TextStyle(
-                                          fontSize: 12,
+                                        style: const TextStyle(
+                                          fontSize: 11.5,
                                           fontWeight: FontWeight.w500,
                                           color: Colors.white70,
                                         ),
@@ -3261,6 +3286,26 @@ class _DrawerUnderlayScreenState extends State<DrawerUnderlayScreen> {
                   _buildSettingsGroup(
                     isDark: isDark,
                     items: [
+                      _buildSettingsTile(
+                        icon: Icons.alternate_email_rounded,
+                        title: 'Batwa ID / Username',
+                        subtitle: '$_walletTag • Instant P2P Handle',
+                        isDark: isDark,
+                        trailingBadge: 'Active',
+                        badgeColor: const Color(0xFFF3D602),
+                        badgeTextColor: const Color(0xFF1B1D28),
+                        onTap: () {
+                          Clipboard.setData(ClipboardData(text: _walletTag));
+                          HapticFeedback.lightImpact();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Copied $_walletTag to clipboard!'),
+                              backgroundColor: const Color(0xFF042B1D),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        },
+                      ),
                       _buildSettingsTile(
                         icon: Icons.phone_android_outlined,
                         title: 'Registered Mobile Number',

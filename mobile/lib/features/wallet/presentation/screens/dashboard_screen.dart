@@ -49,6 +49,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedTabIndex = 0;
   String _currentAvatarUrl = UserAvatarHelper.defaultMaleAvatar;
   String _currentGender = "MALE";
+  String _cachedUserName = '';
+  String _cachedWalletTag = '';
   Timer? _notificationTimer;
   int _unreadNotificationCount = 0;
   String? _latestKnownNotificationId;
@@ -104,6 +106,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
     } catch (_) {}
   }
 
+  Future<void> _loadUserData() async {
+    final name = await SecureStorageHelper.getFullName();
+    final tag = await SecureStorageHelper.getWalletTag();
+    if (mounted) {
+      setState(() {
+        if (name != null && name.trim().isNotEmpty) _cachedUserName = name.trim();
+        if (tag != null && tag.trim().isNotEmpty) _cachedWalletTag = tag.trim();
+      });
+    }
+  }
+
   Future<void> _loadUserAvatar() async {
     final avatar = await UserAvatarHelper.getAvatarUrl();
     final gender = await UserAvatarHelper.getGender();
@@ -118,6 +131,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
+    _loadUserData();
     _loadUserAvatar();
     context.read<WalletBloc>().add(LoadWalletDataEvent());
     _checkIncomingNotifications();
@@ -411,9 +425,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       const SizedBox(width: 10),
                                       BlocBuilder<AuthBloc, AuthState>(
                                         builder: (context, authState) {
-                                          String name = 'Batwa User';
-                                          if (authState is Authenticated && authState.user.fullName.isNotEmpty) {
-                                            name = authState.user.fullName;
+                                          String name = _cachedUserName.isNotEmpty ? _cachedUserName : 'Batwa Member';
+                                          if (authState is Authenticated && authState.user.fullName.trim().isNotEmpty) {
+                                            name = authState.user.fullName.trim();
                                           }
                                           return Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -458,9 +472,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       onTap: () {
                                         HapticFeedback.lightImpact();
                                         final authState = context.read<AuthBloc>().state;
-                                        final currentUserName = (authState is Authenticated && authState.user.fullName.isNotEmpty)
-                                            ? authState.user.fullName
-                                            : 'Batwa User';
+                                        final currentUserName = (authState is Authenticated && authState.user.fullName.trim().isNotEmpty)
+                                            ? authState.user.fullName.trim()
+                                            : (_cachedUserName.isNotEmpty ? _cachedUserName : 'Batwa Member');
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -588,11 +602,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: BlocBuilder<AuthBloc, AuthState>(
                               builder: (context, authState) {
-                                String name = 'Batwa User';
+                                String name = _cachedUserName.isNotEmpty ? _cachedUserName : 'Batwa Member';
                                 String? phone;
                                 if (authState is Authenticated) {
-                                  if (authState.user.fullName.isNotEmpty) {
-                                    name = authState.user.fullName;
+                                  if (authState.user.fullName.trim().isNotEmpty) {
+                                    name = authState.user.fullName.trim();
                                   }
                                   phone = authState.user.phoneNumber;
                                 }
@@ -622,6 +636,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 if (authState is Authenticated) {
                                   phone = authState.user.phoneNumber;
                                   name = authState.user.fullName;
+                                }
+                                if (name == null || name.trim().isEmpty) {
+                                  name = _cachedUserName.isNotEmpty ? _cachedUserName : 'Batwa Member';
                                 }
                                 phone ??= state.wallet.qrCodeData.replaceAll('BATWA:', '').trim();
                                 Navigator.of(context).push(

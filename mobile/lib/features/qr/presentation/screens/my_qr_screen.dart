@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:batwa_wallet/core/constants/app_colors.dart';
+import 'package:batwa_wallet/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:batwa_wallet/features/auth/presentation/bloc/auth_state.dart';
 import '../../domain/entities/qr_payload_entity.dart';
 import '../bloc/qr_bloc.dart';
 import '../bloc/qr_event.dart';
@@ -69,7 +71,13 @@ class _MyQrScreenState extends State<MyQrScreen> {
             );
           }
 
-          final name = staticQr.accountName.isNotEmpty ? staticQr.accountName : 'BATWA User';
+          final authState = context.read<AuthBloc>().state;
+          String fallbackName = (authState is Authenticated && authState.user.fullName.trim().isNotEmpty)
+              ? authState.user.fullName.trim()
+              : 'Batwa Member';
+          final name = (staticQr.accountName.isNotEmpty && staticQr.accountName != 'BATWA User')
+              ? staticQr.accountName
+              : fallbackName;
           final tag = staticQr.accountEmail.isNotEmpty ? staticQr.accountEmail : '';
           final initials = name.length >= 2 ? name.substring(0, 2).toUpperCase() : 'BW';
 

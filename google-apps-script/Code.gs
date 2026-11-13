@@ -461,7 +461,7 @@ function handleRegister(params) {
   const fullName = (params.fullName || params.name || "").toString().trim();
   const phoneNumber = normalizePhone(params.phoneNumber || params.phone || "");
   const email = (params.email || "").toString().trim().toLowerCase();
-  let usernameTag = normalizeTag(params.usernameTag || params.username || "");
+  let usernameTag = normalizeTag(params.usernameTag || params.username || params.customTag || params.tag || "");
   const password = (params.password || params.loginPassword || "").toString().trim();
   const mpin = (params.mpin || params.pin || "1234").toString().trim();
 

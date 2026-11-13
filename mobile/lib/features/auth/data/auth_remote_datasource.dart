@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:batwa_wallet/core/constants/api_constants.dart';
 import 'package:batwa_wallet/core/network/api_client.dart';
 import 'package:batwa_wallet/core/network/api_exception.dart';
+import 'package:batwa_wallet/core/utils/secure_storage_helper.dart';
 import 'package:batwa_wallet/features/auth/data/models/auth_response_model.dart';
 import 'package:batwa_wallet/features/auth/data/models/user_model.dart';
 
@@ -81,6 +82,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'phoneNumber': phoneNumber,
           'password': password,
           if (customTag != null && customTag.isNotEmpty) 'customTag': customTag,
+          if (customTag != null && customTag.isNotEmpty) 'usernameTag': customTag,
+          if (customTag != null && customTag.isNotEmpty) 'username': customTag,
+          if (customTag != null && customTag.isNotEmpty) 'tag': customTag,
           if (cnicNumber != null && cnicNumber.isNotEmpty) 'cnicNumber': cnicNumber,
         },
       );
@@ -96,11 +100,21 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> setPin({required String pin, required String currentPassword}) async {
     try {
+      final phone = await SecureStorageHelper.getUserPhone();
+      final tag = await SecureStorageHelper.getWalletTag();
+      final email = await SecureStorageHelper.getUserEmail();
+      final cleanTag = (tag ?? '').replaceAll('@', '').trim();
+      final cleanPhone = (phone ?? '').trim();
+      final id = cleanTag.isNotEmpty ? cleanTag : (cleanPhone.isNotEmpty ? cleanPhone : (email ?? ''));
+
       await apiClient.client.post(
         ApiConstants.setPin,
         data: {
           'pin': pin,
           'currentPassword': currentPassword,
+          if (id.isNotEmpty) 'identifier': id,
+          if (cleanPhone.isNotEmpty) 'phoneNumber': cleanPhone,
+          if (cleanTag.isNotEmpty) 'usernameTag': cleanTag,
         },
       );
     } catch (e) {

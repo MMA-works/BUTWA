@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:batwa_wallet/core/utils/secure_storage_helper.dart';
+import 'package:batwa_wallet/features/auth/domain/entities/user_entity.dart';
 import 'package:batwa_wallet/features/auth/domain/repositories/auth_repository.dart';
 import 'package:batwa_wallet/features/auth/presentation/bloc/auth_event.dart';
 import 'package:batwa_wallet/features/auth/presentation/bloc/auth_state.dart';
@@ -24,10 +26,44 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (user != null) {
         emit(Authenticated(user: user));
       } else {
-        emit(Unauthenticated());
+        final token = await SecureStorageHelper.getAccessToken();
+        final name = await SecureStorageHelper.getFullName();
+        if (token != null && token.isNotEmpty && name != null && name.isNotEmpty) {
+          final phone = await SecureStorageHelper.getUserPhone() ?? '';
+          final email = await SecureStorageHelper.getUserEmail() ?? '';
+          emit(Authenticated(
+            user: UserEntity(
+              id: 'usr_local',
+              email: email,
+              phoneNumber: phone,
+              fullName: name,
+              hasPinConfigured: true,
+              isLocked: false,
+            ),
+          ));
+        } else {
+          emit(Unauthenticated());
+        }
       }
     } catch (e) {
-      emit(Unauthenticated());
+      final token = await SecureStorageHelper.getAccessToken();
+      final name = await SecureStorageHelper.getFullName();
+      if (token != null && token.isNotEmpty && name != null && name.isNotEmpty) {
+        final phone = await SecureStorageHelper.getUserPhone() ?? '';
+        final email = await SecureStorageHelper.getUserEmail() ?? '';
+        emit(Authenticated(
+          user: UserEntity(
+            id: 'usr_local',
+            email: email,
+            phoneNumber: phone,
+            fullName: name,
+            hasPinConfigured: true,
+            isLocked: false,
+          ),
+        ));
+      } else {
+        emit(Unauthenticated());
+      }
     }
   }
 
@@ -74,7 +110,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         pin: event.pin,
         currentPassword: event.currentPassword,
       );
-      final user = await authRepository.getCurrentUser();
+      UserEntity? user = await authRepository.getCurrentUser();
+      if (user == null) {
+        final name = await SecureStorageHelper.getFullName();
+        final phone = await SecureStorageHelper.getUserPhone() ?? '';
+        final email = await SecureStorageHelper.getUserEmail() ?? '';
+        if (name != null && name.isNotEmpty) {
+          user = UserEntity(
+            id: 'usr_active',
+            email: email,
+            phoneNumber: phone,
+            fullName: name,
+            hasPinConfigured: true,
+            isLocked: false,
+          );
+        }
+      }
       if (user != null) {
         emit(PinSetSuccess(user: user));
       } else {

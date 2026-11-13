@@ -32,11 +32,6 @@ class AuthFailure extends AuthState {
   List<Object?> get props => [message];
 }
 
-class PinSetSuccess extends AuthState {
-  final UserEntity user;
-
-  const PinSetSuccess({required this.user});
-
-  @override
-  List<Object?> get props => [user];
+class PinSetSuccess extends Authenticated {
+  const PinSetSuccess({required super.user});
 }

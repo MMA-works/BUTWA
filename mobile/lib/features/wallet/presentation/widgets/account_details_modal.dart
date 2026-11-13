@@ -80,10 +80,14 @@ class _AccountDetailsModalState extends State<AccountDetailsModal> {
   }
 
   String get _accountTitle =>
-      widget.fullName.trim().isNotEmpty ? widget.fullName.trim() : 'Batwa Account Holder';
+      (widget.fullName.trim().isNotEmpty && widget.fullName.trim() != 'Batwa User')
+          ? widget.fullName.trim()
+          : 'Batwa Account Holder';
 
   String get _username =>
-      widget.walletTag.trim().isNotEmpty ? '@${widget.walletTag.trim().replaceFirst('@', '')}' : '@batwa_user';
+      (widget.walletTag.trim().isNotEmpty && widget.walletTag.trim() != '@batwa_user')
+          ? '@${widget.walletTag.trim().replaceFirst('@', '')}'
+          : '@user';
 
   static const String _bankName = 'BATWA Digital Wallet / Microfinance Bank';
 

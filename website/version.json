@@ -1,30 +1,30 @@
 ﻿{
-    "version":  "2.4.48",
-    "versionCode":  288,
-    "buildNumber":  288,
+    "version":  "2.4.49",
+    "versionCode":  289,
+    "buildNumber":  289,
     "minSupportedVersion":  "1.0.0",
     "releaseDate":  "2026-11-13",
     "apkName":  "batwa-wallet.apk",
     "apkSize":  "90.2 MB",
     "fileSizeBytes":  94573582,
     "fileSize":  "90.2 MB",
-    "sha256":  "24FA5672BB87394AEAFBC9B63B30E4A74F9782611C79D4A97AACC6097D2A72E2",
+    "sha256":  "C088936F331AA90F868B66921DC71079EEA4DFF9A0C061C70B3BBA7139881149",
     "downloadUrl":  "https://buttwaa.online/batwa-wallet.apk",
     "apkUrl":  "https://buttwaa.online/batwa-wallet.apk",
     "forceUpdate":  false,
-    "title":  "BATWA v2.4.48 Real-time Receiver Notifications & Credit Tracking",
-    "message":  "Real-time in-app receiver alerts, dynamic incoming credit amounts (+PKR), and enhanced financial statistics and activity tracking.",
+    "title":  "BATWA v2.4.49 Custom User Identity & Profile Persistence",
+    "message":  "Instant custom Batwa Tag (@tag) registration, dynamic profile name synchronization across Dashboard and Settings, and persistent user credentials.",
     "features":  [
-                     "Real-time In-App Notifications: Automatic heads-up alert banner with haptic feedback on incoming transfers.",
-                     "Accurate Credit & Debit Classification: Incoming transfers display in vibrant green with '+' sign across history and analytics.",
-                     "Notifications Activity Feed: Bell screen lists all received and sent payments with direct receipt view.",
-                     "Enhanced Inflow/Outflow Statistics: Real-time calculation of income vs expenses."
+                     "Custom Batwa ID / Username: Exact user-selected tag is preserved on registration without random numbers.",
+                     "Accurate Profile & Settings Sync: Dashboard and Settings display the real registered full name and tag handle.",
+                     "Seamless Post-Registration Flow: Retains authenticated user identity directly from PIN setup.",
+                     "Instant P2P Handle Copy: Quick copy action for personal Batwa tag in Settings."
                  ],
     "changelog":  [
-                      "Fixed receiver transaction categorization: incoming transfers properly identified as credit (+PKR).",
-                      "Added real-time transaction listener and instant heads-up notification banner for money received.",
-                      "Revamped notification center with direct transaction receipt navigation.",
-                      "Optimized backend transaction querying by wallet tag and phone number.",
-                      "Build 288 release."
+                      "Fixed username tag registration: customTag now accurately captured by backend.",
+                      "Fixed Dashboard & Settings user display: replaces generic Batwa User with actual registered account name.",
+                      "Added Batwa ID / Username tag badge and copy tile in Settings drawer.",
+                      "Synchronized PinSetSuccess state into Authenticated identity session.",
+                      "Build 289 release."
                   ]
 }
