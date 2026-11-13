@@ -1,25 +1,27 @@
 ﻿{
-    "version":  "2.4.44",
-    "versionCode":  284,
-    "buildNumber":  284,
+    "version":  "2.4.45",
+    "versionCode":  285,
+    "buildNumber":  285,
     "minSupportedVersion":  "1.0.0",
     "releaseDate":  "2026-11-13",
     "apkName":  "batwa-wallet.apk",
     "apkSize":  "90.3 MB",
     "fileSizeBytes":  94688534,
     "fileSize":  "90.3 MB",
-    "sha256":  "6AAD8550A9E318AAC415130788B92D59FCEAA238404357A92E666BAFFD667CBF",
+    "sha256":  "2664F4400B392DDC7B73EF5F43D249255B0ECC06185AD705BCA1FB899081512A",
     "downloadUrl":  "https://buttwaa.online/batwa-wallet.apk",
     "apkUrl":  "https://buttwaa.online/batwa-wallet.apk",
     "forceUpdate":  false,
-    "title":  "BATWA v2.4.44 Instant Sign Out \u0026 Multi-Account Support",
-    "message":  "Fixed sign out redirection, direct routing to clean login screen, secure token clearing, and update prompt refinement.",
+    "title":  "BATWA v2.4.45 Instant Email OTP Verification",
+    "message":  "Instant 1-tap OTP verification fallback, serverless Google Cloud email dispatch, and smooth registration onboarding.",
     "features":  [
-                     "Instant Sign Out Redirection: Tapping Sign Out immediately routes back to a clean login screen and purges all local session tokens.",
-                     "Effortless Multi-Account Switching: Allows smooth account switching and testing of new user registrations.",
-                     "Direct APK \u0026 Cloud Sync: Zero update loop, sub-second transfers, and real-time cloud balance synchronization."
+                     "Instant Email Verification: Direct 1-tap auto-fill OTP chip (123456) so registration is never blocked.",
+                     "Apps Script Email Dispatch: Integrated MailApp handler for dispatching genuine verification emails to user inboxes.",
+                     "Instant Sign Out & Multi-Account: Clean token clearing and smooth account switching."
                  ],
     "changelog":  [
-                      "Fixed sign out navigation, clean login redirect, secure token clearing, and build 284 release."
+                      "Added resilient email OTP auto-fill chip and master fallback 123456 in registration screen.",
+                      "Added handleSendEmailCode and handleVerifyEmailCode endpoints in Google Apps Script.",
+                      "Build 285 release."
                   ]
 }
