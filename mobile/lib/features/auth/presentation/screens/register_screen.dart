@@ -102,9 +102,18 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
       return;
     }
 
+    final domain = clean.substring(clean.lastIndexOf('@') + 1);
+    const commonDomains = [
+      'gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com',
+      'icloud.com', 'live.com', 'msn.com', 'proton.me', 'protonmail.com',
+      'zoho.com', 'aol.com', 'yandex.com', 'mail.com', 'gmx.com'
+    ];
+    final bool isWellKnown = commonDomains.contains(domain);
+    final bool hasValidDomain = isWellKnown || (domain.contains('.') && domain.split('.').last.length >= 2);
+
     setState(() {
       _isCheckingEmail = true;
-      _emailCheckMessage = 'Checking real-world mail servers...';
+      _emailCheckMessage = 'Checking email availability...';
     });
 
     try {
@@ -113,31 +122,30 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
         queryParameters: {'email': clean},
       );
 
-      final data = response.data['data'] as Map<String, dynamic>?;
-      final bool isReal = data?['isRealDomain'] == true;
-      final bool isAlreadyRegistered = data?['isAlreadyRegistered'] == true;
+      final data = response.data is Map ? response.data['data'] as Map<String, dynamic>? : null;
+      final bool isAlreadyRegistered = data?['isAlreadyRegistered'] == true ||
+          (data?['isAvailable'] == false && (data?['message']?.toString().toLowerCase().contains('already') == true));
+      final bool isReal = data?['isRealDomain'] ?? hasValidDomain;
 
       setState(() {
         _isCheckingEmail = false;
-        _isEmailRealDomain = isReal && !isAlreadyRegistered;
-        if (!isReal) {
-          _emailCheckMessage = 'This email domain does not exist in the real world.';
-        } else if (isAlreadyRegistered) {
+        if (isAlreadyRegistered) {
+          _isEmailRealDomain = false;
           _emailCheckMessage = 'This email is already registered. Try logging in.';
+        } else if (!isReal) {
+          _isEmailRealDomain = false;
+          _emailCheckMessage = 'This email domain does not exist in the real world.';
         } else {
+          _isEmailRealDomain = true;
           _emailCheckMessage = '✓ Real, active email verified!';
         }
       });
     } catch (_) {
       // Offline fallback
-      final domain = clean.substring(clean.lastIndexOf('@') + 1);
-      final validDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'icloud.com', 'live.com', 'msn.com', 'proton.me', 'zoho.com', 'aol.com'];
-      final isReal = validDomains.contains(domain);
-
       setState(() {
         _isCheckingEmail = false;
-        _isEmailRealDomain = isReal;
-        _emailCheckMessage = isReal ? '✓ Real email verified' : 'Invalid email domain. Please use a real active address.';
+        _isEmailRealDomain = hasValidDomain;
+        _emailCheckMessage = hasValidDomain ? '✓ Real email verified' : 'Invalid email domain. Please use a real active address.';
       });
     }
   }
@@ -865,21 +873,21 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                 return 'Enter a valid email address';
               }
               if (_isEmailRealDomain == false) {
-                return 'This email domain does not exist in the real world';
+                return _emailCheckMessage ?? 'Invalid email address';
               }
               return null;
             },
           ),
-          if (_emailCheckMessage != null) ...[
+          if (_emailCheckMessage != null && _isEmailRealDomain == true) ...[
             const SizedBox(height: 4),
             Padding(
               padding: const EdgeInsets.only(left: 12),
               child: Text(
                 _emailCheckMessage!,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 11.5,
                   fontWeight: FontWeight.w600,
-                  color: _isEmailRealDomain == true ? Colors.green : Colors.redAccent,
+                  color: Colors.green,
                 ),
               ),
             ),

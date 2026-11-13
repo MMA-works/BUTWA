@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:batwa_wallet/core/constants/app_colors.dart';
 import 'package:batwa_wallet/core/constants/api_constants.dart';
 
@@ -40,8 +41,8 @@ class AppUpdateInfo {
 }
 
 class AppUpdateService {
-  static const int currentVersionCode = 280;
-  static const String currentVersionName = "2.4.40";
+  static const int currentVersionCode = 281;
+  static const String currentVersionName = "2.4.41";
 
   /// Server URLs where version.json might be hosted
   static List<String> get updateUrls => [
@@ -80,18 +81,47 @@ class AppUpdateService {
     return null;
   }
 
+  static const String _keyDismissedVersion = "dismissed_update_version_code";
+
+  /// Checks if this update version was already dismissed by the user
+  static Future<bool> isVersionDismissed(int versionCode) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final dismissed = prefs.getInt(_keyDismissedVersion) ?? 0;
+      return dismissed >= versionCode;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Remembers that the user closed/dismissed this update version so it never annoys them again
+  static Future<void> markVersionDismissed(int versionCode) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(_keyDismissedVersion, versionCode);
+    } catch (_) {}
+  }
+
   /// Automatically prompt user if update is available
-  static Future<void> promptIfUpdateAvailable(BuildContext context, {bool showNoUpdateNotice = false}) async {
+  static Future<void> promptIfUpdateAvailable(BuildContext context, {bool showNoUpdateNotice = false, bool forceCheck = false}) async {
     try {
       final update = await checkUpdate();
       if (!context.mounted) return;
 
       if (update != null) {
-        showUpdateDialog(context, update);
+        // If not forceCheck and user already dismissed this version, do not harass them on screen transitions
+        if (!forceCheck && !update.forceUpdate) {
+          final isDismissed = await isVersionDismissed(update.versionCode);
+          if (isDismissed) return;
+        }
+
+        if (context.mounted) {
+          showUpdateDialog(context, update);
+        }
       } else if (showNoUpdateNotice) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Aapki app pehle se hi latest version (v2.2.0) par hai! ✅"),
+          SnackBar(
+            content: Text("Aapki app pehle se hi latest version ($currentVersionName) par hai! ✅"),
             backgroundColor: AppColors.darkNavy,
           ),
         );
@@ -109,29 +139,31 @@ class AppUpdateService {
           onWillPop: () async => !update.forceUpdate,
           child: Dialog(
             backgroundColor: Colors.transparent,
-            insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+            insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
             child: Container(
               decoration: BoxDecoration(
                 color: AppColors.cardSurface,
                 borderRadius: BorderRadius.circular(28),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 30,
-                    offset: const Offset(0, 10),
+                    color: Colors.black.withOpacity(0.25),
+                    blurRadius: 32,
+                    offset: const Offset(0, 12),
                   ),
                 ],
-                border: Border.all(color: AppColors.primaryYellow.withOpacity(0.4), width: 2),
+                border: Border.all(color: AppColors.primaryYellow.withOpacity(0.5), width: 1.5),
               ),
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 22),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Header Row with Icon, Title, and Direct Top-Right Close 'X' Button
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color: AppColors.primaryYellow.withOpacity(0.2),
                           shape: BoxShape.circle,
@@ -139,26 +171,30 @@ class AppUpdateService {
                         child: const Icon(
                           Icons.system_update_rounded,
                           color: AppColors.darkNavy,
-                          size: 28,
+                          size: 24,
                         ),
                       ),
-                      const SizedBox(width: 14),
+                      const SizedBox(width: 12),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               update.title,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
-                                fontSize: 18,
+                                fontSize: 16,
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.darkNavy,
+                                height: 1.2,
                               ),
                             ),
+                            const SizedBox(height: 2),
                             Text(
                               'Version ${update.version} Available',
                               style: const TextStyle(
-                                fontSize: 13,
+                                fontSize: 12,
                                 color: AppColors.textMuted,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -166,59 +202,96 @@ class AppUpdateService {
                           ],
                         ),
                       ),
+                      // Top Right Close 'X' Button
+                      if (!update.forceUpdate)
+                        InkWell(
+                          onTap: () {
+                            Navigator.pop(ctx);
+                            markVersionDismissed(update.versionCode);
+                          },
+                          borderRadius: BorderRadius.circular(20),
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: AppColors.darkNavy.withOpacity(0.08),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.close_rounded,
+                              color: AppColors.darkNavy,
+                              size: 18,
+                            ),
+                          ),
+                        ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 14),
                   Text(
                     update.message,
-                    style: const TextStyle(fontSize: 14, color: AppColors.darkNavyLight, height: 1.4),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 13, color: AppColors.darkNavyLight, height: 1.3),
                   ),
                   if (update.features.isNotEmpty) ...[
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 10),
                     const Text(
                       "What's New:",
-                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.darkNavy),
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.darkNavy),
                     ),
                     const SizedBox(height: 6),
-                    ...update.features.map(
-                      (f) => Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
-                        child: Row(
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxHeight: 120),
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("• ", style: TextStyle(color: AppColors.primaryYellow, fontWeight: FontWeight.bold)),
-                            Expanded(
-                              child: Text(
-                                f,
-                                style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
+                          children: update.features.take(3).map(
+                            (f) => Padding(
+                              padding: const EdgeInsets.only(bottom: 6),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text("• ", style: TextStyle(color: AppColors.primaryYellow, fontWeight: FontWeight.bold)),
+                                  Expanded(
+                                    child: Text(
+                                      f,
+                                      style: const TextStyle(fontSize: 12, color: AppColors.textMuted, height: 1.3),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
+                          ).toList(),
                         ),
                       ),
                     ),
                   ],
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 18),
+                  // Always visible Bottom Buttons
                   Row(
                     children: [
                       if (!update.forceUpdate)
                         Expanded(
                           child: OutlinedButton(
-                            onPressed: () => Navigator.pop(ctx),
+                            onPressed: () {
+                              Navigator.pop(ctx);
+                              markVersionDismissed(update.versionCode);
+                            },
                             style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                               side: const BorderSide(color: AppColors.lightCardBorder),
                             ),
-                            child: const Text("Baad Mein", style: TextStyle(color: AppColors.textMuted, fontWeight: FontWeight.bold)),
+                            child: const Text("Baad Mein", style: TextStyle(color: AppColors.textMuted, fontWeight: FontWeight.bold, fontSize: 13)),
                           ),
                         ),
-                      if (!update.forceUpdate) const SizedBox(width: 12),
+                      if (!update.forceUpdate) const SizedBox(width: 10),
                       Expanded(
                         flex: update.forceUpdate ? 1 : 2,
                         child: ElevatedButton(
                           onPressed: () async {
                             Navigator.pop(ctx);
+                            markVersionDismissed(update.versionCode);
                             final target = update.apkUrl.isNotEmpty ? update.apkUrl : update.downloadUrl;
                             final uri = Uri.tryParse(target);
                             if (uri != null) {
@@ -230,13 +303,13 @@ class AppUpdateService {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primaryYellow,
                             foregroundColor: AppColors.darkNavy,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
                             elevation: 0,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                           ),
                           child: const Text(
                             "Abhi Update Karein ⚡",
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                           ),
                         ),
                       ),
@@ -248,6 +321,11 @@ class AppUpdateService {
           ),
         );
       },
-    );
+    ).then((_) {
+      if (!update.forceUpdate) {
+        markVersionDismissed(update.versionCode);
+      }
+    });
+  }
   }
 }

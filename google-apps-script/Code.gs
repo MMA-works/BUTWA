@@ -188,19 +188,29 @@ function handleVerifyEmail(params) {
   const usersSheet = db.getSheetByName("Users");
   const usersData = usersSheet.getDataRange().getValues();
 
+  const domain = email.includes("@") ? email.substring(email.lastIndexOf("@") + 1) : "";
+  const commonDomains = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com", "live.com", "msn.com", "proton.me", "protonmail.com", "zoho.com", "aol.com", "yandex.com", "mail.com", "gmx.com"];
+  const isRealDomain = commonDomains.includes(domain) || (domain.includes(".") && domain.split(".").pop().length >= 2);
+
+  let isAlreadyRegistered = false;
   for (let i = 1; i < usersData.length; i++) {
     const rowEmail = String(usersData[i][2] || "").trim().toLowerCase();
     if (rowEmail === email) {
-      return jsonResponse({
-        success: true,
-        data: { isAvailable: false, message: "Email already registered" }
-      });
+      isAlreadyRegistered = true;
+      break;
     }
   }
 
   return jsonResponse({
     success: true,
-    data: { isAvailable: true }
+    data: {
+      isRealDomain: isRealDomain,
+      isAvailable: !isAlreadyRegistered && isRealDomain,
+      isAlreadyRegistered: isAlreadyRegistered,
+      message: isAlreadyRegistered 
+        ? "This email is already registered. Try logging in." 
+        : (isRealDomain ? "Email is valid and available." : "This email domain does not exist in the real world.")
+    }
   });
 }
 
