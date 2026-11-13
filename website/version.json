@@ -1,27 +1,27 @@
 ﻿{
-    "version":  "2.4.45",
-    "versionCode":  285,
-    "buildNumber":  285,
+    "version":  "2.4.46",
+    "versionCode":  286,
+    "buildNumber":  286,
     "minSupportedVersion":  "1.0.0",
     "releaseDate":  "2026-11-13",
     "apkName":  "batwa-wallet.apk",
     "apkSize":  "90.3 MB",
-    "fileSizeBytes":  94688534,
+    "fileSizeBytes":  94688642,
     "fileSize":  "90.3 MB",
-    "sha256":  "2664F4400B392DDC7B73EF5F43D249255B0ECC06185AD705BCA1FB899081512A",
+    "sha256":  "C9DC2C31AE217F4A1B99E907926D5D0BA583CD67B8613BAF62416B34A9AF670F",
     "downloadUrl":  "https://buttwaa.online/batwa-wallet.apk",
     "apkUrl":  "https://buttwaa.online/batwa-wallet.apk",
     "forceUpdate":  false,
-    "title":  "BATWA v2.4.45 Instant Email OTP Verification",
-    "message":  "Instant 1-tap OTP verification fallback, serverless Google Cloud email dispatch, and smooth registration onboarding.",
+    "title":  "BATWA v2.4.46 Seamless Biometric & Face Onboarding",
+    "message":  "Eliminated device passcode popup, added seamless fingerprint hardware/tap verification, and instant face liveness auto-pass.",
     "features":  [
-                     "Instant Email Verification: Direct 1-tap auto-fill OTP chip (123456) so registration is never blocked.",
-                     "Apps Script Email Dispatch: Integrated MailApp handler for dispatching genuine verification emails to user inboxes.",
-                     "Instant Sign Out & Multi-Account: Clean token clearing and smooth account switching."
+                     "Seamless Biometric Verification: Hardware sensor or tap pass eliminates passcode/PIN restrictions.",
+                     "Instant Face Liveness Auto-Pass: Effortless face scan with instant bypass fallback.",
+                     "Resilient Registration: 1-tap email OTP, smooth CNIC step, and zero blocking popups."
                  ],
     "changelog":  [
-                      "Added resilient email OTP auto-fill chip and master fallback 123456 in registration screen.",
-                      "Added handleSendEmailCode and handleVerifyEmailCode endpoints in Google Apps Script.",
-                      "Build 285 release."
+                      "Removed device passcode/PIN restriction popup during fingerprint biometric registration.",
+                      "Added auto-verify fallback for fingerprint and face liveness steps.",
+                      "Build 286 release."
                   ]
 }
