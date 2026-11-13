@@ -1,30 +1,29 @@
 ﻿{
-    "version":  "2.4.49",
-    "versionCode":  289,
-    "buildNumber":  289,
+    "version":  "2.4.50",
+    "versionCode":  290,
+    "buildNumber":  290,
     "minSupportedVersion":  "1.0.0",
     "releaseDate":  "2026-11-13",
     "apkName":  "batwa-wallet.apk",
     "apkSize":  "90.2 MB",
-    "fileSizeBytes":  94573582,
+    "fileSizeBytes":  94573586,
     "fileSize":  "90.2 MB",
-    "sha256":  "C088936F331AA90F868B66921DC71079EEA4DFF9A0C061C70B3BBA7139881149",
+    "sha256":  "398FE4914868C63CC00D7244C82A736D18638850B5CB50D6A31D5DE975CD2705",
     "downloadUrl":  "https://buttwaa.online/batwa-wallet.apk",
     "apkUrl":  "https://buttwaa.online/batwa-wallet.apk",
     "forceUpdate":  false,
-    "title":  "BATWA v2.4.49 Custom User Identity & Profile Persistence",
-    "message":  "Instant custom Batwa Tag (@tag) registration, dynamic profile name synchronization across Dashboard and Settings, and persistent user credentials.",
+    "title":  "BATWA v2.4.50 Streamlined Clean Personal QR & Identity Display",
+    "message":  "Reverted to classic white P2P QR design, removed dynamic request and clutter, and enhanced personal handle presentation.",
     "features":  [
-                     "Custom Batwa ID / Username: Exact user-selected tag is preserved on registration without random numbers.",
-                     "Accurate Profile & Settings Sync: Dashboard and Settings display the real registered full name and tag handle.",
-                     "Seamless Post-Registration Flow: Retains authenticated user identity directly from PIN setup.",
-                     "Instant P2P Handle Copy: Quick copy action for personal Batwa tag in Settings."
+                     "Clean Personal QR: Classic white card layout with verified badge and high-contrast scanning.",
+                     "Clutter-Free: Removed redundant dynamic request tabs and bottom payload buttons.",
+                     "Seamless Scan & Pay Navigation: Quick 1-tap launcher for QR camera scanner.",
+                     "Preserved Custom Tag & Username: Full identity synchronization across app."
                  ],
     "changelog":  [
-                      "Fixed username tag registration: customTag now accurately captured by backend.",
-                      "Fixed Dashboard & Settings user display: replaces generic Batwa User with actual registered account name.",
-                      "Added Batwa ID / Username tag badge and copy tile in Settings drawer.",
-                      "Synchronized PinSetSuccess state into Authenticated identity session.",
-                      "Build 289 release."
+                      "Reverted My QR Code layout to user-preferred clean white card theme.",
+                      "Removed Dynamic Amount Request tab and bottom copy payload button as requested.",
+                      "Fixed QR code screen header visibility with dark contrast title.",
+                      "Build 290 release."
                   ]
 }
