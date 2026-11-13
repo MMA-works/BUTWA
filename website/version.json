@@ -1,25 +1,25 @@
-{
-  "version": "2.4.43",
-  "versionCode": 283,
-  "buildNumber": 283,
-  "minSupportedVersion": "1.0.0",
-  "releaseDate": "2026-11-13",
-  "apkName": "batwa-wallet.apk",
-  "apkSize": "90.3 MB",
-  "fileSizeBytes": 94688534,
-  "fileSize": "90.3 MB",
-  "sha256": "D41989F5F0DE128B6246F6669910C0DA4C51BD53EC25A65BFBA4C2D88EAF7AFE",
-  "downloadUrl": "https://buttwaa.online/batwa-wallet.apk",
-  "apkUrl": "https://buttwaa.online/batwa-wallet.apk",
-  "forceUpdate": false,
-  "title": "BATWA v2.4.43 Direct Release & Registration Fix",
-  "message": "Direct APK distribution, permanent update loop elimination, registration auto-login fix, and flawless Raast ledger fund transfers.",
-  "features": [
-    "Permanent fix for update prompt loop and direct APK delivery without redirect.",
-    "Fixed registration auto-login and authentic email DNS validation.",
-    "Flawless P2P and Raast instant ledger transfers with real-time balance sync."
-  ],
-  "changelog": [
-    "Direct APK download, update prompt loop resolved, registration stability fix, and transfer resilience."
-  ]
+﻿{
+    "version":  "2.4.44",
+    "versionCode":  284,
+    "buildNumber":  284,
+    "minSupportedVersion":  "1.0.0",
+    "releaseDate":  "2026-11-13",
+    "apkName":  "batwa-wallet.apk",
+    "apkSize":  "90.3 MB",
+    "fileSizeBytes":  94688534,
+    "fileSize":  "90.3 MB",
+    "sha256":  "6AAD8550A9E318AAC415130788B92D59FCEAA238404357A92E666BAFFD667CBF",
+    "downloadUrl":  "https://buttwaa.online/batwa-wallet.apk",
+    "apkUrl":  "https://buttwaa.online/batwa-wallet.apk",
+    "forceUpdate":  false,
+    "title":  "BATWA v2.4.44 Instant Sign Out \u0026 Multi-Account Support",
+    "message":  "Fixed sign out redirection, direct routing to clean login screen, secure token clearing, and update prompt refinement.",
+    "features":  [
+                     "Instant Sign Out Redirection: Tapping Sign Out immediately routes back to a clean login screen and purges all local session tokens.",
+                     "Effortless Multi-Account Switching: Allows smooth account switching and testing of new user registrations.",
+                     "Direct APK \u0026 Cloud Sync: Zero update loop, sub-second transfers, and real-time cloud balance synchronization."
+                 ],
+    "changelog":  [
+                      "Fixed sign out navigation, clean login redirect, secure token clearing, and build 284 release."
+                  ]
 }

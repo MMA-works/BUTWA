@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:batwa_wallet/core/services/app_update_service.dart';
+import 'package:batwa_wallet/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:batwa_wallet/features/auth/presentation/bloc/auth_state.dart';
+import 'package:batwa_wallet/features/auth/presentation/screens/login_screen.dart';
 import 'package:batwa_wallet/features/wallet/presentation/screens/dashboard_screen.dart';
 import 'package:batwa_wallet/features/wallet/presentation/screens/drawer_underlay_screen.dart';
 import 'package:batwa_wallet/features/cards/presentation/screens/cards_screen.dart';
@@ -131,12 +135,21 @@ class _Main3DShellScreenState extends State<Main3DShellScreen>
 
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF0F1118) : const Color(0xFFF1F3F6),
-      body: GestureDetector(
-        onHorizontalDragStart: _handleHorizontalDragStart,
-        onHorizontalDragUpdate: _handleHorizontalDragUpdate,
-        onHorizontalDragEnd: _handleHorizontalDragEnd,
-        behavior: HitTestBehavior.translucent,
-        child: Stack(
+      body: BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is Unauthenticated) {
+            Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => const LoginScreen(clearFields: true)),
+              (route) => false,
+            );
+          }
+        },
+        child: GestureDetector(
+          onHorizontalDragStart: _handleHorizontalDragStart,
+          onHorizontalDragUpdate: _handleHorizontalDragUpdate,
+          onHorizontalDragEnd: _handleHorizontalDragEnd,
+          behavior: HitTestBehavior.translucent,
+          child: Stack(
           children: [
             // 🌟 LAYER 0: Underlay Navigation Drawer (Lazy-rendered only when opening)
             AnimatedBuilder(
@@ -210,6 +223,7 @@ class _Main3DShellScreenState extends State<Main3DShellScreen>
             ),
           ],
         ),
+      ),
       ),
     );
   }

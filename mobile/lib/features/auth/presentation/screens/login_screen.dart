@@ -12,7 +12,8 @@ import 'package:batwa_wallet/features/auth/presentation/screens/register_screen.
 import 'package:batwa_wallet/features/wallet/presentation/screens/main_3d_shell_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final bool clearFields;
+  const LoginScreen({super.key, this.clearFields = false});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -28,9 +29,11 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    // Default demo credentials prefilled for effortless testing
-    _identifierController.text = 'batwa.tester2026@gmail.com';
-    _passwordController.text = 'Test@123456';
+    if (!widget.clearFields) {
+      // Default demo credentials prefilled for effortless testing
+      _identifierController.text = 'batwa.tester2026@gmail.com';
+      _passwordController.text = 'Test@123456';
+    }
   }
 
   @override

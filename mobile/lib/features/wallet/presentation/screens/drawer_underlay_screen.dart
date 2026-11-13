@@ -15,6 +15,7 @@ import 'package:batwa_wallet/core/network/api_client.dart';
 import 'package:batwa_wallet/core/utils/secure_storage_helper.dart';
 import 'package:batwa_wallet/features/security/data/security_remote_datasource.dart';
 import 'package:batwa_wallet/features/security/presentation/screens/security_settings_screen.dart';
+import 'package:batwa_wallet/features/auth/presentation/screens/login_screen.dart';
 
 class DrawerUnderlayScreen extends StatefulWidget {
   final int selectedIndex;
@@ -2823,6 +2824,10 @@ class _DrawerUnderlayScreenState extends State<DrawerUnderlayScreen> {
               Navigator.pop(ctx);
               widget.onClose();
               context.read<AuthBloc>().add(LogoutEvent());
+              Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (_) => const LoginScreen(clearFields: true)),
+                (route) => false,
+              );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFEF4444),
