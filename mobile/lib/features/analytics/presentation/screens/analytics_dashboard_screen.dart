@@ -1353,7 +1353,7 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
         }
 
         final filteredList = transactions.where((tx) {
-          final isCredit = tx.transactionType == 'TOPUP' || tx.destinationWalletTag == currentWalletTag;
+          final isCredit = tx.isCreditFor(currentWalletTag);
           if (_txFilter == 'EXPENSE') return !isCredit;
           if (_txFilter == 'INFLOW') return isCredit;
           return true;
@@ -1389,7 +1389,7 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
                 separatorBuilder: (_, __) => const SizedBox(height: 8),
                 itemBuilder: (context, index) {
                   final tx = filteredList[index];
-                  final isCredit = tx.transactionType == 'TOPUP' || tx.destinationWalletTag == currentWalletTag;
+                  final isCredit = tx.isCreditFor(currentWalletTag);
 
                   IconData txIcon;
                   if (tx.transactionType == 'TOPUP') {
@@ -1455,10 +1455,10 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
                                   tx.transactionType == 'TOPUP'
                                       ? 'Account Top-Up'
                                       : (isCredit
-                                          ? 'From @${tx.sourceWalletTag}'
+                                          ? 'From ${tx.getSenderDisplayTitle()}'
                                           : (tx.description != null && tx.description!.isNotEmpty
                                               ? tx.description!
-                                              : 'To @${tx.destinationWalletTag}')),
+                                              : 'To ${tx.getReceiverDisplayTitle()}')),
                                   style: const TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w800,

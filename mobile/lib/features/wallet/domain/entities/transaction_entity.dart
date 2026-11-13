@@ -33,6 +33,56 @@ class TransactionEntity extends Equatable {
     required this.createdAt,
   });
 
+  bool isCreditFor(String currentWalletTag, [String? currentPhone]) {
+    final type = transactionType.toUpperCase();
+    if (type == 'TOPUP' || type == 'DEPOSIT') {
+      return true;
+    }
+
+    final cleanMyTag = currentWalletTag.replaceAll(RegExp(r'^@+'), '').trim().toLowerCase();
+    final cleanMyPhone = (currentPhone ?? '').replaceAll(RegExp(r'\D'), '');
+
+    final dest = destinationWalletTag.toLowerCase();
+    final destName = destinationUserFullName.toLowerCase();
+    final src = sourceWalletTag.toLowerCase();
+    final srcName = sourceUserFullName.toLowerCase();
+
+    // 1. If destination matches my tag or phone, it's CREDIT (Money came in)
+    if (cleanMyTag.isNotEmpty && (dest.contains(cleanMyTag) || destName.contains(cleanMyTag))) {
+      return true;
+    }
+    if (cleanMyPhone.isNotEmpty && (dest.contains(cleanMyPhone) || destName.contains(cleanMyPhone))) {
+      return true;
+    }
+
+    // 2. If source matches my tag or phone, it's DEBIT (Money went out)
+    if (cleanMyTag.isNotEmpty && (src.contains(cleanMyTag) || srcName.contains(cleanMyTag))) {
+      return false;
+    }
+    if (cleanMyPhone.isNotEmpty && (src.contains(cleanMyPhone) || srcName.contains(cleanMyPhone))) {
+      return false;
+    }
+
+    // Fallback: If destination matches exactly
+    return destinationWalletTag == currentWalletTag;
+  }
+
+  String getSenderDisplayTitle() {
+    String raw = sourceUserFullName.isNotEmpty ? sourceUserFullName : sourceWalletTag;
+    if (raw.contains('(')) {
+      raw = raw.split('(')[0].trim();
+    }
+    return raw.isNotEmpty ? raw : 'BATWA User';
+  }
+
+  String getReceiverDisplayTitle() {
+    String raw = destinationUserFullName.isNotEmpty ? destinationUserFullName : destinationWalletTag;
+    if (raw.contains('(')) {
+      raw = raw.split('(')[0].trim();
+    }
+    return raw.isNotEmpty ? raw : 'Recipient';
+  }
+
   @override
   List<Object?> get props => [
         id,

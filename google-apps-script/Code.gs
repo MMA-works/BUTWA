@@ -124,6 +124,11 @@ function handleRequest(e, method) {
       return handleGetTransactions(params);
     }
 
+    // Notifications & Activity
+    if (action.includes("notification") || action.includes("activity")) {
+      return handleGetNotifications(params);
+    }
+
     // QR Code / My Code / Parse
     if (action.includes("qr") || action.includes("my-code") || action.includes("mycode")) {
       return handleGetMyQr(params);
@@ -902,6 +907,45 @@ function handleTransfer(params) {
       amount, fee, "TRANSFER", "SUCCESS", newSenderBal, newReceiverBal, note
     ]);
 
+    // Send instant luxury transaction email alert to receiver
+    try {
+      if (usersSheet) {
+        const usersData = usersSheet.getDataRange().getValues();
+        let receiverEmail = "";
+        for (let u = 1; u < usersData.length; u++) {
+          if (matchesUser(usersData[u], receiverRow[2]) || matchesUser(usersData[u], receiverRow[3])) {
+            receiverEmail = String(usersData[u][2] || "").trim();
+            break;
+          }
+        }
+        if (receiverEmail && receiverEmail.includes("@")) {
+          MailApp.sendEmail({
+            to: receiverEmail,
+            subject: "💰 Money Received: Rs " + amount.toFixed(2) + " from " + senderRow[1] + " (BATWA Wallet)",
+            htmlBody: '<div style="font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif; max-width: 520px; margin: 0 auto; padding: 28px; border-radius: 18px; background: #042B1D; color: #FFFFFF;">' +
+              '<div style="text-align: center; margin-bottom: 24px;">' +
+              '<h1 style="color: #F3D602; margin: 0; font-size: 26px; font-weight: 900; letter-spacing: -0.5px;">BATWA</h1>' +
+              '<p style="color: #10B981; margin: 4px 0 0 0; font-size: 13px; font-weight: 700;">INSTANT PAYMENT NOTIFICATION</p>' +
+              '</div>' +
+              '<p style="font-size: 16px; margin: 0 0 12px 0;">Dear <b>' + receiverRow[1] + '</b>,</p>' +
+              '<p style="font-size: 15px; line-height: 1.5; color: #E2E8F0; margin: 0 0 20px 0;">You have received <b style="color: #10B981; font-size: 18px;">Rs ' + amount.toFixed(2) + '</b> from <b>' + senderRow[1] + ' (' + senderTag + ')</b>.</p>' +
+              '<div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); padding: 16px; border-radius: 12px; margin: 20px 0;">' +
+              '<table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #CBD5E1;">' +
+              '<tr><td style="padding: 6px 0; color: #94A3B8;">Transaction ID:</td><td style="padding: 6px 0; text-align: right; font-weight: 700; color: #FFFFFF;">' + trxId + '</td></tr>' +
+              '<tr><td style="padding: 6px 0; color: #94A3B8;">New Balance:</td><td style="padding: 6px 0; text-align: right; font-weight: 800; color: #F3D602;">Rs ' + newReceiverBal.toFixed(2) + '</td></tr>' +
+              '<tr><td style="padding: 6px 0; color: #94A3B8;">Remarks:</td><td style="padding: 6px 0; text-align: right; color: #FFFFFF;">' + (note || "Transfer via BATWA") + '</td></tr>' +
+              '<tr><td style="padding: 6px 0; color: #94A3B8;">Timestamp:</td><td style="padding: 6px 0; text-align: right; color: #FFFFFF;">' + nowStr + ' PKT</td></tr>' +
+              '</table>' +
+              '</div>' +
+              '<p style="font-size: 12px; color: #94A3B8; text-align: center; margin: 20px 0 0 0;">State Bank of Pakistan regulated EMI framework. Protected by 256-bit encryption.</p>' +
+              '</div>'
+          });
+        }
+      }
+    } catch (mailErr) {
+      Logger.log("Transfer email notification error: " + mailErr);
+    }
+
     return jsonResponse({
       success: true,
       message: "Transfer of Rs " + amount.toFixed(2) + " completed successfully!",
@@ -1032,6 +1076,70 @@ function handleGetTransactions(params) {
     if (results.length >= 50) break;
   }
   return jsonResponse({ success: true, data: results });
+}
+
+/**
+ * 7b. GET USER NOTIFICATIONS
+ */
+function handleGetNotifications(params) {
+  const identifier = (params.identifier || params.phoneNumber || params.tag || "").toString().trim();
+  const db = getDb();
+  const txSheet = db.getSheetByName("Transactions");
+  if (!txSheet) return jsonResponse({ success: true, data: [] });
+
+  const data = txSheet.getDataRange().getValues();
+  if (data.length <= 1) return jsonResponse({ success: true, data: [] });
+
+  const normPhone = normalizePhone(identifier);
+  const normTag = normalizeTag(identifier);
+  const notifs = [];
+
+  for (let i = data.length - 1; i >= 1; i--) {
+    const row = data[i];
+    const trxId = String(row[0]);
+    const timeStr = String(row[1]);
+    const sender = String(row[2]);
+    const receiver = String(row[3]);
+    const amount = Number(row[4]) || 0;
+    const type = String(row[6] || "TRANSFER");
+
+    const senderMatch = (normPhone && sender.includes(normPhone)) || (normTag && sender.toLowerCase().includes(normTag));
+    const receiverMatch = (normPhone && receiver.includes(normPhone)) || (normTag && receiver.toLowerCase().includes(normTag));
+
+    if (receiverMatch) {
+      let cleanSender = sender;
+      if (cleanSender.includes("(")) cleanSender = cleanSender.split("(")[0].trim();
+      notifs.push({
+        id: "notif_rec_" + trxId,
+        type: "TRANSFER_RECEIVED",
+        title: "Money Received! 💰",
+        message: "Rs " + amount.toFixed(2) + " received from " + cleanSender,
+        amount: amount,
+        read: false,
+        createdAt: timeStr,
+        source: sender,
+        destination: receiver
+      });
+    } else if (senderMatch) {
+      let cleanReceiver = receiver;
+      if (cleanReceiver.includes("(")) cleanReceiver = cleanReceiver.split("(")[0].trim();
+      notifs.push({
+        id: "notif_sent_" + trxId,
+        type: "TRANSFER_SENT",
+        title: "Money Sent 💸",
+        message: "Rs " + amount.toFixed(2) + " sent to " + cleanReceiver,
+        amount: amount,
+        read: true,
+        createdAt: timeStr,
+        source: sender,
+        destination: receiver
+      });
+    }
+
+    if (notifs.length >= 30) break;
+  }
+
+  return jsonResponse({ success: true, data: notifs });
 }
 
 /**

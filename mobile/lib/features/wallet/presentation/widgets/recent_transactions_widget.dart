@@ -50,7 +50,7 @@ class RecentTransactionsWidget extends StatelessWidget {
       separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final tx = transactions[index];
-        final isCredit = tx.transactionType == 'TOPUP' || tx.destinationWalletTag == currentWalletTag;
+        final isCredit = tx.isCreditFor(currentWalletTag);
 
         IconData txIcon;
         if (tx.transactionType == 'TOPUP') {
@@ -107,10 +107,10 @@ class RecentTransactionsWidget extends StatelessWidget {
                         tx.transactionType == 'TOPUP'
                             ? 'Account Top-Up'
                             : (isCredit
-                                ? 'From @${tx.sourceWalletTag}'
+                                ? 'From ${tx.getSenderDisplayTitle()}'
                                 : (tx.description != null && tx.description!.isNotEmpty
                                     ? tx.description!
-                                    : 'To @${tx.destinationWalletTag}')),
+                                    : 'To ${tx.getReceiverDisplayTitle()}')),
                         style: TextStyle(
                           fontSize: 13.5,
                           fontWeight: FontWeight.w800,

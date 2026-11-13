@@ -3,6 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:batwa_wallet/core/constants/app_colors.dart';
 import 'package:batwa_wallet/core/network/api_client.dart';
+import 'package:batwa_wallet/core/utils/secure_storage_helper.dart';
+import 'package:batwa_wallet/features/wallet/data/wallet_remote_datasource.dart';
+import 'package:batwa_wallet/features/wallet/domain/entities/transaction_entity.dart';
+import 'package:batwa_wallet/features/transfer/presentation/screens/transfer_receipt_screen.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -50,117 +54,100 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   Future<void> _fetchBackendNotifications() async {
     try {
-      final res = await ApiClient().client.get('/notifications');
-      if (res.statusCode == 200 && res.data != null) {
-        final rawList = res.data is Map ? (res.data['data'] as List? ?? []) : (res.data as List? ?? []);
-        final List<Map<String, dynamic>> mapped = [];
+      final myTag = await SecureStorageHelper.getWalletTag() ?? '';
+      final myPhone = await SecureStorageHelper.getUserPhone() ?? '';
 
-        for (final item in rawList) {
-          final id = item['id']?.toString() ?? UniqueKey().toString();
-          final type = item['type']?.toString() ?? 'SYSTEM';
-          final title = item['title']?.toString() ?? 'Activity Alert';
-          final message = item['message']?.toString() ?? '';
-          final amountNum = double.tryParse(item['amount']?.toString() ?? '');
-          final isRead = item['read'] == true || item['isRead'] == true;
-          final createdAtStr = item['createdAt']?.toString();
-          DateTime dt = DateTime.now();
-          if (createdAtStr != null) {
-            dt = DateTime.tryParse(createdAtStr) ?? DateTime.now();
-          }
+      final datasource = WalletRemoteDataSourceImpl(apiClient: ApiClient());
+      final transactions = await datasource.getTransactions(size: 30);
 
-          final now = DateTime.now();
-          final diff = now.difference(dt);
-          String timeStr;
-          String dateGroup;
+      final List<Map<String, dynamic>> mapped = [];
 
-          if (diff.inMinutes < 1) {
-            timeStr = 'Just now';
-          } else if (diff.inMinutes < 60) {
-            timeStr = '${diff.inMinutes}m ago';
-          } else if (diff.inHours < 24 && dt.day == now.day) {
-            timeStr = '${diff.inHours}h ago';
-          } else {
-            timeStr = DateFormat('MMM d • HH:mm').format(dt);
-          }
+      for (final tx in transactions) {
+        final isCredit = tx.isCreditFor(myTag, myPhone);
+        final actor = isCredit ? tx.getSenderDisplayTitle() : tx.getReceiverDisplayTitle();
+        final action = isCredit
+            ? 'Received Rs ${tx.amount.toStringAsFixed(2)} into your BATWA wallet'
+            : 'Transferred Rs ${tx.amount.toStringAsFixed(2)} via BATWA';
 
-          if (dt.year == now.year && dt.month == now.month && dt.day == now.day) {
-            dateGroup = 'TODAY';
-          } else if (now.difference(DateTime(dt.year, dt.month, dt.day)).inDays == 1) {
-            dateGroup = 'YESTERDAY';
-          } else {
-            dateGroup = 'EARLIER';
-          }
+        final dt = tx.createdAt;
+        final now = DateTime.now();
+        final diff = now.difference(dt);
+        String timeStr;
+        String dateGroup;
 
-          final isReceived = type == 'TRANSFER_RECEIVED' || type == 'CREDIT';
-          final isSent = type == 'TRANSFER_SENT' || type == 'DEBIT';
-          final isTopup = type == 'TOPUP';
-          final isBill = type == 'BILL_PAYMENT';
-          final bool isCredit = isReceived || isTopup;
-
-          String amountFormatted = '';
-          if (amountNum != null && amountNum > 0) {
-            amountFormatted = '${isCredit ? '+' : '-'}PKR ${amountNum.toStringAsFixed(2)}';
-          } else {
-            amountFormatted = type;
-          }
-
-          String actor = title;
-          if (title.contains('!')) {
-            actor = title.replaceAll('!', '').replaceAll('🎉', '').replaceAll('💰', '').replaceAll('💸', '').replaceAll('⚡', '').trim();
-          }
-
-          IconData badgeIcon = Icons.notifications_active_rounded;
-          if (isReceived) {
-            badgeIcon = Icons.arrow_downward_rounded;
-          } else if (isSent) {
-            badgeIcon = Icons.arrow_upward_rounded;
-          } else if (isTopup) {
-            badgeIcon = Icons.account_balance_wallet_rounded;
-          } else if (isBill) {
-            badgeIcon = Icons.receipt_long_rounded;
-          }
-
-          Color badgeColor = isCredit ? _accentEmerald : _brandYellow;
-          Color badgeIconColor = isCredit ? Colors.white : _darkNavy;
-
-          String initials = 'BW';
-          if (actor.isNotEmpty) {
-            final parts = actor.split(' ');
-            if (parts.length >= 2) {
-              initials = '${parts[0][0]}${parts[1][0]}'.toUpperCase();
-            } else {
-              initials = actor.substring(0, actor.length >= 2 ? 2 : 1).toUpperCase();
-            }
-          }
-
-          mapped.add({
-            'id': id,
-            'actor': actor,
-            'action': message,
-            'tag': isReceived ? 'RAAST' : (isTopup ? 'TOP-UP' : (isBill ? 'BILL' : 'TRANSFER')),
-            'amount': amountFormatted,
-            'isCredit': isCredit,
-            'time': timeStr,
-            'dateGroup': dateGroup,
-            'isDirect': true,
-            'isRead': isRead,
-            'avatarInitials': initials,
-            'avatarColor': const Color(0xFF042B1D),
-            'badgeIcon': badgeIcon,
-            'badgeColor': badgeColor,
-            'badgeIconColor': badgeIconColor,
-          });
+        if (diff.inMinutes < 1) {
+          timeStr = 'Just now';
+        } else if (diff.inMinutes < 60) {
+          timeStr = '${diff.inMinutes}m ago';
+        } else if (diff.inHours < 24 && dt.day == now.day) {
+          timeStr = '${diff.inHours}h ago';
+        } else {
+          timeStr = DateFormat('MMM d • HH:mm').format(dt);
         }
 
-        if (mounted && mapped.isNotEmpty) {
-          setState(() {
-            _notifications = mapped;
-          });
+        if (dt.year == now.year && dt.month == now.month && dt.day == now.day) {
+          dateGroup = 'TODAY';
+        } else if (now.difference(DateTime(dt.year, dt.month, dt.day)).inDays == 1) {
+          dateGroup = 'YESTERDAY';
+        } else {
+          dateGroup = 'EARLIER';
         }
 
-        try {
-          await ApiClient().client.post('/notifications/read-all');
-        } catch (_) {}
+        final amountFormatted = '${isCredit ? '+' : '-'}PKR ${tx.amount.toStringAsFixed(2)}';
+
+        String initials = 'BW';
+        if (actor.isNotEmpty) {
+          final parts = actor.split(' ');
+          if (parts.length >= 2) {
+            initials = '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+          } else {
+            initials = actor.substring(0, actor.length >= 2 ? 2 : 1).toUpperCase();
+          }
+        }
+
+        mapped.add({
+          'id': tx.id,
+          'actor': actor,
+          'action': action,
+          'tag': isCredit ? 'RECEIVED' : (tx.transactionType == 'TOPUP' ? 'TOP-UP' : 'TRANSFER'),
+          'amount': amountFormatted,
+          'isCredit': isCredit,
+          'time': timeStr,
+          'dateGroup': dateGroup,
+          'isDirect': true,
+          'isRead': false,
+          'avatarInitials': initials,
+          'avatarColor': const Color(0xFF042B1D),
+          'badgeIcon': isCredit ? Icons.arrow_downward_rounded : Icons.arrow_upward_rounded,
+          'badgeColor': isCredit ? _accentEmerald : _brandYellow,
+          'badgeIconColor': isCredit ? Colors.white : _darkNavy,
+          'transaction': tx,
+        });
+      }
+
+      // Keep security welcome announcement as base notification
+      mapped.add({
+        'id': 'system_welcome',
+        'actor': 'Batwa Security Center',
+        'action': 'Protected by SBP licensed 256-bit AES encryption & Biometric Vault.',
+        'tag': 'VERIFIED',
+        'amount': 'SBP EMI',
+        'isCredit': null,
+        'time': 'Active',
+        'dateGroup': 'TODAY',
+        'isDirect': true,
+        'isRead': true,
+        'avatarInitials': 'BW',
+        'avatarColor': const Color(0xFF042B1D),
+        'badgeIcon': Icons.verified_user_rounded,
+        'badgeColor': _accentEmerald,
+        'badgeIconColor': Colors.white,
+      });
+
+      if (mounted && mapped.isNotEmpty) {
+        setState(() {
+          _notifications = mapped;
+        });
       }
     } catch (_) {}
   }
@@ -636,6 +623,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         onTap: () {
           HapticFeedback.lightImpact();
           setState(() => notif['isRead'] = true);
+          if (notif['transaction'] is TransactionEntity) {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => TransferReceiptScreen(transaction: notif['transaction'] as TransactionEntity),
+              ),
+            );
+          }
         },
         borderRadius: BorderRadius.circular(16),
         child: Padding(

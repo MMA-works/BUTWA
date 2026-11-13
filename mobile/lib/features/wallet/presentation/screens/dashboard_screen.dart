@@ -32,6 +32,9 @@ import 'package:batwa_wallet/features/analytics/presentation/widgets/set_budget_
 import 'package:batwa_wallet/features/merchant/presentation/screens/merchant_hub_screen.dart';
 import 'package:batwa_wallet/features/notifications/presentation/screens/notifications_screen.dart';
 import 'package:batwa_wallet/features/ai_assistant/presentation/screens/batwa_ai_assistant_screen.dart';
+import 'package:batwa_wallet/core/utils/secure_storage_helper.dart';
+import 'package:batwa_wallet/features/wallet/data/wallet_remote_datasource.dart';
+import 'package:batwa_wallet/features/transfer/presentation/screens/transfer_receipt_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   final VoidCallback? onMenuTap;
@@ -53,59 +56,50 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Future<void> _checkIncomingNotifications() async {
     try {
-      final res = await ApiClient().client.get('/notifications');
-      if (res.statusCode == 200 && res.data != null) {
-        final rawList = res.data is Map ? (res.data['data'] as List? ?? []) : (res.data as List? ?? []);
-        int unread = 0;
-        String? newestId;
+      final datasource = WalletRemoteDataSourceImpl(apiClient: ApiClient());
+      final transactions = await datasource.getTransactions(size: 15);
 
-        for (final item in rawList) {
-          final isRead = item['read'] == true || item['isRead'] == true;
-          if (!isRead) unread++;
-        }
+      final myTag = await SecureStorageHelper.getWalletTag() ?? '';
+      final myPhone = await SecureStorageHelper.getUserPhone() ?? '';
 
-        if (rawList.isNotEmpty) {
-          final first = rawList.first;
-          newestId = first['id']?.toString();
+      // Incoming transfers (Credit transfers from another person)
+      final incomingTxs = transactions.where((tx) => tx.isCreditFor(myTag, myPhone) && tx.transactionType != 'TOPUP').toList();
 
-          if (!_isFirstCheck && newestId != null && newestId != _latestKnownNotificationId) {
-            final isRead = first['read'] == true || first['isRead'] == true;
-            if (!isRead) {
-              final type = first['type']?.toString() ?? 'ALERT';
-              final title = first['title']?.toString() ?? 'Notification';
-              final message = first['message']?.toString() ?? '';
-              final amount = double.tryParse(first['amount']?.toString() ?? '');
+      if (incomingTxs.isNotEmpty) {
+        final newestTx = incomingTxs.first;
+        final newestId = newestTx.id;
 
-              if (mounted) {
-                InAppNotificationService.showNotification(
+        if (!_isFirstCheck && newestId.isNotEmpty && newestId != _latestKnownNotificationId) {
+          final sender = newestTx.getSenderDisplayTitle();
+          final amount = newestTx.amount;
+
+          if (mounted) {
+            InAppNotificationService.showNotification(
+              context,
+              title: 'Money Received! 💰',
+              message: 'Rs ${amount.toStringAsFixed(2)} received from $sender',
+              type: 'TRANSFER_RECEIVED',
+              amount: amount,
+              onTap: () {
+                Navigator.push(
                   context,
-                  title: title,
-                  message: message,
-                  type: type,
-                  amount: amount,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const NotificationsScreen()),
-                    ).then((_) => _checkIncomingNotifications());
-                  },
-                );
+                  MaterialPageRoute(builder: (_) => TransferReceiptScreen(transaction: newestTx)),
+                ).then((_) => _checkIncomingNotifications());
+              },
+            );
 
-                if (type == 'TRANSFER_RECEIVED' || type == 'TOPUP') {
-                  context.read<WalletBloc>().add(LoadWalletDataEvent());
-                }
-              }
-            }
+            // Real-time balance and transaction update
+            context.read<WalletBloc>().add(LoadWalletDataEvent());
           }
-          _latestKnownNotificationId = newestId;
         }
+        _latestKnownNotificationId = newestId;
+      }
 
-        _isFirstCheck = false;
-        if (mounted) {
-          setState(() {
-            _unreadNotificationCount = unread;
-          });
-        }
+      _isFirstCheck = false;
+      if (mounted) {
+        setState(() {
+          _unreadNotificationCount = incomingTxs.length > 5 ? 5 : incomingTxs.length;
+        });
       }
     } catch (_) {}
   }

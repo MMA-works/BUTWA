@@ -26,13 +26,11 @@ class WalletRemoteDataSourceImpl implements WalletRemoteDataSource {
       final phone = await SecureStorageHelper.getUserPhone();
       final tag = await SecureStorageHelper.getWalletTag();
       final email = await SecureStorageHelper.getUserEmail();
-      final id = (phone != null && phone.isNotEmpty)
-          ? phone
-          : (tag != null && tag.isNotEmpty)
-              ? tag
-              : (email != null && email.isNotEmpty)
-                  ? email
-                  : '';
+      final cleanTag = (tag ?? '').replaceAll('@', '').trim();
+      final cleanPhone = (phone ?? '').trim();
+      final id = cleanTag.isNotEmpty
+          ? cleanTag
+          : (cleanPhone.isNotEmpty ? cleanPhone : (email ?? ''));
 
       final response = await apiClient.client.get(
         ApiConstants.myWallet,
@@ -57,13 +55,11 @@ class WalletRemoteDataSourceImpl implements WalletRemoteDataSource {
       final phone = await SecureStorageHelper.getUserPhone();
       final tag = await SecureStorageHelper.getWalletTag();
       final email = await SecureStorageHelper.getUserEmail();
-      final id = (phone != null && phone.isNotEmpty)
-          ? phone
-          : (tag != null && tag.isNotEmpty)
-              ? tag
-              : (email != null && email.isNotEmpty)
-                  ? email
-                  : '';
+      final cleanTag = (tag ?? '').replaceAll('@', '').trim();
+      final cleanPhone = (phone ?? '').trim();
+      final id = cleanTag.isNotEmpty
+          ? cleanTag
+          : (cleanPhone.isNotEmpty ? cleanPhone : (email ?? ''));
 
       final response = await apiClient.client.get(
         ApiConstants.transactions,
