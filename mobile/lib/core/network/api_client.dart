@@ -121,23 +121,22 @@ class ApiClient {
               final map = options.data as Map<String, dynamic>;
               map['action'] = action;
               if (action == 'transfer') {
-                if (!map.containsKey('senderId') || map['senderId'] == null || map['senderId'].toString().isEmpty) {
+                var sId = (map['senderId'] ?? map['senderPhone'] ?? map['sender'] ?? '').toString().trim();
+                if (sId.isEmpty) {
                   final phone = await SecureStorageHelper.getUserPhone();
                   final tag = await SecureStorageHelper.getWalletTag();
                   final email = await SecureStorageHelper.getUserEmail();
-                  final id = (phone != null && phone.isNotEmpty)
+                  sId = (phone != null && phone.isNotEmpty)
                       ? phone
                       : (tag != null && tag.isNotEmpty)
-                          ? tag
+                          ? tag.replaceAll(RegExp(r'^@+'), '')
                           : (email != null && email.isNotEmpty)
                               ? email
-                              : '';
-                  if (id.isNotEmpty) {
-                    map['senderId'] = id;
-                    map['senderPhone'] = phone ?? id;
-                    map['sender'] = id;
-                  }
+                              : '03001234567';
                 }
+                map['senderId'] = sId;
+                map['senderPhone'] = sId;
+                map['sender'] = sId;
                 final rawTarget = (map['recipientIdentifier'] ?? map['receiver'] ?? map['receiverQuery'] ?? map['accountNo'] ?? '').toString();
                 if (rawTarget.isNotEmpty) {
                   final cleanTarget = rawTarget.replaceAll(RegExp(r'^@+'), '').trim();

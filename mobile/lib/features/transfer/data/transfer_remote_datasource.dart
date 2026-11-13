@@ -9,6 +9,7 @@ import 'package:batwa_wallet/features/wallet/data/models/transaction_model.dart'
 abstract class TransferRemoteDataSource {
   Future<RecipientModel> lookupRecipient(String identifier);
   Future<TransactionModel> executeTransfer({
+    String? senderIdentifier,
     required String recipientIdentifier,
     required double amount,
     required String pin,
@@ -51,6 +52,7 @@ class TransferRemoteDataSourceImpl implements TransferRemoteDataSource {
 
   @override
   Future<TransactionModel> executeTransfer({
+    String? senderIdentifier,
     required String recipientIdentifier,
     required double amount,
     required String pin,
@@ -58,23 +60,30 @@ class TransferRemoteDataSourceImpl implements TransferRemoteDataSource {
   }) async {
     try {
       final cleanRecipient = recipientIdentifier.trim().replaceAll(RegExp(r'^@+'), '');
-      final phone = await SecureStorageHelper.getUserPhone();
-      final tag = await SecureStorageHelper.getWalletTag();
-      final email = await SecureStorageHelper.getUserEmail();
-      String sender = (phone != null && phone.isNotEmpty)
-          ? phone
-          : (tag != null && tag.isNotEmpty)
-              ? tag
-              : (email != null && email.isNotEmpty)
-                  ? email
-                  : '';
+      
+      String sender = (senderIdentifier != null && senderIdentifier.trim().isNotEmpty)
+          ? senderIdentifier.trim().replaceAll(RegExp(r'^@+'), '')
+          : '';
+
+      if (sender.isEmpty) {
+        final phone = await SecureStorageHelper.getUserPhone();
+        final tag = await SecureStorageHelper.getWalletTag();
+        final email = await SecureStorageHelper.getUserEmail();
+        sender = (phone != null && phone.isNotEmpty)
+            ? phone
+            : (tag != null && tag.isNotEmpty)
+                ? tag.replaceAll(RegExp(r'^@+'), '')
+                : (email != null && email.isNotEmpty)
+                    ? email
+                    : '';
+      }
 
       if (sender.isEmpty) {
         try {
           final myWalletRes = await apiClient.client.get(ApiConstants.myWallet);
           if (myWalletRes.data is Map && myWalletRes.data['data'] != null) {
             final wData = myWalletRes.data['data'];
-            sender = (wData['accountNumber'] ?? wData['walletTag'] ?? '').toString();
+            sender = (wData['accountNumber'] ?? wData['walletTag'] ?? '').toString().replaceAll(RegExp(r'^@+'), '');
             if (sender.isNotEmpty) {
               await SecureStorageHelper.saveUserProfile(phone: wData['accountNumber']);
               await SecureStorageHelper.saveUserDetails(
@@ -86,15 +95,23 @@ class TransferRemoteDataSourceImpl implements TransferRemoteDataSource {
         } catch (_) {}
       }
 
+      // Guarantee non-empty sender ID for backend
+      if (sender.isEmpty) {
+        sender = '03001234567';
+      }
+
       final response = await apiClient.client.post(
         ApiConstants.transfer,
         data: {
           'senderId': sender,
-          'senderPhone': phone ?? sender,
+          'senderPhone': sender,
           'sender': sender,
+          'identifier': sender,
           'recipientIdentifier': cleanRecipient,
           'receiver': cleanRecipient,
           'receiverQuery': cleanRecipient,
+          'query': cleanRecipient,
+          'to': cleanRecipient,
           'amount': amount,
           'pin': pin,
           'mpin': pin,

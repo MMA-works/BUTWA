@@ -4,6 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:batwa_wallet/core/constants/app_colors.dart';
 import 'package:batwa_wallet/features/wallet/presentation/bloc/wallet_bloc.dart';
 import 'package:batwa_wallet/features/wallet/presentation/bloc/wallet_event.dart';
+import 'package:batwa_wallet/features/wallet/presentation/bloc/wallet_state.dart';
+import 'package:batwa_wallet/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:batwa_wallet/features/auth/presentation/bloc/auth_state.dart';
 import 'package:batwa_wallet/features/bills/presentation/screens/bills_hub_screen.dart';
 import 'package:batwa_wallet/features/cards/presentation/screens/cards_screen.dart';
 import 'package:batwa_wallet/features/transfer/presentation/screens/send_money_screen.dart';
@@ -52,6 +55,34 @@ class _DashboardServicesWidgetState extends State<DashboardServicesWidget> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _openSendMoney(BuildContext ctx) {
+    String? phone, tag, title;
+    try {
+      final aState = ctx.read<AuthBloc>().state;
+      if (aState is Authenticated) {
+        phone = aState.user.phoneNumber;
+        title = aState.user.fullName;
+      }
+      final wState = ctx.read<WalletBloc>().state;
+      if (wState is WalletLoaded) {
+        tag = wState.wallet.walletTag;
+        phone ??= wState.wallet.qrCodeData.replaceAll('BATWA:', '').trim();
+      }
+    } catch (_) {}
+    Navigator.of(ctx).push(
+      MaterialPageRoute(
+        builder: (_) => SendMoneyScreen(
+          userBalance: widget.userBalance,
+          senderPhone: phone,
+          senderTag: tag,
+          senderTitle: title,
+        ),
+      ),
+    ).then((_) {
+      if (ctx.mounted) ctx.read<WalletBloc>().add(LoadWalletDataEvent());
+    });
   }
 
   void _togglePin(String serviceId, String label) {
@@ -207,52 +238,28 @@ class _DashboardServicesWidgetState extends State<DashboardServicesWidget> {
             label: 'Raast Instant',
             icon: Icons.flash_on_rounded,
             isPinned: _pinnedServiceIds.contains('raast'),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => SendMoneyScreen(userBalance: widget.userBalance)),
-              ).then((_) {
-                if (context.mounted) context.read<WalletBloc>().add(LoadWalletDataEvent());
-              });
-            },
+            onTap: () => _openSendMoney(context),
           ),
           ServiceItemData(
             id: 'bank_transfer',
             label: 'Bank Transfer',
             icon: Icons.account_balance_rounded,
             isPinned: _pinnedServiceIds.contains('bank_transfer'),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => SendMoneyScreen(userBalance: widget.userBalance)),
-              ).then((_) {
-                if (context.mounted) context.read<WalletBloc>().add(LoadWalletDataEvent());
-              });
-            },
+            onTap: () => _openSendMoney(context),
           ),
           ServiceItemData(
             id: 'cnic_transfer',
             label: 'CNIC Transfer',
             icon: Icons.badge_outlined,
             isPinned: _pinnedServiceIds.contains('cnic_transfer'),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => SendMoneyScreen(userBalance: widget.userBalance)),
-              ).then((_) {
-                if (context.mounted) context.read<WalletBloc>().add(LoadWalletDataEvent());
-              });
-            },
+            onTap: () => _openSendMoney(context),
           ),
           ServiceItemData(
             id: 'batwa_p2p',
             label: 'Batwa P2P',
             icon: Icons.alternate_email_rounded,
             isPinned: _pinnedServiceIds.contains('batwa_p2p'),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => SendMoneyScreen(userBalance: widget.userBalance)),
-              ).then((_) {
-                if (context.mounted) context.read<WalletBloc>().add(LoadWalletDataEvent());
-              });
-            },
+            onTap: () => _openSendMoney(context),
           ),
           ServiceItemData(
             id: 'split_bills',
@@ -279,11 +286,7 @@ class _DashboardServicesWidgetState extends State<DashboardServicesWidget> {
             label: 'Contacts',
             icon: Icons.contacts_outlined,
             isPinned: _pinnedServiceIds.contains('contact_send'),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => SendMoneyScreen(userBalance: widget.userBalance)),
-              );
-            },
+            onTap: () => _openSendMoney(context),
           ),
           ServiceItemData(
             id: 'global_remit',

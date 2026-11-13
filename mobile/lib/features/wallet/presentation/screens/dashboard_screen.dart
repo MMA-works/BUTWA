@@ -25,7 +25,6 @@ import 'package:batwa_wallet/features/bills/presentation/screens/bills_hub_scree
 import 'package:batwa_wallet/features/vaults/presentation/screens/vaults_screen.dart';
 import 'package:batwa_wallet/features/splits/presentation/screens/splits_hub_screen.dart';
 import 'package:batwa_wallet/features/security/presentation/screens/security_settings_screen.dart';
-import 'package:batwa_wallet/features/qr/presentation/screens/qr_scanner_screen.dart';
 import 'package:batwa_wallet/features/qr/presentation/widgets/qr_mode_bottom_sheet.dart';
 import 'package:batwa_wallet/features/recurring/presentation/screens/recurring_hub_screen.dart';
 import 'package:batwa_wallet/features/analytics/presentation/screens/analytics_dashboard_screen.dart';
@@ -628,8 +627,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: QuickActionsWidget(
                               onSend: () {
+                                final authState = context.read<AuthBloc>().state;
+                                String? phone;
+                                String? name;
+                                if (authState is Authenticated) {
+                                  phone = authState.user.phoneNumber;
+                                  name = authState.user.fullName;
+                                }
+                                phone ??= state.wallet.qrCodeData.replaceAll('BATWA:', '').trim();
                                 Navigator.of(context).push(
-                                  MaterialPageRoute(builder: (_) => SendMoneyScreen(userBalance: state.wallet.balance)),
+                                  MaterialPageRoute(
+                                    builder: (_) => SendMoneyScreen(
+                                      userBalance: state.wallet.balance,
+                                      senderPhone: phone,
+                                      senderTag: state.wallet.walletTag,
+                                      senderTitle: name,
+                                    ),
+                                  ),
                                 ).then((_) => context.read<WalletBloc>().add(LoadWalletDataEvent()));
                               },
                               onQr: () {

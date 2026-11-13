@@ -5,6 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:batwa_wallet/core/constants/app_colors.dart';
 import 'package:batwa_wallet/features/wallet/presentation/bloc/wallet_bloc.dart';
 import 'package:batwa_wallet/features/wallet/presentation/bloc/wallet_event.dart';
+import 'package:batwa_wallet/features/wallet/presentation/bloc/wallet_state.dart';
+import 'package:batwa_wallet/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:batwa_wallet/features/auth/presentation/bloc/auth_state.dart';
 import 'package:batwa_wallet/features/transfer/presentation/screens/transfer_receipt_screen.dart';
 import 'package:batwa_wallet/features/transfer/data/transfer_remote_datasource.dart';
 import 'package:batwa_wallet/features/transfer/data/models/recipient_model.dart';
@@ -66,8 +69,17 @@ class PayeeItem {
 
 class SendMoneyScreen extends StatefulWidget {
   final double userBalance;
+  final String? senderPhone;
+  final String? senderTag;
+  final String? senderTitle;
 
-  const SendMoneyScreen({super.key, required this.userBalance});
+  const SendMoneyScreen({
+    super.key,
+    required this.userBalance,
+    this.senderPhone,
+    this.senderTag,
+    this.senderTitle,
+  });
 
   @override
   State<SendMoneyScreen> createState() => _SendMoneyScreenState();
@@ -863,9 +875,35 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
     });
   }
 
+  String _resolveSenderIdentifier() {
+    if (widget.senderPhone != null && widget.senderPhone!.trim().isNotEmpty) {
+      return widget.senderPhone!.trim();
+    }
+    if (widget.senderTag != null && widget.senderTag!.trim().isNotEmpty) {
+      return widget.senderTag!.trim().replaceAll('@', '');
+    }
+    try {
+      final wState = context.read<WalletBloc>().state;
+      if (wState is WalletLoaded) {
+        final acc = wState.wallet.qrCodeData.replaceAll('BATWA:', '').trim();
+        final tag = wState.wallet.walletTag.replaceAll('@', '').trim();
+        if (acc.isNotEmpty && acc != '03000000000') return acc;
+        if (tag.isNotEmpty && tag != 'batwa') return tag;
+      }
+    } catch (_) {}
+    try {
+      final aState = context.read<AuthBloc>().state;
+      if (aState is Authenticated) {
+        final ph = aState.user.phoneNumber.trim();
+        if (ph.isNotEmpty) return ph;
+        if (aState.user.email.isNotEmpty) return aState.user.email;
+      }
+    } catch (_) {}
+    return '';
+  }
+
   Future<void> _executeRealTransfer() async {
     final amountVal = double.tryParse(_enteredAmount.replaceAll(',', '')) ?? 0.0;
-    final isWallet = _selectedPayee?.type == 'wallet' || _batwaRecipientTag.isNotEmpty || _selectedBank?.id == 'batwa';
 
     // Recipient tag or identifier
     String rawRecipient = '';
@@ -887,8 +925,10 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
                 : 'Direct Fund Transfer'));
 
     try {
+      final resolvedSender = _resolveSenderIdentifier();
       final datasource = TransferRemoteDataSourceImpl(apiClient: ApiClient());
       final tx = await datasource.executeTransfer(
+        senderIdentifier: resolvedSender.isNotEmpty ? resolvedSender : null,
         recipientIdentifier: rawRecipient,
         amount: amountVal,
         pin: _confirmedPin ?? '1234',
@@ -1230,12 +1270,12 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
                         }
 
                         final name = verifiedRecipient!.recipientFullName;
-                        final cleanTag = verifiedRecipient!.walletTag.replaceAll(RegExp(r'^@+'), '').trim();
+                        final cleanTag = verifiedRecipient!.walletTag.replaceAll('@', '').trim();
                         final phone = verifiedRecipient!.maskedPhoneNumber.replaceAll(RegExp(r'[^0-9]'), '').trim();
                         final acc = isWallet ? (cleanTag.isNotEmpty ? cleanTag : phone) : (phone.isNotEmpty ? phone : cleanTag);
                         final initials = name.length >= 2 ? name.substring(0, 2).toUpperCase() : 'RC';
                         final bankSubtitle = isWallet
-                            ? 'Batwa Wallet •• @$cleanTag'
+                            ? (cleanTag.isNotEmpty ? 'Batwa Wallet •• @$cleanTag' : 'Batwa Wallet •• $phone')
                             : (cleanTag.isNotEmpty ? 'Raast Instant •• @$cleanTag' : 'Raast Instant •• $phone');
 
                         Navigator.pop(modalCtx);
@@ -2916,7 +2956,17 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
               children: [
                 _buildReviewRow('To', '${payee.name} - ${payee.bank}', isDark),
                 const Divider(height: 20, color: Colors.white10),
-                _buildReviewRow('From', 'Current •• 0142', isDark),
+                Builder(builder: (_) {
+                  final sPhone = widget.senderPhone ?? (context.read<WalletBloc>().state is WalletLoaded ? (context.read<WalletBloc>().state as WalletLoaded).wallet.qrCodeData.replaceAll('BATWA:', '').trim() : '');
+                  final sTag = widget.senderTag ?? (context.read<WalletBloc>().state is WalletLoaded ? (context.read<WalletBloc>().state as WalletLoaded).wallet.walletTag : '');
+                  final cleanTag = sTag.replaceAll('@', '').trim();
+                  final fromLabel = cleanTag.isNotEmpty
+                      ? 'Batwa •• @$cleanTag'
+                      : (sPhone.isNotEmpty && sPhone.length >= 4
+                          ? 'Current •• ${sPhone.substring(sPhone.length - 4)}'
+                          : 'Batwa •• 0142');
+                  return _buildReviewRow('From', fromLabel, isDark);
+                }),
                 const Divider(height: 20, color: Colors.white10),
                 _buildReviewRow('Fee', 'Free', isDark, isHighlight: true),
                 const Divider(height: 20, color: Colors.white10),

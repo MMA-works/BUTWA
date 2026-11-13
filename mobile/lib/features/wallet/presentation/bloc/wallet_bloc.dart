@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:batwa_wallet/core/utils/secure_storage_helper.dart';
 import 'package:batwa_wallet/features/wallet/domain/entities/wallet_entity.dart';
 import 'package:batwa_wallet/features/wallet/domain/entities/transaction_entity.dart';
 import 'package:batwa_wallet/features/wallet/domain/repositories/wallet_repository.dart';
@@ -43,9 +44,24 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
         walletRepository.getTransactions(page: 0, size: 20),
       ]);
 
+      final wallet = results[0] as WalletEntity;
+      final txList = results[1] as List<TransactionEntity>;
+
+      final rawPhone = wallet.qrCodeData.replaceAll('BATWA:', '').trim();
+      if (rawPhone.isNotEmpty && rawPhone != '03000000000') {
+        SecureStorageHelper.saveUserProfile(phone: rawPhone);
+      }
+      if (wallet.walletTag.isNotEmpty && wallet.walletTag != '@batwa') {
+        final existingName = await SecureStorageHelper.getFullName();
+        SecureStorageHelper.saveUserDetails(
+          fullName: existingName ?? 'Batwa Member',
+          walletTag: wallet.walletTag,
+        );
+      }
+
       emit(WalletLoaded(
-        wallet: results[0] as WalletEntity,
-        transactions: results[1] as List<TransactionEntity>,
+        wallet: wallet,
+        transactions: txList,
         isBalanceHidden: _isBalanceHidden,
       ));
     } catch (e) {
