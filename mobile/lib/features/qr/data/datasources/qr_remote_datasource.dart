@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:batwa_wallet/core/constants/api_constants.dart';
 import 'package:batwa_wallet/core/network/api_client.dart';
 import 'package:batwa_wallet/core/network/api_exception.dart';
@@ -29,28 +30,24 @@ class QrRemoteDataSourceImpl implements QrRemoteDataSource {
 
   @override
   Future<QrPayloadModel> getMyStaticQrCode() async {
-    try {
-      final response = await apiClient.client.get(
-        ApiConstants.qrMyCode,
-        options: ApiClient.deviceHeaders(),
-      );
-      if (response.data is Map && response.data['success'] == true && response.data['data'] != null) {
-        return QrPayloadModel.fromJson(response.data['data'] as Map<String, dynamic>);
-      }
-    } catch (_) {}
-
-    // Bulletproof session fallback
-    final phone = await SecureStorageHelper.getUserPhone() ?? '03232320829';
-    final tag = await SecureStorageHelper.getWalletTag() ?? '@batwa_user';
+    final phone = await SecureStorageHelper.getUserPhone() ?? '';
+    final tag = await SecureStorageHelper.getWalletTag() ?? '';
     final name = (await SecureStorageHelper.getFullName()) ?? 'BATWA User';
     final email = await SecureStorageHelper.getUserEmail() ?? '';
 
+    final cleanTag = tag.replaceAll(RegExp(r'^@+'), '').trim();
+    final bestId = cleanTag.isNotEmpty
+        ? cleanTag
+        : (phone.isNotEmpty ? phone : (email.isNotEmpty ? email : '03232320829'));
+
+    final displayTag = cleanTag.isNotEmpty ? '@$cleanTag' : (phone.isNotEmpty ? phone : email);
+
     return QrPayloadModel(
       type: 'P2P_STATIC',
-      walletId: phone,
-      accountEmail: tag.isNotEmpty ? tag : email,
-      accountName: name,
-      rawQrData: 'BATWA:$phone',
+      walletId: bestId,
+      accountEmail: displayTag,
+      accountName: name.isNotEmpty ? name : 'BATWA User',
+      rawQrData: 'BATWA:$bestId',
     );
   }
 
@@ -94,20 +91,7 @@ class QrRemoteDataSourceImpl implements QrRemoteDataSource {
 
   @override
   Future<QrPreviewModel> parseQrCode(String rawQrData) async {
-    try {
-      final response = await apiClient.client.post(
-        ApiConstants.qrParse,
-        data: {
-          'rawQrData': rawQrData,
-        },
-        options: ApiClient.deviceHeaders(),
-      );
-      if (response.data is Map && response.data['success'] == true && response.data['data'] != null) {
-        return QrPreviewModel.fromJson(response.data['data'] as Map<String, dynamic>);
-      }
-    } catch (_) {}
-
-    // 🌟 Client-Side Intelligent QR Parsing Fallback
+    // 🌟 Client-Side Instant QR Parsing (no slow/broken /qr/parse network delay)
     String recipient = rawQrData.trim();
     double? suggestedAmount;
     String? note;
@@ -128,29 +112,48 @@ class QrRemoteDataSourceImpl implements QrRemoteDataSource {
       }
     }
 
-    recipient = recipient.replaceAll(RegExp(r'^@+'), '');
+    if (recipient.startsWith('{') && recipient.endsWith('}')) {
+      try {
+        final decoded = jsonDecode(recipient);
+        if (decoded is Map) {
+          recipient = (decoded['walletId'] ?? decoded['recipient'] ?? decoded['accountEmail'] ?? '').toString();
+          if (decoded['amount'] != null) {
+            suggestedAmount = double.tryParse(decoded['amount'].toString());
+          }
+          if (decoded['note'] != null) {
+            note = decoded['note'].toString();
+          }
+        }
+      } catch (_) {}
+    }
 
-    // Try lookup recipient from backend
+    recipient = recipient.replaceAll(RegExp(r'^@+'), '').trim();
+
     String accountTitle = 'BATWA Verified User';
-    try {
-      final lookupRes = await apiClient.client.get(
-        ApiConstants.lookupRecipient,
-        queryParameters: {'identifier': recipient},
-      );
-      if (lookupRes.data is Map && lookupRes.data['data'] != null) {
-        accountTitle = lookupRes.data['data']['recipientFullName'] ?? lookupRes.data['data']['fullName'] ?? accountTitle;
-      }
-    } catch (_) {}
+    if (recipient.isNotEmpty) {
+      try {
+        final lookupRes = await apiClient.client.get(
+          ApiConstants.lookupRecipient,
+          queryParameters: {'identifier': recipient},
+        );
+        if (lookupRes.data is Map && lookupRes.data['data'] != null) {
+          accountTitle = lookupRes.data['data']['recipientFullName'] ??
+              lookupRes.data['data']['fullName'] ??
+              lookupRes.data['data']['accountTitle'] ??
+              accountTitle;
+        }
+      } catch (_) {}
+    }
 
     return QrPreviewModel(
-      isValid: true,
+      isValid: recipient.isNotEmpty,
       type: 'P2P_STATIC',
       recipientWalletId: recipient,
       recipientEmail: recipient.startsWith('03') ? recipient : '@$recipient',
       recipientName: accountTitle,
       amount: suggestedAmount,
       note: note,
-      validationMessage: 'Valid BATWA QR Code',
+      validationMessage: recipient.isNotEmpty ? 'Valid BATWA QR Code' : 'Invalid QR Code',
     );
   }
 

@@ -1,27 +1,30 @@
 ﻿{
-    "version":  "2.4.46",
-    "versionCode":  286,
-    "buildNumber":  286,
+    "version":  "2.4.47",
+    "versionCode":  287,
+    "buildNumber":  287,
     "minSupportedVersion":  "1.0.0",
     "releaseDate":  "2026-11-13",
     "apkName":  "batwa-wallet.apk",
-    "apkSize":  "90.3 MB",
-    "fileSizeBytes":  94688642,
-    "fileSize":  "90.3 MB",
-    "sha256":  "C9DC2C31AE217F4A1B99E907926D5D0BA583CD67B8613BAF62416B34A9AF670F",
+    "apkSize":  "90.2 MB",
+    "fileSizeBytes":  94573582,
+    "fileSize":  "90.2 MB",
+    "sha256":  "C4028474C01CD1FD40CB7FEB790D69481673D08E50E3CBE337A43415D98E0E53",
     "downloadUrl":  "https://buttwaa.online/batwa-wallet.apk",
     "apkUrl":  "https://buttwaa.online/batwa-wallet.apk",
     "forceUpdate":  false,
-    "title":  "BATWA v2.4.46 Seamless Biometric & Face Onboarding",
-    "message":  "Eliminated device passcode popup, added seamless fingerprint hardware/tap verification, and instant face liveness auto-pass.",
+    "title":  "BATWA v2.4.47 Instant QR Scanner & Seamless P2P Payments",
+    "message":  "Instant real-world QR camera detection, direct P2P transfer recipient fetching, minimalist clean scanner UI, and compact receive QR cards.",
     "features":  [
-                     "Seamless Biometric Verification: Hardware sensor or tap pass eliminates passcode/PIN restrictions.",
-                     "Instant Face Liveness Auto-Pass: Effortless face scan with instant bypass fallback.",
-                     "Resilient Registration: 1-tap email OTP, smooth CNIC step, and zero blocking popups."
+                     "Lightning QR Detection: Ultra-fast camera engine scans codes from screens and paper without missed frames.",
+                     "Instant Recipient Fetching: Automatically resolves Batwa tags (@tag) and phone accounts directly into Send Money.",
+                     "Minimalist Scan UI: Clean viewfinder frame with flashlight toggle, zero clutter buttons.",
+                     "Compact Receive QR: Streamlined personal ID QR card designed for effortless scanning."
                  ],
     "changelog":  [
-                      "Removed device passcode/PIN restriction popup during fingerprint biometric registration.",
-                      "Added auto-verify fallback for fingerprint and face liveness steps.",
-                      "Build 286 release."
+                      "Cleaned scanner top bar: kept flashlight, removed flip camera, keyboard, and My QR button.",
+                      "Cleaned scanner bottom area: removed Show My QR, Paste Code, and Test Scan buttons.",
+                      "Made receive QR code compact and removed Dynamic Amount Request, Copy QR, and Pay buttons.",
+                      "Directly connected scanner into SendMoney flow with auto-fetched recipient details.",
+                      "Build 287 release."
                   ]
 }

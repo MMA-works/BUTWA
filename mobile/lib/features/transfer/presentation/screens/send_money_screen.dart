@@ -72,6 +72,10 @@ class SendMoneyScreen extends StatefulWidget {
   final String? senderPhone;
   final String? senderTag;
   final String? senderTitle;
+  final String? initialRecipient;
+  final String? initialRecipientName;
+  final double? initialAmount;
+  final String? initialNote;
 
   const SendMoneyScreen({
     super.key,
@@ -79,6 +83,10 @@ class SendMoneyScreen extends StatefulWidget {
     this.senderPhone,
     this.senderTag,
     this.senderTitle,
+    this.initialRecipient,
+    this.initialRecipientName,
+    this.initialAmount,
+    this.initialNote,
   });
 
   @override
@@ -533,6 +541,32 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
     super.initState();
     _searchController.addListener(() => setState(() {}));
     _bankSearchController.addListener(() => setState(() {}));
+
+    if (widget.initialRecipient != null && widget.initialRecipient!.trim().isNotEmpty) {
+      final rec = widget.initialRecipient!.replaceAll(RegExp(r'^@+'), '').trim();
+      final name = (widget.initialRecipientName != null && widget.initialRecipientName!.trim().isNotEmpty)
+          ? widget.initialRecipientName!.trim()
+          : 'BATWA User';
+      final initials = name.length >= 2 ? name.substring(0, 2).toUpperCase() : 'RC';
+      _selectedPayee = PayeeItem(
+        id: 'qr_${DateTime.now().millisecondsSinceEpoch}',
+        name: name,
+        initials: initials,
+        bank: 'Batwa Wallet •• @$rec',
+        accountNo: rec,
+        type: 'wallet',
+        avatarBg: const Color(0xFF10B981),
+      );
+      _batwaRecipientTag = rec;
+      _accountInputController.text = rec;
+      if (widget.initialAmount != null && widget.initialAmount! > 0) {
+        _enteredAmount = widget.initialAmount!.toStringAsFixed(widget.initialAmount! % 1 == 0 ? 0 : 2);
+      }
+      if (widget.initialNote != null && widget.initialNote!.trim().isNotEmpty) {
+        _transferPurpose = widget.initialNote!.trim();
+      }
+      _currentStep = SendMoneyStep.enterAmount;
+    }
   }
 
   @override
@@ -1389,7 +1423,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen>
   }
 
   void _handleBackNavigation() {
-    if (_currentStep == SendMoneyStep.selectPayee) {
+    if (_currentStep == SendMoneyStep.selectPayee || (widget.initialRecipient != null && _currentStep == SendMoneyStep.enterAmount)) {
       Navigator.pop(context);
     } else if (_currentStep == SendMoneyStep.selectBank) {
       setState(() => _currentStep = SendMoneyStep.selectPayee);
